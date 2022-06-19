@@ -23,6 +23,12 @@
         <artifactId>panda-gateway-servlet</artifactId>
         <version>${revision}</version>
       </dependency>
+
+      <dependency>
+        <groupId>com.lzhpo</groupId>
+        <artifactId>panda-gateway-webflux</artifactId>
+        <version>${revision}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>

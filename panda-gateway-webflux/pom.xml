@@ -13,4 +13,21 @@
   <artifactId>panda-gateway-webflux</artifactId>
   <name>${project.groupId} ::: ${project.artifactId}</name>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.lzhpo</groupId>
+      <artifactId>panda-gateway-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-web</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+  </dependencies>
 </project>

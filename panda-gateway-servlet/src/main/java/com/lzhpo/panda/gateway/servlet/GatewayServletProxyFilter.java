@@ -1,15 +1,14 @@
 package com.lzhpo.panda.gateway.servlet;
 
 import cn.hutool.extra.servlet.ServletUtil;
+import com.lzhpo.panda.gateway.core.ForwardTargetUtils;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.GatewayProxyRoute;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -58,7 +57,8 @@ public class GatewayServletProxyFilter extends GenericFilterBean implements Orde
 
       if (proxyRouteOptional.isPresent()) {
         GatewayProxyRoute proxyRoute = proxyRouteOptional.get();
-        String stripPrefixedRequestPath = stripPrefix(requestPath, proxyRoute.getStripPrefix());
+        String stripPrefixedRequestPath =
+            ForwardTargetUtils.stripPrefix(requestPath, proxyRoute.getStripPrefix());
         String fullRequestPath = proxyRoute.getTargetUrl() + stripPrefixedRequestPath;
         log.info("Request [{}] match to route {}", requestPath, proxyRoute);
 
@@ -95,19 +95,6 @@ public class GatewayServletProxyFilter extends GenericFilterBean implements Orde
     }
 
     chain.doFilter(request, response);
-  }
-
-  private String stripPrefix(String requestPath, Integer stripPrefix) {
-    if (Objects.nonNull(stripPrefix) && stripPrefix > 0) {
-      int finallyStripPrefix = stripPrefix;
-      List<String> requestPaths =
-          Arrays.stream(requestPath.split("/")).collect(Collectors.toList());
-      while (finallyStripPrefix > 0) {
-        requestPaths.remove(finallyStripPrefix--);
-      }
-      requestPath = String.join("/", requestPaths);
-    }
-    return requestPath;
   }
 
   @Override
