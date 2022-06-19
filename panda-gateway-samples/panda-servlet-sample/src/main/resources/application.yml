@@ -1,0 +1,8 @@
+server:
+  port: 9001
+gateway:
+  routes:
+    - name: spring-actuator
+      match-path: /api/start-spring/**
+      strip-prefix: 2
+      target-url: https://start.spring.io
