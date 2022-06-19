@@ -60,7 +60,7 @@ public class GatewayServletProxyFilter extends GenericFilterBean implements Orde
         GatewayProxyRoute proxyRoute = proxyRouteOptional.get();
         String stripPrefixedRequestPath = stripPrefix(requestPath, proxyRoute.getStripPrefix());
         String fullRequestPath = proxyRoute.getTargetUrl() + stripPrefixedRequestPath;
-        log.info("Request [{}] match to route {}", fullRequestPath, proxyRoute);
+        log.info("Request [{}] match to route {}", requestPath, proxyRoute);
 
         String requestMethod = httpRequest.getMethod();
         HttpMethod httpMethod = HttpMethod.resolve(requestMethod);
@@ -91,8 +91,6 @@ public class GatewayServletProxyFilter extends GenericFilterBean implements Orde
               System.currentTimeMillis() - startMillis);
           return;
         }
-      } else {
-        log.warn("Request [{}] cannot match route.", requestPath);
       }
     }
 
