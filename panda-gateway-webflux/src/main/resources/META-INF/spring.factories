@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.lzhpo.gateway.webflux.GatewayWebfluxAutoConfiguration
+  com.lzhpo.panda.gateway.webflux.GatewayWebfluxAutoConfiguration

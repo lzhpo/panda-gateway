@@ -1,6 +1,6 @@
-package com.lzhpo.gateway.servlet;
+package com.lzhpo.panda.gateway.servlet;
 
-import com.lzhpo.gateway.core.GatewayProperties;
+import com.lzhpo.panda.gateway.core.GatewayProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

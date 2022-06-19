@@ -1,4 +1,4 @@
-package com.lzhpo.gateway.core;
+package com.lzhpo.panda.gateway.core;
 
 import lombok.NoArgsConstructor;
 

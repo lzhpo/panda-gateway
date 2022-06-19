@@ -1,8 +1,8 @@
-package com.lzhpo.gateway.servlet;
+package com.lzhpo.panda.gateway.servlet;
 
 import cn.hutool.extra.servlet.ServletUtil;
-import com.lzhpo.gateway.core.GatewayProperties;
-import com.lzhpo.gateway.core.GatewayProxyRoute;
+import com.lzhpo.panda.gateway.core.GatewayProperties;
+import com.lzhpo.panda.gateway.core.GatewayProxyRoute;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;

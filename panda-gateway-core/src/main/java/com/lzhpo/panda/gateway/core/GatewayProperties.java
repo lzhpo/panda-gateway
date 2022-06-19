@@ -1,4 +1,4 @@
-package com.lzhpo.gateway.core;
+package com.lzhpo.panda.gateway.core;
 
 import java.util.ArrayList;
 import java.util.List;
