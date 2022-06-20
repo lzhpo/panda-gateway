@@ -1,6 +1,6 @@
 package com.lzhpo.panda.gateway.webflux;
 
-import com.lzhpo.panda.gateway.core.ForwardTargetUtils;
+import com.lzhpo.panda.gateway.core.ExtractUtils;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.GatewayProxyRoute;
 import java.util.List;
@@ -47,58 +47,47 @@ public class WebClientForwardFilter implements WebFilter {
             .filter(proxyRoute -> antPathMatcher.match(proxyRoute.getMatchPath(), requestPath))
             .findAny();
 
-    if (proxyRouteOptional.isPresent()) {
-      GatewayProxyRoute proxyRoute = proxyRouteOptional.get();
-      String stripPrefixedRequestPath =
-          ForwardTargetUtils.stripPrefix(requestPath, proxyRoute.getStripPrefix());
-      String fullRequestPath = proxyRoute.getTargetUrl() + stripPrefixedRequestPath;
-      log.info("Request [{}] match to route {}", requestPath, proxyRoute);
-
-      HttpMethod httpMethod = request.getMethod();
-      Assert.notNull(httpMethod, "Bad request");
-
-      RequestBodySpec requestBodySpec =
-          webClient
-              .method(httpMethod)
-              .uri(fullRequestPath)
-              .headers(httpHeaders -> httpHeaders.addAll(request.getHeaders()));
-
-      RequestHeadersSpec<?> requestHeadersSpec;
-      if (requireBody(httpMethod)) {
-        requestHeadersSpec = requestBodySpec.body(BodyInserters.fromDataBuffers(request.getBody()));
-      } else {
-        requestHeadersSpec = requestBodySpec;
-      }
-
-      return requestHeadersSpec.exchangeToMono(
-          clientResponse -> {
-            ServerHttpResponse response = exchange.getResponse();
-            response.getHeaders().putAll(clientResponse.headers().asHttpHeaders());
-            response.setStatusCode(clientResponse.statusCode());
-            Flux<DataBuffer> clientResDataBuffers =
-                clientResponse.body(BodyExtractors.toDataBuffers());
-            return response
-                .writeWith(clientResDataBuffers)
-                .doFinally(
-                    signalType ->
-                        log.info(
-                            "Request [{}] completed, take time {} millis.",
-                            fullRequestPath,
-                            System.currentTimeMillis() - startMillis));
-          });
+    if (proxyRouteOptional.isEmpty()) {
+      return chain.filter(exchange);
     }
 
-    return chain.filter(exchange);
-  }
+    GatewayProxyRoute proxyRoute = proxyRouteOptional.get();
+    String stripPrefixedRequestPath =
+        ExtractUtils.stripPrefix(requestPath, proxyRoute.getStripPrefix());
+    String fullRequestPath = proxyRoute.getTargetUrl() + stripPrefixedRequestPath;
+    log.info("Request [{}] match to route {}", requestPath, proxyRoute);
 
-  private boolean requireBody(HttpMethod method) {
-    switch (method) {
-      case PUT:
-      case POST:
-      case PATCH:
-        return true;
-      default:
-        return false;
+    HttpMethod httpMethod = request.getMethod();
+    Assert.notNull(httpMethod, "Bad request");
+
+    RequestBodySpec bodySpec =
+        webClient
+            .method(httpMethod)
+            .uri(fullRequestPath)
+            .headers(httpHeaders -> httpHeaders.addAll(request.getHeaders()));
+
+    RequestHeadersSpec<?> headersSpec;
+    if (ExtractUtils.requireBody(httpMethod)) {
+      headersSpec = bodySpec.body(BodyInserters.fromDataBuffers(request.getBody()));
+    } else {
+      headersSpec = bodySpec;
     }
+
+    return headersSpec.exchangeToMono(
+        clientResponse -> {
+          ServerHttpResponse response = exchange.getResponse();
+          response.getHeaders().putAll(clientResponse.headers().asHttpHeaders());
+          response.setStatusCode(clientResponse.statusCode());
+          Flux<DataBuffer> clientResDataBuffers =
+              clientResponse.body(BodyExtractors.toDataBuffers());
+          return response
+              .writeWith(clientResDataBuffers)
+              .doFinally(
+                  signalType ->
+                      log.info(
+                          "Request [{}] completed, take time {} millis.",
+                          fullRequestPath,
+                          System.currentTimeMillis() - startMillis));
+        });
   }
 }

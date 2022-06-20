@@ -1,11 +1,11 @@
 package com.lzhpo.panda.gateway.servlet;
 
 import cn.hutool.extra.servlet.ServletUtil;
-import com.lzhpo.panda.gateway.core.ForwardTargetUtils;
+import com.lzhpo.panda.gateway.core.ExtractUtils;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.GatewayProxyRoute;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -19,12 +19,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -42,59 +42,60 @@ public class GatewayServletProxyFilter extends GenericFilterBean implements Orde
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
+
     long startMillis = System.currentTimeMillis();
-
     HttpServletRequest httpRequest = (HttpServletRequest) request;
-    HttpServletResponse httpResponse = (HttpServletResponse) response;
-    String requestPath = httpRequest.getRequestURI();
+    String path = httpRequest.getRequestURI();
 
-    if (!response.isCommitted()) {
-      List<GatewayProxyRoute> proxyRoutes = gatewayProperties.getRoutes();
-      Optional<GatewayProxyRoute> proxyRouteOptional =
-          proxyRoutes.stream()
-              .filter(proxyRoute -> antPathMatcher.match(proxyRoute.getMatchPath(), requestPath))
-              .findAny();
+    List<GatewayProxyRoute> proxyRoutes = gatewayProperties.getRoutes();
+    Optional<GatewayProxyRoute> proxyRouteOptional =
+        proxyRoutes.stream()
+            .filter(proxyRoute -> antPathMatcher.match(proxyRoute.getMatchPath(), path))
+            .findAny();
 
-      if (proxyRouteOptional.isPresent()) {
-        GatewayProxyRoute proxyRoute = proxyRouteOptional.get();
-        String stripPrefixedRequestPath =
-            ForwardTargetUtils.stripPrefix(requestPath, proxyRoute.getStripPrefix());
-        String fullRequestPath = proxyRoute.getTargetUrl() + stripPrefixedRequestPath;
-        log.info("Request [{}] match to route {}", requestPath, proxyRoute);
-
-        String requestMethod = httpRequest.getMethod();
-        HttpMethod httpMethod = HttpMethod.resolve(requestMethod);
-        Assert.notNull(httpMethod, "Can not resolve http method [" + requestMethod + "]");
-
-        String requestBody = ServletUtil.getBody(request);
-        HttpEntity<String> httpEntity = new HttpEntity<>(requestBody);
-
-        ResponseEntity<String> responseEntity =
-            restTemplate.exchange(fullRequestPath, httpMethod, httpEntity, String.class);
-        String responseEntityBody = responseEntity.getBody();
-
-        if (Objects.nonNull(responseEntityBody)) {
-          httpResponse.setCharacterEncoding("UTF-8");
-          httpResponse.setStatus(responseEntity.getStatusCodeValue());
-          httpResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
-          httpResponse.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-
-          PrintWriter writer = response.getWriter();
-          writer.write(responseEntityBody);
-          writer.flush();
-          writer.close();
-          response.flushBuffer();
-
-          log.info(
-              "Request [{}] completed, take time {} millis.",
-              fullRequestPath,
-              System.currentTimeMillis() - startMillis);
-          return;
-        }
-      }
+    if (proxyRouteOptional.isEmpty()) {
+      chain.doFilter(request, response);
+      return;
     }
 
-    chain.doFilter(request, response);
+    GatewayProxyRoute proxyRoute = proxyRouteOptional.get();
+    String filteredPath = ExtractUtils.stripPrefix(path, proxyRoute.getStripPrefix());
+    String fullPath = proxyRoute.getTargetUrl() + filteredPath;
+    log.info("Request [{}] match to route {}", path, proxyRoute);
+
+    String method = httpRequest.getMethod();
+    HttpMethod httpMethod = HttpMethod.resolve(method);
+    Assert.notNull(httpMethod, "Can not resolve http method [" + method + "]");
+
+    Enumeration<String> headerNames = httpRequest.getHeaderNames();
+    MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+    while (headerNames.hasMoreElements()) {
+      String headerName = headerNames.nextElement();
+      headers.add(headerName, httpRequest.getHeader(headerName));
+    }
+
+    final HttpEntity<String> httpEntity;
+    if (ExtractUtils.requireBody(httpMethod)) {
+      String requestBody = ServletUtil.getBody(request);
+      httpEntity = new HttpEntity<>(requestBody, headers);
+    } else {
+      httpEntity = new HttpEntity<>(null, headers);
+    }
+
+    ResponseEntity<byte[]> resEntity =
+        restTemplate.exchange(fullPath, httpMethod, httpEntity, byte[].class);
+    byte[] responseBody = resEntity.getBody();
+    if (Objects.nonNull(responseBody)) {
+      HttpServletResponse httpResponse = (HttpServletResponse) response;
+      headers.toSingleValueMap().forEach(httpResponse::setHeader);
+      httpResponse.setStatus(resEntity.getStatusCodeValue());
+      httpResponse.getOutputStream().write(responseBody);
+
+      log.info(
+          "Request [{}] completed, take time {} millis.",
+          fullPath,
+          System.currentTimeMillis() - startMillis);
+    }
   }
 
   @Override
