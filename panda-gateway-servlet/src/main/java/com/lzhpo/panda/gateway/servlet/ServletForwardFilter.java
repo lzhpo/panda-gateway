@@ -33,7 +33,7 @@ import org.springframework.web.filter.GenericFilterBean;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class GatewayServletProxyFilter extends GenericFilterBean implements Ordered {
+public class ServletForwardFilter extends GenericFilterBean implements Ordered {
 
   private final RestTemplate restTemplate;
   private final GatewayProperties gatewayProperties;

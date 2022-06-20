@@ -19,8 +19,8 @@ public class GatewayWebfluxAutoConfiguration {
   }
 
   @Bean
-  public WebClientForwardFilter webClientForwardFilter(
+  public WebfluxForwardFilter webfluxForwardFilter(
       WebClient webClient, GatewayProperties gatewayProperties) {
-    return new WebClientForwardFilter(webClient, gatewayProperties);
+    return new WebfluxForwardFilter(webClient, gatewayProperties);
   }
 }

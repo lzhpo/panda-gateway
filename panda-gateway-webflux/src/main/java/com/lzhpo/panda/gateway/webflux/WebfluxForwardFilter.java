@@ -29,7 +29,7 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class WebClientForwardFilter implements WebFilter {
+public class WebfluxForwardFilter implements WebFilter {
 
   private final WebClient webClient;
   private final GatewayProperties gatewayProperties;

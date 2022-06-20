@@ -19,8 +19,8 @@ public class GatewayServletAutoConfiguration {
   }
 
   @Bean
-  public GatewayServletProxyFilter gatewayServletProxyFilter(
+  public ServletForwardFilter servletForwardFilter(
       GatewayProperties gatewayProperties, RestTemplate restTemplate) {
-    return new GatewayServletProxyFilter(restTemplate, gatewayProperties);
+    return new ServletForwardFilter(restTemplate, gatewayProperties);
   }
 }
