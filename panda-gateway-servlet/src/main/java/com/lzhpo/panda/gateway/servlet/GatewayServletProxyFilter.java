@@ -42,7 +42,6 @@ public class GatewayServletProxyFilter extends GenericFilterBean implements Orde
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
-
     long startMillis = System.currentTimeMillis();
     HttpServletRequest httpRequest = (HttpServletRequest) request;
     String path = httpRequest.getRequestURI();

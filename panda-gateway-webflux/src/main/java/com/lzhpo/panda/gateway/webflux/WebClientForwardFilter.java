@@ -39,12 +39,12 @@ public class WebClientForwardFilter implements WebFilter {
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
     long startMillis = System.currentTimeMillis();
     ServerHttpRequest request = exchange.getRequest();
-    String requestPath = request.getPath().value();
+    String path = request.getPath().value();
 
     List<GatewayProxyRoute> proxyRoutes = gatewayProperties.getRoutes();
     Optional<GatewayProxyRoute> proxyRouteOptional =
         proxyRoutes.stream()
-            .filter(proxyRoute -> antPathMatcher.match(proxyRoute.getMatchPath(), requestPath))
+            .filter(proxyRoute -> antPathMatcher.match(proxyRoute.getMatchPath(), path))
             .findAny();
 
     if (proxyRouteOptional.isEmpty()) {
@@ -52,18 +52,16 @@ public class WebClientForwardFilter implements WebFilter {
     }
 
     GatewayProxyRoute proxyRoute = proxyRouteOptional.get();
-    String stripPrefixedRequestPath =
-        ExtractUtils.stripPrefix(requestPath, proxyRoute.getStripPrefix());
-    String fullRequestPath = proxyRoute.getTargetUrl() + stripPrefixedRequestPath;
-    log.info("Request [{}] match to route {}", requestPath, proxyRoute);
-
+    String filteredPath = ExtractUtils.stripPrefix(path, proxyRoute.getStripPrefix());
+    String fullPath = proxyRoute.getTargetUrl() + filteredPath;
+    log.info("Request [{}] match to route {}", path, proxyRoute);
     HttpMethod httpMethod = request.getMethod();
     Assert.notNull(httpMethod, "Bad request");
 
     RequestBodySpec bodySpec =
         webClient
             .method(httpMethod)
-            .uri(fullRequestPath)
+            .uri(fullPath)
             .headers(httpHeaders -> httpHeaders.addAll(request.getHeaders()));
 
     RequestHeadersSpec<?> headersSpec;
@@ -83,10 +81,10 @@ public class WebClientForwardFilter implements WebFilter {
           return response
               .writeWith(clientResDataBuffers)
               .doFinally(
-                  signalType ->
+                  x ->
                       log.info(
                           "Request [{}] completed, take time {} millis.",
-                          fullRequestPath,
+                          fullPath,
                           System.currentTimeMillis() - startMillis));
         });
   }
