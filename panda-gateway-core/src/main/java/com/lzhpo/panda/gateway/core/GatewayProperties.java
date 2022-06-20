@@ -12,5 +12,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "gateway")
 public class GatewayProperties {
 
-  private List<GatewayProxyRoute> routes = new ArrayList<>();
+  private List<RouteDefinition> routes = new ArrayList<>();
 }

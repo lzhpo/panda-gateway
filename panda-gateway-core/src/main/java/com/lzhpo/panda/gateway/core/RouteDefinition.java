@@ -3,10 +3,12 @@ package com.lzhpo.panda.gateway.core;
 import lombok.Data;
 
 /**
+ * Route definition
+ *
  * @author lzhpo
  */
 @Data
-public class GatewayProxyRoute {
+public class RouteDefinition {
 
   private String name;
   private String matchPath;

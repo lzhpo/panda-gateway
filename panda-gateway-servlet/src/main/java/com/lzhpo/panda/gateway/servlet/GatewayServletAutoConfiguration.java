@@ -1,6 +1,6 @@
 package com.lzhpo.panda.gateway.servlet;
 
-import com.lzhpo.panda.gateway.core.GatewayProperties;
+import com.lzhpo.panda.gateway.core.loadbalancer.RouteLoadBalancer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ public class GatewayServletAutoConfiguration {
 
   @Bean
   public ServletForwardFilter servletForwardFilter(
-      GatewayProperties gatewayProperties, RestTemplate restTemplate) {
-    return new ServletForwardFilter(restTemplate, gatewayProperties);
+      RestTemplate restTemplate, RouteLoadBalancer routeLoadBalancer) {
+    return new ServletForwardFilter(restTemplate, routeLoadBalancer);
   }
 }
