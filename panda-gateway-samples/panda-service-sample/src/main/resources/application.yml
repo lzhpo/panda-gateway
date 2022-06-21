@@ -1,2 +1,10 @@
 server:
   port: 9000
+
+spring:
+  servlet:
+    multipart:
+      # 单个文件大小最大限制
+      max-file-size: 50MB
+      # 单次请求总文件大小最大限制
+      max-request-size: 50MB

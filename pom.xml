@@ -29,6 +29,7 @@
   <properties>
     <java.version>11</java.version>
     <hutool.version>5.8.3</hutool.version>
+    <guava.version>31.1-jre</guava.version>
     <spring-cloud.version>2021.0.1</spring-cloud.version>
     <fmt-maven-plugin.version>2.19</fmt-maven-plugin.version>
   </properties>
@@ -49,6 +50,12 @@
       <groupId>cn.hutool</groupId>
       <artifactId>hutool-all</artifactId>
       <version>${hutool.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
     </dependency>
   </dependencies>
 

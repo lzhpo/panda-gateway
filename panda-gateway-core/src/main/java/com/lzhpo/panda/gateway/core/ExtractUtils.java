@@ -1,8 +1,10 @@
 package com.lzhpo.panda.gateway.core;
 
 import cn.hutool.core.text.StrPool;
+import com.google.common.base.Joiner;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
@@ -14,6 +16,10 @@ import org.springframework.http.HttpMethod;
 @UtilityClass
 public class ExtractUtils {
 
+  public static String mapToUrl(Map<String, String> paramsMap) {
+    return Joiner.on("&").useForNull("").withKeyValueSeparator("=").join(paramsMap);
+  }
+
   public static String stripPrefix(String path, Integer stripPrefix) {
     if (Objects.nonNull(stripPrefix) && stripPrefix > 0) {
       int finallyStripPrefix = stripPrefix;
@@ -23,7 +29,7 @@ public class ExtractUtils {
       }
       path = String.join(StrPool.SLASH, paths);
     }
-    return path;
+    return path + StrPool.SLASH;
   }
 
   public static boolean requireBody(HttpMethod method) {
