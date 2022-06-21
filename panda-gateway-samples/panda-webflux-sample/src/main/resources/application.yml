@@ -2,7 +2,7 @@ server:
   port: 9002
 gateway:
   routes:
-    - name: sample-service
-      match-path: /api/sample/**
+    - name: service-sample
+      match-path: /api/service-sample/**
       strip-prefix: 2
       target-url: http://127.0.0.1:9000
