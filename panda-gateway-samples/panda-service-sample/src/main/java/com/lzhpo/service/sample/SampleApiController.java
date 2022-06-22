@@ -1,9 +1,9 @@
 package com.lzhpo.service.sample;
 
+import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.json.JSONUtil;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,27 +52,15 @@ public class SampleApiController {
     return username;
   }
 
-  //  @PostMapping("/body")
-  //  public void body(HttpServletRequest request, @RequestBody Animal animal) {
-  //    log.info("[IP: {}] body..., animal: {}", request.getRemoteAddr(), animal);
-  //  }
-
-  // https://blog.csdn.net/li396864285/article/details/78122296
   @PostMapping("/body")
-  public String body(
-      HttpServletRequest request, HttpServletResponse response, @RequestBody Animal animal) {
-    log.info("[IP: {}] body..., animal: {}", request.getRemoteAddr(), animal);
+  public String body(HttpServletRequest request, @RequestBody Animal animal) {
+    Map<String, String> headers = ServletUtil.getHeaderMap(request);
+    log.info("Request body [{}] with headers [{}]", animal, headers);
     return JSONUtil.toJsonPrettyStr(animal);
   }
 
   @PostMapping("/upload")
   public void upload(HttpServletRequest request, @RequestParam MultipartFile file) {
     log.info("[IP: {}] upload file [{}]", request.getRemoteAddr(), file.getOriginalFilename());
-  }
-
-  @Data
-  static class Animal {
-    private String name;
-    private Integer age;
   }
 }
