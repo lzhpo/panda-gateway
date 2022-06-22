@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -32,10 +33,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class ServletForwardFilter extends OncePerRequestFilter {
+public class ServletForwardFilter extends OncePerRequestFilter implements Ordered {
 
   private final RestTemplate restTemplate;
   private final RouteLoadBalancer routeLoadBalancer;
+
+  @Override
+  public int getOrder() {
+    return Integer.MAX_VALUE;
+  }
 
   @Override
   protected void doFilterInternal(
