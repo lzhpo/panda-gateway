@@ -77,7 +77,7 @@ public class WebfluxForwardFilter implements WebFilter {
   private String buildPathWithParams(ServerHttpRequest request, String fullPath) {
     Map<String, String> queryParams = request.getQueryParams().toSingleValueMap();
     if (!ObjectUtils.isEmpty(queryParams)) {
-      String queryParamsInPath = ExtractUtils.mapToUrl(queryParams);
+      String queryParamsInPath = ExtractUtils.mapToParamPath(queryParams);
       fullPath += "?" + queryParamsInPath;
     }
     return fullPath;

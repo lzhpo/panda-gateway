@@ -16,7 +16,7 @@ import org.springframework.http.HttpMethod;
 @UtilityClass
 public class ExtractUtils {
 
-  public static String mapToUrl(Map<String, String> paramsMap) {
+  public static String mapToParamPath(Map<String, String> paramsMap) {
     return Joiner.on("&").useForNull("").withKeyValueSeparator("=").join(paramsMap);
   }
 

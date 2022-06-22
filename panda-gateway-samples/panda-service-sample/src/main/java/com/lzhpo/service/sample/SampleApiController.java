@@ -2,6 +2,7 @@ package com.lzhpo.service.sample;
 
 import cn.hutool.json.JSONUtil;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,7 +59,8 @@ public class SampleApiController {
 
   // https://blog.csdn.net/li396864285/article/details/78122296
   @PostMapping("/body")
-  public String body(HttpServletRequest request, @RequestBody Animal animal) {
+  public String body(
+      HttpServletRequest request, HttpServletResponse response, @RequestBody Animal animal) {
     log.info("[IP: {}] body..., animal: {}", request.getRemoteAddr(), animal);
     return JSONUtil.toJsonPrettyStr(animal);
   }
