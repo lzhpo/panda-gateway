@@ -1,6 +1,5 @@
-package com.lzhpo.panda.gateway.webflux.filter.global;
+package com.lzhpo.panda.gateway.webflux.filter;
 
-import com.lzhpo.panda.gateway.webflux.filter.DefaultWebfluxFilterChain;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;

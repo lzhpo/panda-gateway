@@ -14,7 +14,7 @@ public class DefaultWebfluxFilterChain implements WebfluxFilterChain {
   private final int index;
   private final List<WebfluxFilter> filters;
 
-  DefaultWebfluxFilterChain(List<WebfluxFilter> filters) {
+  public DefaultWebfluxFilterChain(List<WebfluxFilter> filters) {
     this.filters = filters;
     this.index = 0;
   }

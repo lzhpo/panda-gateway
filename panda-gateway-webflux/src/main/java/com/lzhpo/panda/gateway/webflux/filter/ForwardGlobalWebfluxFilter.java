@@ -1,9 +1,8 @@
-package com.lzhpo.panda.gateway.webflux.filter.global;
+package com.lzhpo.panda.gateway.webflux.filter;
 
 import com.lzhpo.panda.gateway.core.ExtractUtils;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
-import com.lzhpo.panda.gateway.webflux.filter.DefaultWebfluxFilterChain;
 import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
