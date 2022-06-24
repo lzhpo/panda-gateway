@@ -1,11 +1,14 @@
 package com.lzhpo.panda.gateway.servlet;
 
 import com.lzhpo.panda.gateway.core.ExtractUtils;
+import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
-import com.lzhpo.panda.gateway.core.loadbalancer.RouteLoadBalancer;
+import com.lzhpo.panda.gateway.servlet.filter.ServletFilter;
+import com.lzhpo.panda.gateway.servlet.predicate.ServletPredicate;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.servlet.FilterChain;
@@ -36,7 +39,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class ServletForwardFilter extends OncePerRequestFilter implements Ordered {
 
   private final RestTemplate restTemplate;
-  private final RouteLoadBalancer routeLoadBalancer;
+  private final List<ServletPredicate> predicates;
+  private final List<ServletFilter> filters;
+  private final GatewayProperties gatewayProperties;
 
   @Override
   public int getOrder() {
@@ -48,25 +53,41 @@ public class ServletForwardFilter extends OncePerRequestFilter implements Ordere
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    String requestPath = request.getRequestURI();
-    RouteDefinition proxyRoute = routeLoadBalancer.choose(requestPath);
-    if (Objects.isNull(proxyRoute) || response.isCommitted()) {
-      filterChain.doFilter(request, response);
-      return;
-    }
-
-    String filteredPath = ExtractUtils.stripPrefix(requestPath, proxyRoute.getStripPrefix());
-    String fullPath = proxyRoute.getTargetUrl() + filteredPath;
     String method = request.getMethod();
     HttpMethod httpMethod = HttpMethod.resolve(method);
     Assert.notNull(httpMethod, "Can not resolve http method [" + method + "]");
     MultiValueMap<String, String> headers = filterHeaders(request);
 
-    fullPath = buildPathWithParams(request, fullPath);
-    HttpEntity<?> httpEntity = buildHttpEntity(request, httpMethod, headers);
+    List<RouteDefinition> routes = gatewayProperties.getRoutes();
+    RouteDefinition route =
+        routes.stream()
+            .filter(
+                routeDefinition ->
+                    predicates.stream()
+                        .map(predicate -> predicate.apply(request, routeDefinition))
+                        .filter(Boolean.TRUE::equals)
+                        .findAny()
+                        .orElse(false))
+            .findAny()
+            .orElse(null);
 
+    if (Objects.isNull(route)) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
+    String oldRequestPath = request.getRequestURI();
+    filters.forEach(filter -> filter.doFilterInternal(request, response, filterChain, route));
+    String finallyRequestPath = request.getRequestURI();
+    log.info("oldRequestPath: {}", oldRequestPath);
+    log.info("finallyRequestPath: {}", finallyRequestPath);
+
+    finallyRequestPath = buildPathWithParams(request, finallyRequestPath);
+    HttpEntity<?> httpEntity = buildHttpEntity(request, httpMethod, headers);
     ResponseEntity<byte[]> responseEntity =
-        restTemplate.exchange(fullPath, httpMethod, httpEntity, byte[].class);
+        restTemplate.exchange(
+            route.getUri() + finallyRequestPath, httpMethod, httpEntity, byte[].class);
+
     byte[] responseBody = responseEntity.getBody();
     if (Objects.nonNull(responseBody)) {
       response.setStatus(responseEntity.getStatusCodeValue());

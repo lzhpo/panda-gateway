@@ -1,5 +1,9 @@
 package com.lzhpo.panda.gateway.core;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.Data;
 
 /**
@@ -10,8 +14,9 @@ import lombok.Data;
 @Data
 public class RouteDefinition {
 
-  private String name;
-  private String matchPath;
-  private String targetUrl;
-  private Integer stripPrefix;
+  private String id;
+  private String uri;
+  private List<String> predicates = new ArrayList<>();
+  private List<String> filters = new ArrayList<>();
+  private Map<String, String> metadata = new LinkedHashMap<>();
 }

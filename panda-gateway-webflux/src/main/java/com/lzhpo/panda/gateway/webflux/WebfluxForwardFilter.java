@@ -1,13 +1,16 @@
 package com.lzhpo.panda.gateway.webflux;
 
 import com.lzhpo.panda.gateway.core.ExtractUtils;
+import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
-import com.lzhpo.panda.gateway.core.loadbalancer.RouteLoadBalancer;
+import com.lzhpo.panda.gateway.webflux.predicate.ServletPredicate;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -32,7 +35,9 @@ import reactor.core.publisher.Mono;
 public class WebfluxForwardFilter implements WebFilter {
 
   private final WebClient webClient;
-  private final RouteLoadBalancer routeLoadBalancer;
+
+  private final List<ServletPredicate> predicates;
+  private final GatewayProperties gatewayProperties;
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -40,22 +45,34 @@ public class WebfluxForwardFilter implements WebFilter {
     ServerHttpResponse response = exchange.getResponse();
 
     String requestPath = request.getPath().value();
-    RouteDefinition proxyRoute = routeLoadBalancer.choose(requestPath);
-    if (Objects.isNull(proxyRoute) || response.isCommitted()) {
-      return chain.filter(exchange);
-    }
 
-    String filteredPath = ExtractUtils.stripPrefix(requestPath, proxyRoute.getStripPrefix());
-    String fullPath = proxyRoute.getTargetUrl() + filteredPath;
     HttpMethod httpMethod = request.getMethod();
     Assert.notNull(httpMethod, "Bad request");
 
-    fullPath = buildPathWithParams(request, fullPath);
+    requestPath = buildPathWithParams(request, requestPath);
+    HttpHeaders headers = request.getHeaders();
+
+    List<RouteDefinition> routes = gatewayProperties.getRoutes();
+    RouteDefinition route =
+        routes.stream()
+            .filter(
+                routeDefinition ->
+                    predicates.stream()
+                        .map(predicate -> predicate.apply(request, routeDefinition))
+                        .filter(Boolean.TRUE::equals)
+                        .findAny()
+                        .orElse(false))
+            .findAny()
+            .orElse(null);
+    if (Objects.isNull(route)) {
+      return chain.filter(exchange);
+    }
+
     RequestBodySpec bodySpec =
         webClient
             .method(httpMethod)
-            .uri(fullPath)
-            .headers(httpHeaders -> httpHeaders.addAll(request.getHeaders()));
+            .uri(requestPath)
+            .headers(httpHeaders -> httpHeaders.addAll(headers));
 
     RequestHeadersSpec<?> headersSpec;
     if (ExtractUtils.requireBody(httpMethod)) {

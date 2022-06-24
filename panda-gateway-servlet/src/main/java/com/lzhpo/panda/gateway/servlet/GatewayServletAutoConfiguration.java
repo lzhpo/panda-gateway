@@ -1,6 +1,11 @@
 package com.lzhpo.panda.gateway.servlet;
 
-import com.lzhpo.panda.gateway.core.loadbalancer.RouteLoadBalancer;
+import com.lzhpo.panda.gateway.core.GatewayProperties;
+import com.lzhpo.panda.gateway.servlet.filter.ServletFilter;
+import com.lzhpo.panda.gateway.servlet.filter.StripPrefixServletFilter;
+import com.lzhpo.panda.gateway.servlet.predicate.PathServletPredicate;
+import com.lzhpo.panda.gateway.servlet.predicate.ServletPredicate;
+import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +24,21 @@ public class GatewayServletAutoConfiguration {
   }
 
   @Bean
+  public PathServletPredicate pathServletPredicate() {
+    return new PathServletPredicate();
+  }
+
+  @Bean
+  public StripPrefixServletFilter stripPrefixFilter() {
+    return new StripPrefixServletFilter();
+  }
+
+  @Bean
   public ServletForwardFilter servletForwardFilter(
-      RestTemplate restTemplate, RouteLoadBalancer routeLoadBalancer) {
-    return new ServletForwardFilter(restTemplate, routeLoadBalancer);
+      GatewayProperties gatewayProperties,
+      RestTemplate restTemplate,
+      List<ServletPredicate> predicates,
+      List<ServletFilter> filters) {
+    return new ServletForwardFilter(restTemplate, predicates, filters, gatewayProperties);
   }
 }
