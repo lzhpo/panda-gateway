@@ -66,7 +66,6 @@ public class WebfluxForwardFilter implements WebFilter {
 
     return headersSpec.exchangeToMono(
         clientResponse -> {
-          response.getHeaders().putAll(clientResponse.headers().asHttpHeaders());
           response.setStatusCode(clientResponse.statusCode());
           Flux<DataBuffer> clientResDataBuffers =
               clientResponse.body(BodyExtractors.toDataBuffers());

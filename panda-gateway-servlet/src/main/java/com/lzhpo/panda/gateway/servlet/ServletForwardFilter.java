@@ -69,7 +69,6 @@ public class ServletForwardFilter extends OncePerRequestFilter implements Ordere
         restTemplate.exchange(fullPath, httpMethod, httpEntity, byte[].class);
     byte[] responseBody = responseEntity.getBody();
     if (Objects.nonNull(responseBody)) {
-      headers.toSingleValueMap().forEach(response::setHeader);
       response.setStatus(responseEntity.getStatusCodeValue());
       response.getOutputStream().write(responseBody);
     }
