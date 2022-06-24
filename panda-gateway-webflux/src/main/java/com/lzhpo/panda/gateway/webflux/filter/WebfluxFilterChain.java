@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 /**
  * @author lzhpo
  */
-public interface WebfluxFilter {
+public interface WebfluxFilterChain {
 
-  Mono<Void> filter(ServerWebExchange exchange, DefaultWebfluxFilterChain filterChain);
+  Mono<Void> filter(ServerWebExchange exchange);
 }

@@ -6,12 +6,13 @@ import java.util.Arrays;
 import java.util.List;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.ObjectUtils;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.server.ServerWebExchange;
 
 /**
  * @author lzhpo
  */
-public class PathServletPredicate implements WebfluxPredicate {
+public class PathWebfluxPredicate implements WebfluxPredicate {
 
   private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -22,20 +23,21 @@ public class PathServletPredicate implements WebfluxPredicate {
   }
 
   @Override
-  public boolean apply(ServerHttpRequest request, RouteDefinition route) {
+  public boolean apply(ServerWebExchange exchange, RouteDefinition route) {
     String prefix = getPrefix();
+    ServerHttpRequest request = exchange.getRequest();
     String requestPath = request.getPath().value();
-    List<String> predicates = route.getPredicates();
 
-    String[] patterns =
-        predicates.stream()
+    List<String> patterns =
+        route.getPredicates().stream()
             .filter(x -> x.startsWith(prefix))
             .map(x -> x.replace(prefix + "=", ""))
             .findAny()
             .map(x -> x.split(StrPool.COMMA))
+            .map(Arrays::asList)
             .orElse(null);
 
-    return !ObjectUtils.isEmpty(patterns)
-        && Arrays.stream(patterns).anyMatch(pattern -> antPathMatcher.match(pattern, requestPath));
+    return !CollectionUtils.isEmpty(patterns)
+        && patterns.stream().anyMatch(pattern -> antPathMatcher.match(pattern, requestPath));
   }
 }

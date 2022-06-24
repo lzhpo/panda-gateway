@@ -29,7 +29,7 @@ public class ExtractUtils {
       }
       path = String.join(StrPool.SLASH, paths);
     }
-    return path + StrPool.SLASH;
+    return path;
   }
 
   public static boolean requireBody(HttpMethod method) {

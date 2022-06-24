@@ -3,8 +3,10 @@ package com.lzhpo.panda.gateway.servlet.filter;
 import com.lzhpo.panda.gateway.core.ExtractUtils;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
 import java.util.List;
+import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.springframework.util.ObjectUtils;
 
@@ -15,7 +17,11 @@ public class StripPrefixServletFilter implements ServletFilter {
 
   @Override
   @SneakyThrows
-  public HttpServletRequest doFilterInternal(HttpServletRequest request, RouteDefinition route) {
+  public void doFilter(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      FilterChain filterChain,
+      RouteDefinition route) {
 
     String prefix = getPrefix();
     List<String> filters = route.getFilters();
@@ -28,7 +34,10 @@ public class StripPrefixServletFilter implements ServletFilter {
             .map(Integer::parseInt)
             .orElse(null);
 
-    return !ObjectUtils.isEmpty(stripPath) ? newRequest(request, stripPath) : request;
+    if (!ObjectUtils.isEmpty(stripPath)) {
+      HttpServletRequest newRequest = newRequest(request, stripPath);
+      filterChain.doFilter(newRequest, response);
+    }
   }
 
   private HttpServletRequest newRequest(HttpServletRequest request, Integer stripPath) {

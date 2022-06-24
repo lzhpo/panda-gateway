@@ -1,10 +1,9 @@
-package com.lzhpo.panda.gateway.webflux;
+package com.lzhpo.panda.gateway.webflux.filter.global;
 
 import com.lzhpo.panda.gateway.core.ExtractUtils;
-import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
-import com.lzhpo.panda.gateway.webflux.predicate.WebfluxPredicate;
-import java.util.List;
+import com.lzhpo.panda.gateway.core.consts.GatewayConst;
+import com.lzhpo.panda.gateway.webflux.filter.DefaultWebfluxFilterChain;
 import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +21,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodySpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -32,45 +29,31 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class WebfluxForwardFilter implements WebFilter {
+public class ForwardGlobalWebfluxFilter implements GlobalWebfluxFilter {
 
   private final WebClient webClient;
-  private final List<WebfluxPredicate> predicates;
-  private final GatewayProperties gatewayProperties;
 
   @Override
-  public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+  public Mono<Void> filter(ServerWebExchange exchange, DefaultWebfluxFilterChain filterChain) {
     ServerHttpRequest request = exchange.getRequest();
     ServerHttpResponse response = exchange.getResponse();
 
     String requestPath = request.getPath().value();
-
     HttpMethod httpMethod = request.getMethod();
     Assert.notNull(httpMethod, "Bad request");
 
     requestPath = buildPathWithParams(request, requestPath);
     HttpHeaders headers = request.getHeaders();
 
-    List<RouteDefinition> routes = gatewayProperties.getRoutes();
-    RouteDefinition route =
-        routes.stream()
-            .filter(
-                routeDefinition ->
-                    predicates.stream()
-                        .map(predicate -> predicate.apply(request, routeDefinition))
-                        .filter(Boolean.TRUE::equals)
-                        .findAny()
-                        .orElse(false))
-            .findAny()
-            .orElse(null);
-    if (Objects.isNull(route)) {
-      return chain.filter(exchange);
+    RouteDefinition routeDefinition = exchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
+    if (Objects.isNull(routeDefinition)) {
+      return filterChain.filter(exchange);
     }
 
     RequestBodySpec bodySpec =
         webClient
             .method(httpMethod)
-            .uri(requestPath)
+            .uri(routeDefinition.getUri() + requestPath)
             .headers(httpHeaders -> httpHeaders.addAll(headers));
 
     RequestHeadersSpec<?> headersSpec;
