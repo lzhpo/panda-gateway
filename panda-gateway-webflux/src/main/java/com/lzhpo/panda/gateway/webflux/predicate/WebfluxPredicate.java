@@ -6,13 +6,13 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 /**
  * @author lzhpo
  */
-public interface ServletPredicate {
+public interface WebfluxPredicate {
 
   boolean apply(ServerHttpRequest request, RouteDefinition route);
 
   String getPrefix();
 
   default String getSuffix() {
-    return ServletPredicate.class.getSimpleName();
+    return WebfluxPredicate.class.getSimpleName();
   }
 }

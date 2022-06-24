@@ -1,7 +1,6 @@
 package com.lzhpo.panda.gateway.servlet;
 
 import com.lzhpo.panda.gateway.core.GatewayProperties;
-import com.lzhpo.panda.gateway.servlet.filter.ServletFilter;
 import com.lzhpo.panda.gateway.servlet.filter.StripPrefixServletFilter;
 import com.lzhpo.panda.gateway.servlet.predicate.PathServletPredicate;
 import com.lzhpo.panda.gateway.servlet.predicate.ServletPredicate;
@@ -37,8 +36,7 @@ public class GatewayServletAutoConfiguration {
   public ServletForwardFilter servletForwardFilter(
       GatewayProperties gatewayProperties,
       RestTemplate restTemplate,
-      List<ServletPredicate> predicates,
-      List<ServletFilter> filters) {
-    return new ServletForwardFilter(restTemplate, predicates, filters, gatewayProperties);
+      List<ServletPredicate> predicates) {
+    return new ServletForwardFilter(restTemplate, predicates, gatewayProperties);
   }
 }

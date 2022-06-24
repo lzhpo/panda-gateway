@@ -11,13 +11,13 @@ import org.springframework.util.ObjectUtils;
 /**
  * @author lzhpo
  */
-public class PathServletPredicate implements ServletPredicate {
+public class PathServletPredicate implements WebfluxPredicate {
 
   private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
   @Override
   public String getPrefix() {
-    String suffix = ServletPredicate.super.getSuffix();
+    String suffix = WebfluxPredicate.super.getSuffix();
     return getClass().getSimpleName().replace(suffix, "");
   }
 

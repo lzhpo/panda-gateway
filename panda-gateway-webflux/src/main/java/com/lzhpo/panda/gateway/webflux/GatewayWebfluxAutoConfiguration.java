@@ -2,7 +2,7 @@ package com.lzhpo.panda.gateway.webflux;
 
 import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.webflux.predicate.PathServletPredicate;
-import com.lzhpo.panda.gateway.webflux.predicate.ServletPredicate;
+import com.lzhpo.panda.gateway.webflux.predicate.WebfluxPredicate;
 import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +28,7 @@ public class GatewayWebfluxAutoConfiguration {
 
   @Bean
   public WebfluxForwardFilter webfluxForwardFilter(
-      GatewayProperties gatewayProperties, WebClient webClient, List<ServletPredicate> predicates) {
+      GatewayProperties gatewayProperties, WebClient webClient, List<WebfluxPredicate> predicates) {
     return new WebfluxForwardFilter(webClient, predicates, gatewayProperties);
   }
 }

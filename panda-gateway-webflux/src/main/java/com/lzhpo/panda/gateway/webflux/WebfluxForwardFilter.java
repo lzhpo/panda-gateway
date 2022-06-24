@@ -3,7 +3,7 @@ package com.lzhpo.panda.gateway.webflux;
 import com.lzhpo.panda.gateway.core.ExtractUtils;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
-import com.lzhpo.panda.gateway.webflux.predicate.ServletPredicate;
+import com.lzhpo.panda.gateway.webflux.predicate.WebfluxPredicate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,8 +35,7 @@ import reactor.core.publisher.Mono;
 public class WebfluxForwardFilter implements WebFilter {
 
   private final WebClient webClient;
-
-  private final List<ServletPredicate> predicates;
+  private final List<WebfluxPredicate> predicates;
   private final GatewayProperties gatewayProperties;
 
   @Override

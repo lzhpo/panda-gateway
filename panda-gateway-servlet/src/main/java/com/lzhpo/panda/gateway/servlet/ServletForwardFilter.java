@@ -3,7 +3,6 @@ package com.lzhpo.panda.gateway.servlet;
 import com.lzhpo.panda.gateway.core.ExtractUtils;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
-import com.lzhpo.panda.gateway.servlet.filter.ServletFilter;
 import com.lzhpo.panda.gateway.servlet.predicate.ServletPredicate;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -40,7 +39,6 @@ public class ServletForwardFilter extends OncePerRequestFilter implements Ordere
 
   private final RestTemplate restTemplate;
   private final List<ServletPredicate> predicates;
-  private final List<ServletFilter> filters;
   private final GatewayProperties gatewayProperties;
 
   @Override
@@ -76,12 +74,7 @@ public class ServletForwardFilter extends OncePerRequestFilter implements Ordere
       return;
     }
 
-    String oldRequestPath = request.getRequestURI();
-    filters.forEach(filter -> filter.doFilterInternal(request, response, filterChain, route));
     String finallyRequestPath = request.getRequestURI();
-    log.info("oldRequestPath: {}", oldRequestPath);
-    log.info("finallyRequestPath: {}", finallyRequestPath);
-
     finallyRequestPath = buildPathWithParams(request, finallyRequestPath);
     HttpEntity<?> httpEntity = buildHttpEntity(request, httpMethod, headers);
     ResponseEntity<byte[]> responseEntity =

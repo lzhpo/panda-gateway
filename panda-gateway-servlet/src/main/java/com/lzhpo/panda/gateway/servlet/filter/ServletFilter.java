@@ -1,20 +1,14 @@
 package com.lzhpo.panda.gateway.servlet.filter;
 
 import com.lzhpo.panda.gateway.core.RouteDefinition;
-import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author lzhpo
  */
 public interface ServletFilter {
 
-  void doFilterInternal(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      FilterChain filterChain,
-      RouteDefinition route);
+  HttpServletRequest doFilterInternal(HttpServletRequest request, RouteDefinition route);
 
   String getPrefix();
 
