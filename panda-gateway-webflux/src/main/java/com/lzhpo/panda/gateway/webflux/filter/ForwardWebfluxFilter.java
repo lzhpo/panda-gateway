@@ -1,7 +1,7 @@
 package com.lzhpo.panda.gateway.webflux.filter;
 
 import com.lzhpo.panda.gateway.core.ExtractUtils;
-import com.lzhpo.panda.gateway.core.Route;
+import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
 import java.util.Map;
 import java.util.Objects;
@@ -44,7 +44,7 @@ public class ForwardWebfluxFilter implements WebfluxFilter {
     requestPath = buildPathWithParams(request, requestPath);
     HttpHeaders headers = request.getHeaders();
 
-    Route route = exchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
+    RouteDefinition route = exchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
     if (Objects.isNull(route)) {
       return filterChain.filter(exchange);
     }

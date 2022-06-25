@@ -1,13 +1,16 @@
 package com.lzhpo.panda.gateway.servlet.filter;
 
+import com.lzhpo.panda.gateway.core.FilterDefinition;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
-import com.lzhpo.panda.gateway.core.Route;
-import com.lzhpo.panda.gateway.core.RouteUtil;
+import com.lzhpo.panda.gateway.core.PredicateDefinition;
+import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
+import com.lzhpo.panda.gateway.servlet.RouteComponentLocator;
 import com.lzhpo.panda.gateway.servlet.filter.support.GlobalServletFilterAdapter;
-import com.lzhpo.panda.gateway.servlet.predicate.ServletPredicate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +29,7 @@ public class ServletWebFilter extends OncePerRequestFilter implements Ordered {
 
   private final RestTemplate restTemplate;
   private final GatewayProperties gatewayProperties;
-  private final List<GlobalServletFilter> globalFilters;
+  private final RouteComponentLocator routeComponentLocator;
 
   @Override
   public int getOrder() {
@@ -37,13 +40,17 @@ public class ServletWebFilter extends OncePerRequestFilter implements Ordered {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
 
-    List<ServletFilter> filters = new ArrayList<>();
-    globalFilters.stream().map(GlobalServletFilterAdapter::new).forEach(filters::add);
-    Route route = lookupRoute(request, response);
+    List<GlobalServletFilterAdapter> globalFilters = routeComponentLocator.getGlobalFilters();
+    List<ServletFilter> filters = new ArrayList<>(globalFilters);
+    RouteDefinition route = lookupRoute(request);
 
     if (!ObjectUtils.isEmpty(route)) {
       request.setAttribute(GatewayConst.ROUTE_DEFINITION, route);
-      List<ServletFilter> routeFilters = RouteUtil.parseFilters(route, ServletFilter.class);
+      List<ServletFilter> routeFilters =
+          route.getFilters().stream()
+              .map(FilterDefinition::getName)
+              .map(routeComponentLocator::getFilter)
+              .collect(Collectors.toList());
       filters.addAll(routeFilters);
       filters.add(new ForwardServletFilter(restTemplate));
     }
@@ -52,14 +59,21 @@ public class ServletWebFilter extends OncePerRequestFilter implements Ordered {
     DefaultServletFilterChain.create(filters).doFilter(request, response);
   }
 
-  private Route lookupRoute(HttpServletRequest request, HttpServletResponse response) {
-    List<Route> routes = gatewayProperties.getRoutes();
+  private RouteDefinition lookupRoute(HttpServletRequest request) {
+    List<RouteDefinition> routes = gatewayProperties.getRoutes();
     return routes.stream()
         .filter(
             route ->
-                RouteUtil.parsePredicates(route, ServletPredicate.class).stream()
-                    .map(predicate -> predicate.apply(request, response, route))
-                    .filter(Boolean.TRUE::equals)
+                route.getPredicates().stream()
+                    .map(PredicateDefinition::getName)
+                    .map(routeComponentLocator::getPredicate)
+                    .filter(Objects::nonNull)
+                    .map(
+                        predicateFactory -> {
+                          Object config = predicateFactory.getConfig(route);
+                          return predicateFactory.apply(config);
+                        })
+                    .map(predicate -> predicate.test(request))
                     .findAny()
                     .orElse(false))
         .findAny()

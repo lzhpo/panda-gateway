@@ -1,19 +1,14 @@
 package com.lzhpo.panda.gateway.servlet.predicate;
 
-import com.lzhpo.panda.gateway.core.Route;
+import java.util.function.Predicate;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author lzhpo
  */
-public interface ServletPredicate {
+public interface ServletPredicate extends Predicate<HttpServletRequest> {
 
-  boolean apply(HttpServletRequest request, HttpServletResponse response, Route route);
-
-  String getPrefix();
-
-  default String getSuffix() {
-    return ServletPredicate.class.getSimpleName();
+  default String getName() {
+    return getClass().getSimpleName().replace(ServletPredicate.class.getSimpleName(), "");
   }
 }

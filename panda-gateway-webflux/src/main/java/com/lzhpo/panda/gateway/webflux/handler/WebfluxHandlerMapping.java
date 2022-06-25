@@ -1,7 +1,7 @@
 package com.lzhpo.panda.gateway.webflux.handler;
 
 import com.lzhpo.panda.gateway.core.GatewayProperties;
-import com.lzhpo.panda.gateway.core.Route;
+import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.RouteUtil;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
 import com.lzhpo.panda.gateway.webflux.predicate.WebfluxPredicate;
@@ -50,8 +50,8 @@ public class WebfluxHandlerMapping extends AbstractHandlerMapping {
                         })));
   }
 
-  private Mono<Route> lookupRoute(ServerWebExchange exchange) {
-    List<Route> routes = gatewayProperties.getRoutes();
+  private Mono<RouteDefinition> lookupRoute(ServerWebExchange exchange) {
+    List<RouteDefinition> routes = gatewayProperties.getRoutes();
     return routes.stream()
         .filter(
             route ->

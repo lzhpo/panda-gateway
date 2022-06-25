@@ -1,6 +1,6 @@
 package com.lzhpo.panda.gateway.core.consts;
 
-import com.lzhpo.panda.gateway.core.Route;
+import com.lzhpo.panda.gateway.core.RouteDefinition;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GatewayConst {
 
-  public static final String ROUTE_DEFINITION = Route.class.getName();
+  public static final String ROUTE_DEFINITION = RouteDefinition.class.getName();
 }

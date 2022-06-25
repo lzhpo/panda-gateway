@@ -1,6 +1,6 @@
 package com.lzhpo.panda.gateway.webflux.handler;
 
-import com.lzhpo.panda.gateway.core.Route;
+import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.RouteUtil;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
 import com.lzhpo.panda.gateway.webflux.filter.DefaultWebfluxFilterChain;
@@ -29,7 +29,7 @@ public class WebfluxWebHandler implements WebHandler {
 
   @Override
   public Mono<Void> handle(ServerWebExchange exchange) {
-    Route route = exchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
+    RouteDefinition route = exchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
     List<WebfluxFilter> filters = new ArrayList<>();
     globalFilters.stream().map(GlobalWebfluxFilterAdapter::new).forEach(filters::add);
 

@@ -12,11 +12,17 @@ import lombok.Data;
  * @author lzhpo
  */
 @Data
-public class Route {
+public class RouteDefinition {
 
   private String id;
+
   private String uri;
-  private List<String> predicates = new ArrayList<>();
-  private List<String> filters = new ArrayList<>();
+
+  private int order;
+
+  private List<PredicateDefinition> predicates = new ArrayList<>();
+
+  private List<FilterDefinition> filters = new ArrayList<>();
+
   private Map<String, String> metadata = new LinkedHashMap<>();
 }

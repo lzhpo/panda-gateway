@@ -1,7 +1,6 @@
 package com.lzhpo.panda.gateway.webflux.predicate;
 
-import com.lzhpo.panda.gateway.core.Route;
-import com.lzhpo.panda.gateway.core.RouteUtil;
+import com.lzhpo.panda.gateway.core.RouteDefinition;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -17,10 +16,10 @@ public class PathWebfluxPredicate implements WebfluxPredicate {
   }
 
   @Override
-  public boolean apply(ServerWebExchange exchange, Route route) {
+  public boolean apply(ServerWebExchange exchange, RouteDefinition route) {
     String prefix = getPrefix();
     ServerHttpRequest request = exchange.getRequest();
     String requestPath = request.getPath().value();
-    return RouteUtil.isMatch(route, prefix, requestPath);
+    return false;
   }
 }

@@ -1,6 +1,6 @@
 package com.lzhpo.panda.gateway.webflux.predicate;
 
-import com.lzhpo.panda.gateway.core.Route;
+import com.lzhpo.panda.gateway.core.RouteDefinition;
 import org.springframework.web.server.ServerWebExchange;
 
 /**
@@ -8,7 +8,7 @@ import org.springframework.web.server.ServerWebExchange;
  */
 public interface WebfluxPredicate {
 
-  boolean apply(ServerWebExchange exchange, Route route);
+  boolean apply(ServerWebExchange exchange, RouteDefinition route);
 
   String getPrefix();
 

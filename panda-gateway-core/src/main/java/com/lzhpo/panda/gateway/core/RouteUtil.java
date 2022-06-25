@@ -1,16 +1,12 @@
 package com.lzhpo.panda.gateway.core;
 
-import cn.hutool.core.text.StrPool;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.google.common.collect.Lists;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
-import org.springframework.util.AntPathMatcher;
 
 /**
  * @author lzhpo
@@ -18,44 +14,35 @@ import org.springframework.util.AntPathMatcher;
 @UtilityClass
 public class RouteUtil {
 
-  private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
-
-  public static <T> List<T> parseFilters(Route route, Class<T> filterType) {
+  public static <T> List<T> parseFilters(RouteDefinition route, Class<T> filterType) {
     String filterSuffixName = filterType.getSimpleName();
-    return Optional.ofNullable(route).map(Route::getFilters).orElse(Lists.newArrayList()).stream()
-        .filter(Objects::nonNull)
-        .map(x -> x.split("=")[0] + filterSuffixName)
-        .map(StrUtil::lowerFirst)
-        .map(SpringUtil::getBean)
-        .map(filterType::cast)
-        .collect(Collectors.toList());
+    return Optional.ofNullable(route)
+        .map(RouteDefinition::getFilters)
+        .map(
+            filterDefinitions ->
+                filterDefinitions.stream()
+                    .map(FilterDefinition::getName)
+                    .map(StrUtil::lowerFirst)
+                    .map(filterName -> filterName + filterSuffixName)
+                    .map(SpringUtil::getBean)
+                    .map(filterType::cast)
+                    .collect(Collectors.toList()))
+        .orElse(Lists.newArrayList());
   }
 
-  public static <T> List<T> parsePredicates(Route route, Class<T> predicateType) {
+  public static <T> List<T> parsePredicates(RouteDefinition route, Class<T> predicateType) {
+    String filterSuffixName = predicateType.getSimpleName();
     return Optional.ofNullable(route)
-        .map(Route::getPredicates)
-        .orElse(Lists.newArrayList())
-        .stream()
-        .map(x -> x.split("=")[0])
-        .map(StrUtil::lowerFirst)
-        .map(x -> x + predicateType.getSimpleName())
-        .map(SpringUtil::getBean)
-        .map(predicateType::cast)
-        .collect(Collectors.toList());
-  }
-
-  public static boolean isMatch(Route route, String prefix, String requestPath) {
-    return Optional.ofNullable(route)
-        .map(Route::getPredicates)
-        .orElse(Lists.newArrayList())
-        .stream()
-        .filter(x -> x.startsWith(prefix))
-        .map(x -> x.replace(prefix + "=", ""))
-        .findAny()
-        .map(x -> x.split(StrPool.COMMA))
-        .map(Arrays::asList)
-        .orElse(Lists.newArrayList())
-        .stream()
-        .anyMatch(pattern -> ANT_PATH_MATCHER.match(pattern, requestPath));
+        .map(RouteDefinition::getPredicates)
+        .map(
+            filterDefinitions ->
+                filterDefinitions.stream()
+                    .map(PredicateDefinition::getName)
+                    .map(StrUtil::lowerFirst)
+                    .map(filterName -> filterName + filterSuffixName)
+                    .map(SpringUtil::getBean)
+                    .map(predicateType::cast)
+                    .collect(Collectors.toList()))
+        .orElse(Lists.newArrayList());
   }
 }

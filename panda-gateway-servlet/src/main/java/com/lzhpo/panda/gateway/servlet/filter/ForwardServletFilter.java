@@ -1,7 +1,7 @@
 package com.lzhpo.panda.gateway.servlet.filter;
 
 import com.lzhpo.panda.gateway.core.ExtractUtils;
-import com.lzhpo.panda.gateway.core.Route;
+import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
 import com.lzhpo.panda.gateway.servlet.CachingServletRequestWrapper;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class ForwardServletFilter implements ServletFilter {
     HttpMethod httpMethod = HttpMethod.resolve(method);
     Assert.notNull(httpMethod, "Bad request");
     MultiValueMap<String, String> headers = filterHeaders(request);
-    Route route = (Route) request.getAttribute(GatewayConst.ROUTE_DEFINITION);
+    RouteDefinition route = (RouteDefinition) request.getAttribute(GatewayConst.ROUTE_DEFINITION);
 
     String finallyRequestPath = request.getRequestURI();
     finallyRequestPath = buildPathWithParams(request, finallyRequestPath);
