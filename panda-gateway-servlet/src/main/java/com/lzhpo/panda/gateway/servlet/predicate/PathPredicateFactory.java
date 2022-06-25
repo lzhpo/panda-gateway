@@ -1,26 +1,29 @@
 package com.lzhpo.panda.gateway.servlet.predicate;
 
 import cn.hutool.core.collection.ListUtil;
-import com.lzhpo.panda.gateway.servlet.enums.ConfigTypeEnum;
-import com.lzhpo.panda.gateway.servlet.predicate.PathRoutePredicateFactory.Config;
+import com.lzhpo.panda.gateway.core.config.ConfigTypeEnum;
+import com.lzhpo.panda.gateway.servlet.predicate.PathPredicateFactory.Config;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import javax.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.springframework.util.AntPathMatcher;
 
 /**
  * @author lzhpo
  */
-public class PathRoutePredicateFactory extends AbstractRoutePredicateFactory<Config> {
+public class PathPredicateFactory extends AbstractPredicateFactory<Config>
+    implements PredicateInvoker<Config> {
 
   private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-  public PathRoutePredicateFactory() {
+  public PathPredicateFactory() {
     super(Config.class);
   }
 
   @Override
-  public ServletPredicate apply(Config config) {
+  public Predicate<HttpServletRequest> invoke(Config config) {
     return (request) -> {
       String requestPath = request.getRequestURI();
       List<String> patterns = config.getPatterns();
@@ -29,12 +32,12 @@ public class PathRoutePredicateFactory extends AbstractRoutePredicateFactory<Con
   }
 
   @Override
-  public ConfigTypeEnum configTypeEnum() {
+  public ConfigTypeEnum configFieldType() {
     return ConfigTypeEnum.LIST;
   }
 
   @Override
-  public List<String> configFieldNames() {
+  public List<String> configFieldOrder() {
     return ListUtil.of("patterns");
   }
 

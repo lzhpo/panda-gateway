@@ -1,10 +1,10 @@
-package com.lzhpo.panda.gateway.servlet.enums;
+package com.lzhpo.panda.gateway.core.config;
 
 /**
  * @author lzhpo
  */
 public enum ConfigTypeEnum {
-  STRING,
+  DEFAULT,
 
   LIST,
 

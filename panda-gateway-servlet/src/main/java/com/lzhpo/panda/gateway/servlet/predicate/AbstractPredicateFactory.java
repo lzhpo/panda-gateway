@@ -4,65 +4,65 @@ import cn.hutool.core.util.ReflectUtil;
 import com.lzhpo.panda.gateway.core.GatewayCustomException;
 import com.lzhpo.panda.gateway.core.PredicateDefinition;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
-import com.lzhpo.panda.gateway.servlet.enums.ConfigTypeEnum;
+import com.lzhpo.panda.gateway.core.config.ConfigFactory;
+import com.lzhpo.panda.gateway.core.config.ConfigTypeEnum;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.BeanUtils;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 /**
  * @author lzhpo
  */
-public abstract class AbstractRoutePredicateFactory<T> implements RoutePredicateFactory<T> {
+public abstract class AbstractPredicateFactory<T> implements ConfigFactory<T>, PredicateFactory<T> {
 
   protected final Class<T> configClass;
 
-  protected AbstractRoutePredicateFactory(Class<T> configClass) {
+  protected AbstractPredicateFactory(Class<T> configClass) {
     this.configClass = configClass;
   }
 
-  protected T newConfig() {
-    return BeanUtils.instantiateClass(configClass);
-  }
-
   @Override
-  public T getConfig(RouteDefinition route) {
-    T config = newConfig();
-    List<String> fieldNames = configFieldNames();
-    String currentPredicateName = getName();
-    List<PredicateDefinition> predicates = route.getPredicates();
-    String fieldName = fieldNames.get(0);
+  public T parseToConfig(RouteDefinition route) {
+    if (ObjectUtils.isEmpty(route)) {
+      return null;
+    }
 
-    ConfigTypeEnum configType = configTypeEnum();
+    T config = newConfigInstance(configClass);
+    List<String> fieldNames = configFieldOrder();
+    String currentPredicateName = currentName();
+    List<PredicateDefinition> predicates = route.getPredicates();
+
+    ConfigTypeEnum configType = configFieldType();
     switch (configType) {
-      case STRING:
+      case DEFAULT:
         predicates.stream()
             .filter(predicate -> predicate.getName().equalsIgnoreCase(currentPredicateName))
             .findAny()
             .ifPresentOrElse(
                 predicate -> {
                   Map<String, String> args = predicate.getArgs();
-                  Collection<String> argValues = args.values();
-                  for (String value : argValues) {
-                    ReflectUtil.setFieldValue(config, fieldName, value);
-                    break;
-                  }
+                  args.forEach(
+                      (name, arg) -> {
+                        String fieldName = fieldNames.get(Integer.parseInt(name));
+                        ReflectUtil.setFieldValue(config, fieldName, arg);
+                      });
                 },
                 () -> {
                   throw new GatewayCustomException("Not found config.");
                 });
         break;
       case LIST:
+        Assert.isTrue(fieldNames.size() == 1, "Config type of LIST should be 1 field order.");
         predicates.stream()
             .filter(predicate -> predicate.getName().equalsIgnoreCase(currentPredicateName))
             .findAny()
             .ifPresentOrElse(
                 predicate -> {
                   Map<String, String> args = predicate.getArgs();
-                  Collection<String> argValues = args.values();
-                  List<String> values = new ArrayList<>(argValues);
-                  ReflectUtil.setFieldValue(config, fieldName, values);
+                  List<String> values = new ArrayList<>(args.values());
+                  ReflectUtil.setFieldValue(config, fieldNames.get(0), values);
                 },
                 () -> {
                   throw new GatewayCustomException("Not found config.");
