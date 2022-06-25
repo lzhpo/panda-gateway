@@ -21,7 +21,7 @@ public class RouteUtil {
         .map(
             filterDefinitions ->
                 filterDefinitions.stream()
-                    .map(FilterDefinition::getName)
+                    .map(ComponentDefinition::getName)
                     .map(StrUtil::lowerFirst)
                     .map(filterName -> filterName + filterSuffixName)
                     .map(SpringUtil::getBean)
@@ -37,7 +37,7 @@ public class RouteUtil {
         .map(
             filterDefinitions ->
                 filterDefinitions.stream()
-                    .map(PredicateDefinition::getName)
+                    .map(ComponentDefinition::getName)
                     .map(StrUtil::lowerFirst)
                     .map(filterName -> filterName + filterSuffixName)
                     .map(SpringUtil::getBean)

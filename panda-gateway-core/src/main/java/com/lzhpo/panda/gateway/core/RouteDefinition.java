@@ -20,9 +20,9 @@ public class RouteDefinition {
 
   private int order;
 
-  private List<PredicateDefinition> predicates = new ArrayList<>();
+  private List<ComponentDefinition> predicates = new ArrayList<>();
 
-  private List<FilterDefinition> filters = new ArrayList<>();
+  private List<ComponentDefinition> filters = new ArrayList<>();
 
   private Map<String, String> metadata = new LinkedHashMap<>();
 }

@@ -1,7 +1,6 @@
 package com.lzhpo.panda.gateway.servlet.filter.support;
 
-import com.lzhpo.panda.gateway.core.FilterDefinition;
-import com.lzhpo.panda.gateway.core.PredicateDefinition;
+import com.lzhpo.panda.gateway.core.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
 import com.lzhpo.panda.gateway.servlet.RouteComponentLocator;
@@ -50,12 +49,12 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
       request.setAttribute(GatewayConst.ROUTE_DEFINITION, route);
       List<RouteFilter> routeFilters =
           route.getFilters().stream()
-              .map(FilterDefinition::getName)
+              .map(ComponentDefinition::getName)
               .map(routeComponentLocator::getFilterFactory)
               .filter(Objects::nonNull)
               .map(
                   filterFactory -> {
-                    Object config = filterFactory.parseToConfig(route);
+                    Object config = filterFactory.getConfig(route.getFilters());
                     return filterFactory.filter(config);
                   })
               .collect(Collectors.toList());
@@ -73,12 +72,12 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
         .filter(
             route ->
                 route.getPredicates().stream()
-                    .map(PredicateDefinition::getName)
+                    .map(ComponentDefinition::getName)
                     .map(routeComponentLocator::getPredicateFactory)
                     .filter(Objects::nonNull)
                     .map(
                         predicateFactory -> {
-                          Object config = predicateFactory.parseToConfig(route);
+                          Object config = predicateFactory.getConfig(route.getPredicates());
                           return predicateFactory.invoke(config);
                         })
                     .map(predicate -> predicate.test(request))

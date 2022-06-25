@@ -10,12 +10,12 @@ import lombok.Data;
  * @author lzhpo
  */
 @Data
-public class FilterDefinition {
+public class ComponentDefinition {
 
   private String name;
   private Map<String, String> args = new LinkedHashMap<>();
 
-  public FilterDefinition(String text) {
+  public ComponentDefinition(String text) {
     int eqIdx = text.indexOf('=');
     if (eqIdx <= 0) {
       setName(text);
