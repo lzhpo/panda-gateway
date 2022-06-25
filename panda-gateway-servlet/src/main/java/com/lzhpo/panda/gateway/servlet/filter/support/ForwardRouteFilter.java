@@ -1,10 +1,11 @@
-package com.lzhpo.panda.gateway.servlet.filter;
+package com.lzhpo.panda.gateway.servlet.filter.support;
 
 import com.lzhpo.panda.gateway.core.ExtractUtils;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
 import com.lzhpo.panda.gateway.servlet.CachingServletRequestWrapper;
-import com.lzhpo.panda.gateway.servlet.filter.chain.FilterInvokerChain;
+import com.lzhpo.panda.gateway.servlet.filter.RouteFilter;
+import com.lzhpo.panda.gateway.servlet.filter.chain.RouteFilterChain;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -30,14 +31,14 @@ import org.springframework.web.client.RestTemplate;
  * @author lzhpo
  */
 @RequiredArgsConstructor
-public class ForwardServletFilter implements FilterInvoker {
+public class ForwardRouteFilter implements RouteFilter {
 
   private final RestTemplate restTemplate;
 
   @Override
   @SneakyThrows
   public void doFilter(
-      HttpServletRequest request, HttpServletResponse response, FilterInvokerChain chain) {
+      HttpServletRequest request, HttpServletResponse response, RouteFilterChain chain) {
 
     String method = request.getMethod();
     HttpMethod httpMethod = HttpMethod.resolve(method);

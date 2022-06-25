@@ -3,8 +3,8 @@ package com.lzhpo.panda.gateway.servlet.filter.factory;
 import cn.hutool.core.collection.ListUtil;
 import com.lzhpo.panda.gateway.core.ExtractUtils;
 import com.lzhpo.panda.gateway.core.config.ConfigTypeEnum;
-import com.lzhpo.panda.gateway.servlet.filter.FilterInvoker;
-import com.lzhpo.panda.gateway.servlet.filter.factory.StripPrefixFilterFactory.Config;
+import com.lzhpo.panda.gateway.servlet.filter.RouteFilter;
+import com.lzhpo.panda.gateway.servlet.filter.factory.StripPrefixRouteFilterFactory.Config;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -14,14 +14,15 @@ import org.springframework.core.Ordered;
 /**
  * @author lzhpo
  */
-public class StripPrefixFilterFactory extends AbstractFilterFactory<Config> implements Ordered {
+public class StripPrefixRouteFilterFactory extends AbstractRouteFilterFactory<Config>
+    implements Ordered {
 
-  public StripPrefixFilterFactory() {
+  public StripPrefixRouteFilterFactory() {
     super(Config.class);
   }
 
   @Override
-  public FilterInvoker filter(Config config) {
+  public RouteFilter filter(Config config) {
     return (request, response, chain) ->
         chain.doFilter(newRequest(request, config.getParts()), response);
   }

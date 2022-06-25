@@ -6,7 +6,4 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author lzhpo
  */
-public interface PredicateInvoker<T> extends PredicateFactory<T> {
-
-  Predicate<HttpServletRequest> invoke(T config);
-}
+public interface RoutePredicate extends Predicate<HttpServletRequest> {}

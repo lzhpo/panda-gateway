@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author lzhpo
  */
-public interface FilterInvokerChain {
+public interface RouteFilterChain {
 
   void doFilter(HttpServletRequest request, HttpServletResponse response);
 }

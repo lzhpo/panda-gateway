@@ -1,12 +1,10 @@
 package com.lzhpo.panda.gateway.servlet;
 
 import com.lzhpo.panda.gateway.core.GatewayProperties;
-import com.lzhpo.panda.gateway.servlet.filter.ServletWebFilter;
-import com.lzhpo.panda.gateway.servlet.filter.factory.FilterFactory;
-import com.lzhpo.panda.gateway.servlet.filter.factory.StripPrefixFilterFactory;
-import com.lzhpo.panda.gateway.servlet.filter.global.GlobalFilterInvoker;
-import com.lzhpo.panda.gateway.servlet.predicate.PathPredicateFactory;
-import com.lzhpo.panda.gateway.servlet.predicate.PredicateInvoker;
+import com.lzhpo.panda.gateway.servlet.filter.factory.StripPrefixRouteFilterFactory;
+import com.lzhpo.panda.gateway.servlet.filter.global.GlobalFilter;
+import com.lzhpo.panda.gateway.servlet.filter.support.WebRequestFilter;
+import com.lzhpo.panda.gateway.servlet.predicate.factory.PathRoutePredicateFactory;
 import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -25,28 +23,19 @@ public class GatewayServletAutoConfiguration {
     return new RestTemplate();
   }
 
-  // ====== filters ======
-
   @Bean
-  public StripPrefixFilterFactory stripPrefixFilterFactory() {
-    return new StripPrefixFilterFactory();
+  public StripPrefixRouteFilterFactory stripPrefixFilterFactory() {
+    return new StripPrefixRouteFilterFactory();
   }
 
-  // ====== predicates ======
-
   @Bean
-  public PathPredicateFactory pathPredicateFactory() {
-    return new PathPredicateFactory();
+  public PathRoutePredicateFactory pathPredicateFactory() {
+    return new PathRoutePredicateFactory();
   }
 
-  // =========================
-
   @Bean
-  public RouteComponentLocator routeComponentLocator(
-      List<PredicateInvoker> predicateFactories,
-      List<FilterFactory> filters,
-      List<GlobalFilterInvoker> globalFilters) {
-    return new RouteComponentLocator(predicateFactories, filters, globalFilters);
+  public RouteComponentLocator routeComponentLocator(List<GlobalFilter> globalFilters) {
+    return new RouteComponentLocator(globalFilters);
   }
 
   @Bean
@@ -56,10 +45,10 @@ public class GatewayServletAutoConfiguration {
   }
 
   @Bean
-  public ServletWebFilter servletWebFilter(
+  public WebRequestFilter servletWebFilter(
       RestTemplate restTemplate,
       RouteDefinitionLocator routeDefinitionLocator,
       RouteComponentLocator routeComponentLocator) {
-    return new ServletWebFilter(restTemplate, routeDefinitionLocator, routeComponentLocator);
+    return new WebRequestFilter(restTemplate, routeDefinitionLocator, routeComponentLocator);
   }
 }

@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway.servlet.predicate;
+package com.lzhpo.panda.gateway.servlet.predicate.factory;
 
 import cn.hutool.core.util.ReflectUtil;
 import com.lzhpo.panda.gateway.core.GatewayCustomException;
@@ -15,11 +15,12 @@ import org.springframework.util.ObjectUtils;
 /**
  * @author lzhpo
  */
-public abstract class AbstractPredicateFactory<T> implements ConfigFactory<T>, PredicateFactory<T> {
+public abstract class AbstractRoutePredicateFactory<T>
+    implements ConfigFactory<T>, RoutePredicateFactory<T> {
 
   protected final Class<T> configClass;
 
-  protected AbstractPredicateFactory(Class<T> configClass) {
+  protected AbstractRoutePredicateFactory(Class<T> configClass) {
     this.configClass = configClass;
   }
 

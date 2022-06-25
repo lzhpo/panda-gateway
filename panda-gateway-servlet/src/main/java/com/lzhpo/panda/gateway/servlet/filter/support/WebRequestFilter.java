@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway.servlet.filter;
+package com.lzhpo.panda.gateway.servlet.filter.support;
 
 import com.lzhpo.panda.gateway.core.FilterDefinition;
 import com.lzhpo.panda.gateway.core.PredicateDefinition;
@@ -6,8 +6,9 @@ import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
 import com.lzhpo.panda.gateway.servlet.RouteComponentLocator;
 import com.lzhpo.panda.gateway.servlet.RouteDefinitionLocator;
-import com.lzhpo.panda.gateway.servlet.filter.chain.DefaultServletFilterChain;
-import com.lzhpo.panda.gateway.servlet.filter.global.GlobalFilterInvokerAdapter;
+import com.lzhpo.panda.gateway.servlet.filter.RouteFilter;
+import com.lzhpo.panda.gateway.servlet.filter.chain.DefaultRouteFilterChain;
+import com.lzhpo.panda.gateway.servlet.filter.global.GlobalFilterAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,7 +27,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * @author lzhpo
  */
 @RequiredArgsConstructor
-public class ServletWebFilter extends OncePerRequestFilter implements Ordered {
+public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
 
   private final RestTemplate restTemplate;
   private final RouteDefinitionLocator routeDefinitionLocator;
@@ -41,16 +42,16 @@ public class ServletWebFilter extends OncePerRequestFilter implements Ordered {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
 
-    List<GlobalFilterInvokerAdapter> globalFilters = routeComponentLocator.getGlobalFilters();
-    List<FilterInvoker> filters = new ArrayList<>(globalFilters);
+    List<GlobalFilterAdapter> globalFilters = routeComponentLocator.getGlobalFilterAdapters();
+    List<RouteFilter> filters = new ArrayList<>(globalFilters);
     RouteDefinition route = lookupRoute(request);
 
     if (!ObjectUtils.isEmpty(route)) {
       request.setAttribute(GatewayConst.ROUTE_DEFINITION, route);
-      List<FilterInvoker> routeFilters =
+      List<RouteFilter> routeFilters =
           route.getFilters().stream()
               .map(FilterDefinition::getName)
-              .map(routeComponentLocator::getFilter)
+              .map(routeComponentLocator::getFilterFactory)
               .filter(Objects::nonNull)
               .map(
                   filterFactory -> {
@@ -59,11 +60,11 @@ public class ServletWebFilter extends OncePerRequestFilter implements Ordered {
                   })
               .collect(Collectors.toList());
       filters.addAll(routeFilters);
-      filters.add(new ForwardServletFilter(restTemplate));
+      filters.add(new ForwardRouteFilter(restTemplate));
     }
 
     AnnotationAwareOrderComparator.sort(filters);
-    DefaultServletFilterChain.create(filters).doFilter(request, response);
+    DefaultRouteFilterChain.create(filters).doFilter(request, response);
   }
 
   private RouteDefinition lookupRoute(HttpServletRequest request) {
@@ -73,7 +74,7 @@ public class ServletWebFilter extends OncePerRequestFilter implements Ordered {
             route ->
                 route.getPredicates().stream()
                     .map(PredicateDefinition::getName)
-                    .map(routeComponentLocator::getPredicate)
+                    .map(routeComponentLocator::getPredicateFactory)
                     .filter(Objects::nonNull)
                     .map(
                         predicateFactory -> {

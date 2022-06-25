@@ -15,11 +15,12 @@ import org.springframework.util.ObjectUtils;
 /**
  * @author lzhpo
  */
-public abstract class AbstractFilterFactory<T> implements ConfigFactory<T>, FilterFactory<T> {
+public abstract class AbstractRouteFilterFactory<T>
+    implements ConfigFactory<T>, RouteFilterFactory<T> {
 
   protected final Class<T> configClass;
 
-  public AbstractFilterFactory(Class<T> configClass) {
+  public AbstractRouteFilterFactory(Class<T> configClass) {
     this.configClass = configClass;
   }
 
