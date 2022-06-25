@@ -12,7 +12,7 @@ import lombok.Data;
  * @author lzhpo
  */
 @Data
-public class RouteDefinition {
+public class Route {
 
   private String id;
   private String uri;

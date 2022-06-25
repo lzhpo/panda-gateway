@@ -1,7 +1,7 @@
 package com.lzhpo.panda.gateway.webflux.filter;
 
 import com.lzhpo.panda.gateway.core.ExtractUtils;
-import com.lzhpo.panda.gateway.core.RouteDefinition;
+import com.lzhpo.panda.gateway.core.Route;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +28,7 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class ForwardGlobalWebfluxFilter implements GlobalWebfluxFilter {
+public class ForwardWebfluxFilter implements WebfluxFilter {
 
   private final WebClient webClient;
 
@@ -44,15 +44,15 @@ public class ForwardGlobalWebfluxFilter implements GlobalWebfluxFilter {
     requestPath = buildPathWithParams(request, requestPath);
     HttpHeaders headers = request.getHeaders();
 
-    RouteDefinition routeDefinition = exchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
-    if (Objects.isNull(routeDefinition)) {
+    Route route = exchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
+    if (Objects.isNull(route)) {
       return filterChain.filter(exchange);
     }
 
     RequestBodySpec bodySpec =
         webClient
             .method(httpMethod)
-            .uri(routeDefinition.getUri() + requestPath)
+            .uri(route.getUri() + requestPath)
             .headers(httpHeaders -> httpHeaders.addAll(headers));
 
     RequestHeadersSpec<?> headersSpec;

@@ -3,9 +3,8 @@ package com.lzhpo.panda.gateway.core;
 import cn.hutool.core.text.StrPool;
 import com.google.common.base.Joiner;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpMethod;
@@ -20,12 +19,13 @@ public class ExtractUtils {
     return Joiner.on("&").useForNull("").withKeyValueSeparator("=").join(paramsMap);
   }
 
-  public static String stripPrefix(String path, Integer stripPrefix) {
-    if (Objects.nonNull(stripPrefix) && stripPrefix > 0) {
-      int finallyStripPrefix = stripPrefix;
-      List<String> paths = Arrays.stream(path.split(StrPool.SLASH)).collect(Collectors.toList());
-      while (finallyStripPrefix > 0) {
-        paths.remove(finallyStripPrefix--);
+  public static String stripPrefix(String path, int stripPrefix) {
+    if (stripPrefix > 0) {
+      CopyOnWriteArrayList<String> paths =
+          Arrays.stream(path.split(StrPool.SLASH))
+              .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+      while (stripPrefix > 0 && paths.size() > 0) {
+        paths.remove(stripPrefix--);
       }
       path = String.join(StrPool.SLASH, paths);
     }

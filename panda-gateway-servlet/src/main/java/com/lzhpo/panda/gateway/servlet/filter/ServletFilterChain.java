@@ -6,8 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author lzhpo
  */
-public interface ServletFilter {
+public interface ServletFilterChain {
 
-  void filter(
-      HttpServletRequest request, HttpServletResponse response, ServletFilterChain filterChain);
+  void doFilter(HttpServletRequest request, HttpServletResponse response);
 }

@@ -1,13 +1,11 @@
 package com.lzhpo.panda.gateway.webflux.handler;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
-import com.lzhpo.panda.gateway.core.RouteDefinition;
+import com.lzhpo.panda.gateway.core.Route;
+import com.lzhpo.panda.gateway.core.RouteUtil;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
 import com.lzhpo.panda.gateway.webflux.predicate.WebfluxPredicate;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.handler.AbstractHandlerMapping;
 import org.springframework.web.server.ServerWebExchange;
@@ -25,7 +23,10 @@ public class WebfluxHandlerMapping extends AbstractHandlerMapping {
   public WebfluxHandlerMapping(WebfluxWebHandler webHandler, GatewayProperties gatewayProperties) {
     this.webHandler = webHandler;
     this.gatewayProperties = gatewayProperties;
-    // Can't be missing, otherwise it won't work.
+    // Default value is Ordered.LOWEST_PRECEDENCE
+    // RequestMappingHandlerMapping order is 0
+    // RouterFunctionMapping order is -1
+    // ResourceHandlerRegistry default order is Ordered.LOWEST_PRECEDENCE - 1
     setOrder(1);
   }
 
@@ -33,8 +34,8 @@ public class WebfluxHandlerMapping extends AbstractHandlerMapping {
   protected Mono<?> getHandlerInternal(ServerWebExchange exchange) {
     return lookupRoute(exchange)
         .flatMap(
-            routeDefinition -> {
-              exchange.getAttributes().put(GatewayConst.ROUTE_DEFINITION, routeDefinition);
+            route -> {
+              exchange.getAttributes().put(GatewayConst.ROUTE_DEFINITION, route);
               return Mono.just(webHandler);
             })
         .switchIfEmpty(
@@ -49,29 +50,18 @@ public class WebfluxHandlerMapping extends AbstractHandlerMapping {
                         })));
   }
 
-  private Mono<RouteDefinition> lookupRoute(ServerWebExchange exchange) {
-    List<RouteDefinition> routes = gatewayProperties.getRoutes();
+  private Mono<Route> lookupRoute(ServerWebExchange exchange) {
+    List<Route> routes = gatewayProperties.getRoutes();
     return routes.stream()
         .filter(
-            routeDefinition ->
-                getPredicates(routeDefinition).stream()
-                    .map(predicate -> predicate.apply(exchange, routeDefinition))
+            route ->
+                RouteUtil.parsePredicates(route, WebfluxPredicate.class).stream()
+                    .map(predicate -> predicate.apply(exchange, route))
                     .filter(Boolean.TRUE::equals)
                     .findAny()
                     .orElse(false))
         .findAny()
         .map(Mono::just)
         .orElseGet(Mono::empty);
-  }
-
-  private List<WebfluxPredicate> getPredicates(RouteDefinition routeDefinition) {
-    List<String> predicates = routeDefinition.getPredicates();
-    return predicates.stream()
-        .map(x -> x.split("=")[0])
-        .map(StrUtil::lowerFirst)
-        .map(x -> x + WebfluxPredicate.class.getSimpleName())
-        .map(SpringUtil::getBean)
-        .map(WebfluxPredicate.class::cast)
-        .collect(Collectors.toList());
   }
 }

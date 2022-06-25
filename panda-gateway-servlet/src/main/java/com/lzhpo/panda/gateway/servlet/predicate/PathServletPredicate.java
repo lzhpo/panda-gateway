@@ -1,19 +1,14 @@
 package com.lzhpo.panda.gateway.servlet.predicate;
 
-import cn.hutool.core.text.StrPool;
-import com.lzhpo.panda.gateway.core.RouteDefinition;
-import java.util.Arrays;
-import java.util.List;
+import com.lzhpo.panda.gateway.core.Route;
+import com.lzhpo.panda.gateway.core.RouteUtil;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.ObjectUtils;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author lzhpo
  */
 public class PathServletPredicate implements ServletPredicate {
-
-  private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
   @Override
   public String getPrefix() {
@@ -22,20 +17,9 @@ public class PathServletPredicate implements ServletPredicate {
   }
 
   @Override
-  public boolean apply(HttpServletRequest request, RouteDefinition route) {
+  public boolean apply(HttpServletRequest request, HttpServletResponse response, Route route) {
     String prefix = getPrefix();
     String requestPath = request.getRequestURI();
-    List<String> predicates = route.getPredicates();
-
-    String[] patterns =
-        predicates.stream()
-            .filter(x -> x.startsWith(prefix))
-            .map(x -> x.replace(prefix + "=", ""))
-            .findAny()
-            .map(x -> x.split(StrPool.COMMA))
-            .orElse(null);
-
-    return !ObjectUtils.isEmpty(patterns)
-        && Arrays.stream(patterns).anyMatch(pattern -> antPathMatcher.match(pattern, requestPath));
+    return RouteUtil.isMatch(route, prefix, requestPath);
   }
 }

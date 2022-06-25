@@ -1,25 +1,21 @@
-package com.lzhpo.panda.gateway.servlet;
+package com.lzhpo.panda.gateway.servlet.filter;
 
 import com.lzhpo.panda.gateway.core.ExtractUtils;
-import com.lzhpo.panda.gateway.core.GatewayProperties;
-import com.lzhpo.panda.gateway.core.RouteDefinition;
-import com.lzhpo.panda.gateway.servlet.predicate.ServletPredicate;
+import com.lzhpo.panda.gateway.core.Route;
+import com.lzhpo.panda.gateway.core.consts.GatewayConst;
+import com.lzhpo.panda.gateway.servlet.CachingServletRequestWrapper;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
-import org.springframework.core.Ordered;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -28,51 +24,25 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * @author lzhpo
  */
-@Slf4j
 @RequiredArgsConstructor
-public class ServletForwardFilter extends OncePerRequestFilter implements Ordered {
+public class ForwardServletFilter implements ServletFilter {
 
   private final RestTemplate restTemplate;
-  private final List<ServletPredicate> predicates;
-  private final GatewayProperties gatewayProperties;
 
   @Override
-  public int getOrder() {
-    return Integer.MAX_VALUE;
-  }
-
-  @Override
-  protected void doFilterInternal(
-      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-      throws ServletException, IOException {
+  @SneakyThrows
+  public void filter(
+      HttpServletRequest request, HttpServletResponse response, ServletFilterChain filterChain) {
 
     String method = request.getMethod();
     HttpMethod httpMethod = HttpMethod.resolve(method);
-    Assert.notNull(httpMethod, "Can not resolve http method [" + method + "]");
+    Assert.notNull(httpMethod, "Bad request");
     MultiValueMap<String, String> headers = filterHeaders(request);
-
-    List<RouteDefinition> routes = gatewayProperties.getRoutes();
-    RouteDefinition route =
-        routes.stream()
-            .filter(
-                routeDefinition ->
-                    predicates.stream()
-                        .map(predicate -> predicate.apply(request, routeDefinition))
-                        .filter(Boolean.TRUE::equals)
-                        .findAny()
-                        .orElse(false))
-            .findAny()
-            .orElse(null);
-
-    if (Objects.isNull(route)) {
-      filterChain.doFilter(request, response);
-      return;
-    }
+    Route route = (Route) request.getAttribute(GatewayConst.ROUTE_DEFINITION);
 
     String finallyRequestPath = request.getRequestURI();
     finallyRequestPath = buildPathWithParams(request, finallyRequestPath);
