@@ -10,18 +10,6 @@ import org.springframework.validation.annotation.Validated;
 /**
  * Route predicate by method.
  *
- * <p>e.g:
- *
- * <pre>{@code
- * gateway:
- *   routes:
- *     - id: service1-sample
- *       uri: http://127.0.0.1:9000
- *       order: 1
- *       predicates:
- *         - Method=POST,GET
- * }</pre>
- *
  * @author lzhpo
  */
 @Slf4j

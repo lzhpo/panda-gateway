@@ -18,25 +18,6 @@ import org.springframework.validation.annotation.Validated;
 /**
  * Route predicate by weight.
  *
- * <p>e.g: 20% request will go to service1-sample, 80% request will go to service2-sample.
- *
- * <pre>{@code
- * gateway:
- *   routes:
- *     - id: service1-sample
- *       uri: http://127.0.0.1:9000
- *       order: 1
- *       predicates:
- *         - Weight=service-sample,2
- *     - id: service2-sample
- *       uri: http://127.0.0.1:9000
- *       order: 2
- *       predicates:
- *         - Weight=service-sample,8
- * }</pre>
- *
- * <p>Notes: group need same if you want give weight for route.
- *
  * @author lzhpo
  */
 @Slf4j
