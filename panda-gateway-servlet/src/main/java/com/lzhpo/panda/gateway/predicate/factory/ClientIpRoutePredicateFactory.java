@@ -11,6 +11,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 
 /**
+ * Route predicate by between time.
+ *
+ * <p>e.g:
+ *
+ * <pre>{@code
+ * gateway:
+ *   routes:
+ *     - id: service1-sample
+ *       uri: http://127.0.0.1:9000
+ *       order: 1
+ *       predicates:
+ *         - ClientIp=127.0.0.1,192.168.200.111
+ * }</pre>
+ *
+ * <p>Notes: you can customize how to get client ip, see {@link ClientIpResolver}.
+ *
  * @author lzhpo
  */
 @Slf4j

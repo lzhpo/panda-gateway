@@ -8,6 +8,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface ClientIpResolver {
 
+  /**
+   * Resolve client ip from {@code request}
+   *
+   * @param request {@link HttpServletRequest}
+   * @return client ip
+   */
   default String resolve(HttpServletRequest request) {
     return ServletUtil.getClientIP(request);
   }

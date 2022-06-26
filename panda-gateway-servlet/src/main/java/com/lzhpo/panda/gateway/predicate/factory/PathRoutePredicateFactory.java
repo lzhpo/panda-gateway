@@ -12,6 +12,22 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 /**
+ * Route predicate by path.
+ *
+ * <p>e.g:
+ *
+ * <pre>{@code
+ * gateway:
+ *   routes:
+ *     - id: service1-sample
+ *       uri: http://127.0.0.1:9000
+ *       order: 1
+ *       predicates:
+ *         - Path=/api/service-sample/**,=/api/sample/**
+ * }</pre>
+ *
+ * <p>Notes: support regular expression.
+ *
  * @author lzhpo
  */
 public class PathRoutePredicateFactory
