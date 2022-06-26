@@ -42,7 +42,7 @@ public interface RouteDefinitionLocator extends RouteComponentLocator {
       if (!routeIdValidate.contains(routeId)) {
         routeIdValidate.add(routeId);
       } else {
-        throw new GatewayCustomException(StrUtil.format("routeId={} repeat."));
+        throw new GatewayCustomException(StrUtil.format("Duplicate with routeId of {}.", routeId));
       }
     }
   }
