@@ -1,9 +1,6 @@
 package com.lzhpo.panda.gateway.predicate.factory;
 
-import cn.hutool.core.collection.ListUtil;
-import com.lzhpo.panda.gateway.core.config.ConfigTypeEnum;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.validation.constraints.NotBlank;
@@ -37,16 +34,6 @@ public class QueryRoutePredicateFactory
 
   public QueryRoutePredicateFactory() {
     super(Config.class);
-  }
-
-  @Override
-  public List<String> configFieldOrder() {
-    return ListUtil.of("param", "regexp");
-  }
-
-  @Override
-  public ConfigTypeEnum configFieldType() {
-    return ConfigTypeEnum.DEFAULT;
   }
 
   @Override

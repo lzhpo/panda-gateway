@@ -1,12 +1,10 @@
 package com.lzhpo.panda.gateway.predicate.factory;
 
-import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.WeightRandom;
 import cn.hutool.core.lang.WeightRandom.WeightObj;
 import com.lzhpo.panda.gateway.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.core.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
-import com.lzhpo.panda.gateway.core.config.ConfigTypeEnum;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import java.util.List;
@@ -50,16 +48,6 @@ public class WeightRoutePredicateFactory
   public WeightRoutePredicateFactory(RouteDefinitionLocator routeDefinitionLocator) {
     super(Config.class);
     this.routeDefinitionLocator = routeDefinitionLocator;
-  }
-
-  @Override
-  public List<String> configFieldOrder() {
-    return ListUtil.of("group", "weight");
-  }
-
-  @Override
-  public ConfigTypeEnum configFieldType() {
-    return ConfigTypeEnum.DEFAULT;
   }
 
   @Override

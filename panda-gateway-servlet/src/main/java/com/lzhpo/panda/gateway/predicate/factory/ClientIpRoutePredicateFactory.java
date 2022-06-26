@@ -1,7 +1,5 @@
 package com.lzhpo.panda.gateway.predicate.factory;
 
-import cn.hutool.core.collection.ListUtil;
-import com.lzhpo.panda.gateway.core.config.ConfigTypeEnum;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import com.lzhpo.panda.gateway.support.ClientIpResolver;
 import java.util.List;
@@ -38,16 +36,6 @@ public class ClientIpRoutePredicateFactory
   public ClientIpRoutePredicateFactory(ClientIpResolver clientIpResolver) {
     super(Config.class);
     this.clientIpResolver = clientIpResolver;
-  }
-
-  @Override
-  public List<String> configFieldOrder() {
-    return ListUtil.of("sources");
-  }
-
-  @Override
-  public ConfigTypeEnum configFieldType() {
-    return ConfigTypeEnum.DEFAULT;
   }
 
   @Override

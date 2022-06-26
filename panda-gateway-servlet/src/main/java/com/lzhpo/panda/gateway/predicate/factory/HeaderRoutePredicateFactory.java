@@ -1,9 +1,6 @@
 package com.lzhpo.panda.gateway.predicate.factory;
 
-import cn.hutool.core.collection.ListUtil;
-import com.lzhpo.panda.gateway.core.config.ConfigTypeEnum;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
-import java.util.List;
 import java.util.Objects;
 import javax.validation.constraints.NotBlank;
 import lombok.Data;
@@ -35,16 +32,6 @@ public class HeaderRoutePredicateFactory
 
   public HeaderRoutePredicateFactory() {
     super(Config.class);
-  }
-
-  @Override
-  public List<String> configFieldOrder() {
-    return ListUtil.of("header", "regexp");
-  }
-
-  @Override
-  public ConfigTypeEnum configFieldType() {
-    return ConfigTypeEnum.DEFAULT;
   }
 
   @Override

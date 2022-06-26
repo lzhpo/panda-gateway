@@ -1,7 +1,5 @@
 package com.lzhpo.panda.gateway.predicate.factory;
 
-import cn.hutool.core.collection.ListUtil;
-import com.lzhpo.panda.gateway.core.config.ConfigTypeEnum;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
@@ -50,16 +48,6 @@ public class PathRoutePredicateFactory
               pattern ->
                   antPathMatcher.parse(pattern).matches(PathContainer.parsePath(requestPath)));
     };
-  }
-
-  @Override
-  public ConfigTypeEnum configFieldType() {
-    return ConfigTypeEnum.LIST;
-  }
-
-  @Override
-  public List<String> configFieldOrder() {
-    return ListUtil.of("patterns");
   }
 
   @Data

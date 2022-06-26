@@ -2,18 +2,21 @@ package com.lzhpo.panda.gateway.core;
 
 import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author lzhpo
  */
 @Data
+@NoArgsConstructor
 public class ComponentDefinition {
 
   private String name;
-  private Map<String, String> args = new LinkedHashMap<>();
+
+  private Map<String, Object> args = new HashMap<>();
 
   public ComponentDefinition(String text) {
     int eqIdx = text.indexOf('=');
