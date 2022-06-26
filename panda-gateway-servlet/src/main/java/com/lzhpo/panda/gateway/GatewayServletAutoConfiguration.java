@@ -1,10 +1,10 @@
-package com.lzhpo.panda.gateway.servlet;
+package com.lzhpo.panda.gateway;
 
 import com.lzhpo.panda.gateway.core.GatewayProperties;
-import com.lzhpo.panda.gateway.servlet.filter.factory.StripPrefixRouteFilterFactory;
-import com.lzhpo.panda.gateway.servlet.filter.global.GlobalFilter;
-import com.lzhpo.panda.gateway.servlet.filter.support.WebRequestFilter;
-import com.lzhpo.panda.gateway.servlet.predicate.factory.PathRoutePredicateFactory;
+import com.lzhpo.panda.gateway.filter.GlobalFilter;
+import com.lzhpo.panda.gateway.filter.WebRequestFilter;
+import com.lzhpo.panda.gateway.filter.factory.StripPrefixRouteFilterFactory;
+import com.lzhpo.panda.gateway.predicate.factory.PathRoutePredicateFactory;
 import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;

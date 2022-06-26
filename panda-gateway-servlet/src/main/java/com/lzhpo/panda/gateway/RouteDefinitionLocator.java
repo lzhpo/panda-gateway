@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway.servlet;
+package com.lzhpo.panda.gateway;
 
 import com.lzhpo.panda.gateway.core.RouteDefinition;
 import java.util.List;

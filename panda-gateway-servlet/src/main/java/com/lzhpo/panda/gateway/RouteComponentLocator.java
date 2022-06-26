@@ -1,8 +1,8 @@
-package com.lzhpo.panda.gateway.servlet;
+package com.lzhpo.panda.gateway;
 
-import com.lzhpo.panda.gateway.servlet.filter.factory.RouteFilterFactory;
-import com.lzhpo.panda.gateway.servlet.filter.global.GlobalFilterAdapter;
-import com.lzhpo.panda.gateway.servlet.predicate.factory.RoutePredicateFactory;
+import com.lzhpo.panda.gateway.filter.GlobalFilterAdapter;
+import com.lzhpo.panda.gateway.filter.factory.RouteFilterFactory;
+import com.lzhpo.panda.gateway.predicate.factory.RoutePredicateFactory;
 import java.util.List;
 
 /**

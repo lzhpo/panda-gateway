@@ -1,6 +1,5 @@
-package com.lzhpo.panda.gateway.servlet.filter.chain;
+package com.lzhpo.panda.gateway.filter;
 
-import com.lzhpo.panda.gateway.servlet.filter.RouteFilter;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

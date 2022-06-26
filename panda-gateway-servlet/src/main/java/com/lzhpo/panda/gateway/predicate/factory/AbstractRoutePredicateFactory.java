@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway.servlet.predicate.factory;
+package com.lzhpo.panda.gateway.predicate.factory;
 
 import com.lzhpo.panda.gateway.core.config.ConfigFactory;
 

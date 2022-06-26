@@ -1,9 +1,8 @@
-package com.lzhpo.panda.gateway.servlet.predicate.factory;
+package com.lzhpo.panda.gateway.predicate.factory;
 
 import cn.hutool.core.collection.ListUtil;
 import com.lzhpo.panda.gateway.core.config.ConfigTypeEnum;
-import com.lzhpo.panda.gateway.servlet.predicate.RoutePredicate;
-import com.lzhpo.panda.gateway.servlet.predicate.factory.PathRoutePredicateFactory.Config;
+import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
@@ -12,12 +11,13 @@ import org.springframework.util.AntPathMatcher;
 /**
  * @author lzhpo
  */
-public class PathRoutePredicateFactory extends AbstractRoutePredicateFactory<Config> {
+public class PathRoutePredicateFactory
+    extends AbstractRoutePredicateFactory<PathRoutePredicateFactory.Config> {
 
   private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
   public PathRoutePredicateFactory() {
-    super(Config.class);
+    super(PathRoutePredicateFactory.Config.class);
   }
 
   @Override

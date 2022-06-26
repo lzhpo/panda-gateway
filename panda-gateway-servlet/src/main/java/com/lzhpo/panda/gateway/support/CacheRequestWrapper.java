@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway.servlet.filter.support;
+package com.lzhpo.panda.gateway.support;
 
 import java.io.IOException;
 import javax.servlet.ReadListener;

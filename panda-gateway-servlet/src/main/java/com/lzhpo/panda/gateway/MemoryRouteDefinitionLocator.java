@@ -1,11 +1,11 @@
-package com.lzhpo.panda.gateway.servlet;
+package com.lzhpo.panda.gateway;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
-import com.lzhpo.panda.gateway.servlet.filter.factory.RouteFilterFactory;
-import com.lzhpo.panda.gateway.servlet.filter.global.GlobalFilter;
-import com.lzhpo.panda.gateway.servlet.filter.global.GlobalFilterAdapter;
-import com.lzhpo.panda.gateway.servlet.predicate.factory.RoutePredicateFactory;
+import com.lzhpo.panda.gateway.filter.GlobalFilter;
+import com.lzhpo.panda.gateway.filter.GlobalFilterAdapter;
+import com.lzhpo.panda.gateway.filter.factory.RouteFilterFactory;
+import com.lzhpo.panda.gateway.predicate.factory.RoutePredicateFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

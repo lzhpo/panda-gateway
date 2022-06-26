@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway.servlet.filter.chain;
+package com.lzhpo.panda.gateway.filter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

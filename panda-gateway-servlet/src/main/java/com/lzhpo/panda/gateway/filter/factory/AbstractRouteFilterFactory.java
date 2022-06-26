@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway.servlet.filter.factory;
+package com.lzhpo.panda.gateway.filter.factory;
 
 import com.lzhpo.panda.gateway.core.config.ConfigFactory;
 

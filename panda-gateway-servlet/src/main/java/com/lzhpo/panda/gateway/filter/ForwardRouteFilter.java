@@ -1,10 +1,9 @@
-package com.lzhpo.panda.gateway.servlet.filter.support;
+package com.lzhpo.panda.gateway.filter;
 
 import com.lzhpo.panda.gateway.core.ExtractUtils;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
-import com.lzhpo.panda.gateway.servlet.filter.RouteFilter;
-import com.lzhpo.panda.gateway.servlet.filter.chain.RouteFilterChain;
+import com.lzhpo.panda.gateway.support.CacheRequestWrapper;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;

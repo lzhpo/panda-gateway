@@ -1,8 +1,8 @@
-package com.lzhpo.panda.gateway.servlet.filter.factory;
+package com.lzhpo.panda.gateway.filter.factory;
 
 import com.lzhpo.panda.gateway.core.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.config.ConfigFactory;
-import com.lzhpo.panda.gateway.servlet.filter.RouteFilter;
+import com.lzhpo.panda.gateway.filter.RouteFilter;
 
 /**
  * Route filter factory, it can create route filter.

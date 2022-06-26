@@ -1,10 +1,9 @@
-package com.lzhpo.panda.gateway.servlet.filter.factory;
+package com.lzhpo.panda.gateway.filter.factory;
 
 import cn.hutool.core.collection.ListUtil;
 import com.lzhpo.panda.gateway.core.ExtractUtils;
 import com.lzhpo.panda.gateway.core.config.ConfigTypeEnum;
-import com.lzhpo.panda.gateway.servlet.filter.RouteFilter;
-import com.lzhpo.panda.gateway.servlet.filter.factory.StripPrefixRouteFilterFactory.Config;
+import com.lzhpo.panda.gateway.filter.RouteFilter;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -14,11 +13,11 @@ import org.springframework.core.Ordered;
 /**
  * @author lzhpo
  */
-public class StripPrefixRouteFilterFactory extends AbstractRouteFilterFactory<Config>
-    implements Ordered {
+public class StripPrefixRouteFilterFactory
+    extends AbstractRouteFilterFactory<StripPrefixRouteFilterFactory.Config> implements Ordered {
 
   public StripPrefixRouteFilterFactory() {
-    super(Config.class);
+    super(StripPrefixRouteFilterFactory.Config.class);
   }
 
   @Override

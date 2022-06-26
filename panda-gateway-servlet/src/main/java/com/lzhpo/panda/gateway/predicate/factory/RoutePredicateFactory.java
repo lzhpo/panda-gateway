@@ -1,8 +1,8 @@
-package com.lzhpo.panda.gateway.servlet.predicate.factory;
+package com.lzhpo.panda.gateway.predicate.factory;
 
 import com.lzhpo.panda.gateway.core.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.config.ConfigFactory;
-import com.lzhpo.panda.gateway.servlet.predicate.RoutePredicate;
+import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 
 /**
  * Route predicate factory, it can create route predicate.
