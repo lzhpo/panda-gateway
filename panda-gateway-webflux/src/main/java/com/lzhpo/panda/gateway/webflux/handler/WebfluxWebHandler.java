@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class WebfluxWebHandler implements WebHandler {
 
-  private final WebClient webClient;
+  private final WebClient.Builder webClientBuilder;
   private final List<GlobalWebfluxFilter> globalFilters;
 
   @Override
@@ -37,7 +37,7 @@ public class WebfluxWebHandler implements WebHandler {
       List<WebfluxFilter> routeFilters = RouteUtil.parseFilters(route, WebfluxFilter.class);
       filters.addAll(routeFilters);
       AnnotationAwareOrderComparator.sort(filters);
-      ForwardWebfluxFilter forwardFilter = new ForwardWebfluxFilter(webClient);
+      ForwardWebfluxFilter forwardFilter = new ForwardWebfluxFilter(webClientBuilder);
       filters.add(forwardFilter);
     }
 

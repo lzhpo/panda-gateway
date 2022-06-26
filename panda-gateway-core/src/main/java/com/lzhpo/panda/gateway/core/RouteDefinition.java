@@ -14,8 +14,10 @@ import lombok.Data;
 @Data
 public class RouteDefinition {
 
+  /** Unique route id. */
   private String id;
 
+  /** e.g: lb://<serviceId>, http://<serviceId>:<port>, https://<serviceId>:<port> */
   private String uri;
 
   private int order;

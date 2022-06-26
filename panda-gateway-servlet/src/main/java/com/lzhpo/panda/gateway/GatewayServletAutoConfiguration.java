@@ -18,6 +18,9 @@ import com.lzhpo.panda.gateway.support.ClientIpResolver;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -27,9 +30,11 @@ import org.springframework.web.client.RestTemplate;
  * @author lzhpo
  */
 @Configuration
+@ConditionalOnWebApplication(type = Type.SERVLET)
 public class GatewayServletAutoConfiguration {
 
   @Bean
+  @LoadBalanced
   @ConditionalOnMissingBean
   public RestTemplate restTemplate() {
     return new RestTemplate();

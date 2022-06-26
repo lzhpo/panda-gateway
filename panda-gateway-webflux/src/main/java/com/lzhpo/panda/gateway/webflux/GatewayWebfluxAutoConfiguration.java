@@ -11,6 +11,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -24,6 +27,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 @RequiredArgsConstructor
 @ConditionalOnClass(DispatcherHandler.class)
+@ConditionalOnWebApplication(type = Type.REACTIVE)
 public class GatewayWebfluxAutoConfiguration {
 
   @Bean
@@ -34,8 +38,8 @@ public class GatewayWebfluxAutoConfiguration {
 
   @Bean
   public WebfluxWebHandler webfluxWebHandler(
-      WebClient webClient, List<GlobalWebfluxFilter> globalFilters) {
-    return new WebfluxWebHandler(webClient, globalFilters);
+      WebClient.Builder webClientBuilder, List<GlobalWebfluxFilter> globalFilters) {
+    return new WebfluxWebHandler(webClientBuilder, globalFilters);
   }
 
   @Bean
@@ -50,9 +54,10 @@ public class GatewayWebfluxAutoConfiguration {
   }
 
   @Bean
+  @LoadBalanced
   @ConditionalOnMissingBean
-  public WebClient webClient() {
-    return WebClient.create();
+  public WebClient.Builder webClientBuilder() {
+    return WebClient.builder();
   }
 
   @Bean

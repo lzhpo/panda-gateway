@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ForwardWebfluxFilter implements WebfluxFilter {
 
-  private final WebClient webClient;
+  private final WebClient.Builder webClientBuilder;
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, DefaultWebfluxFilterChain filterChain) {
@@ -50,7 +50,8 @@ public class ForwardWebfluxFilter implements WebfluxFilter {
     }
 
     RequestBodySpec bodySpec =
-        webClient
+        webClientBuilder
+            .build()
             .method(httpMethod)
             .uri(route.getUri() + requestPath)
             .headers(httpHeaders -> httpHeaders.addAll(headers));
