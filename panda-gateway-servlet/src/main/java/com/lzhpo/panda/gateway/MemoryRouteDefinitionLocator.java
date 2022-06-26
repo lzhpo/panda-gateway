@@ -32,7 +32,7 @@ public class MemoryRouteDefinitionLocator implements RouteDefinitionLocator {
    */
   public MemoryRouteDefinitionLocator(
       List<RouteDefinition> routeDefinitions, List<GlobalFilter> globalFilters) {
-    this.routeDefinitions = routeDefinitions;
+    this.routeDefinitions = sortRoutes(routeDefinitions);
     globalFilters.forEach(filter -> this.globalFilterAdapters.add(new GlobalFilterAdapter(filter)));
     log.info("Found {} of GlobalFilter.", globalFilters.size());
   }

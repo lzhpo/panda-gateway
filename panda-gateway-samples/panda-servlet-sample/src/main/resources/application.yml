@@ -2,10 +2,42 @@ server:
   port: 9001
 gateway:
   routes:
-    - id: service-sample
+#    - id: service1-sample
+#      uri: http://127.0.0.1:9000
+#      order: 1
+#      predicates:
+#        - Path=/abc/**,/def/**
+#        - Path=/api/service-sample/**,/sample/**
+#      filters:
+#        - StripPrefix=2
+#    - id: service2-sample
+#      uri: http://127.0.0.1:9000
+#      order: 2
+#      predicates:
+#        - Header=X-B3-TraceId,666
+#        - Header=X-B3-TraceId,\d+
+#        - Cookie=Name,Lewis
+#      filters:
+#        - StripPrefix=1
+#    - id: service3-sample
+#      uri: http://127.0.0.1:9000
+#      order: 3
+#      predicates:
+#        - Method=POST,GET
+#      filters:
+#        - StripPrefix=1
+#    - id: service4-sample
+#      uri: http://127.0.0.1:9000
+#      order: 4
+#      predicates:
+#        - Query=name,Lewis
+#      filters:
+#        - StripPrefix=1
+    - id: service5-sample
       uri: http://127.0.0.1:9000
+      order: 5
       predicates:
-        - Path=/abc/**,/def/**
-        - Path=/api/service-sample/**,/sample/**
+#        - ClientIp=127.0.0.1,192.168.200.111
+        - Between=2019-04-29T00:00:00+08:00[Asia/Shanghai], 2030-05-01T00:00:00+08:00[Asia/Shanghai]
       filters:
-        - StripPrefix=2
+        - StripPrefix=1

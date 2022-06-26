@@ -2,6 +2,7 @@ package com.lzhpo.panda.gateway.core.config;
 
 import cn.hutool.core.util.ReflectUtil;
 import com.lzhpo.panda.gateway.core.ComponentDefinition;
+import com.lzhpo.panda.gateway.core.ValidateUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +88,7 @@ public interface ConfigFactory<T> {
         throw new UnsupportedOperationException("Not support type " + configType.name());
     }
 
+    ValidateUtil.validate(config);
     return config;
   }
 }

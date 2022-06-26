@@ -83,7 +83,7 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
                     .filter(Boolean.TRUE::equals)
                     .findAny()
                     .orElse(false))
-        .findAny()
+        .findFirst()
         .orElse(null);
   }
 }

@@ -12,7 +12,7 @@ public abstract class AbstractRoutePredicateFactory<T>
 
   protected final Class<T> configClass;
 
-  protected AbstractRoutePredicateFactory(Class<T> configClass) {
+  public AbstractRoutePredicateFactory(Class<T> configClass) {
     this.configClass = configClass;
   }
 

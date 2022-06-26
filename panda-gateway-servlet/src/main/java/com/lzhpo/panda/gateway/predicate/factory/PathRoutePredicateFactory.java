@@ -3,10 +3,13 @@ package com.lzhpo.panda.gateway.predicate.factory;
 import cn.hutool.core.collection.ListUtil;
 import com.lzhpo.panda.gateway.core.config.ConfigTypeEnum;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
-import java.util.ArrayList;
 import java.util.List;
+import javax.validation.constraints.NotEmpty;
 import lombok.Data;
+import org.springframework.http.server.PathContainer;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.util.pattern.PathPatternParser;
 
 /**
  * @author lzhpo
@@ -14,10 +17,11 @@ import org.springframework.util.AntPathMatcher;
 public class PathRoutePredicateFactory
     extends AbstractRoutePredicateFactory<PathRoutePredicateFactory.Config> {
 
-  private final AntPathMatcher antPathMatcher = new AntPathMatcher();
+  /** Also can see {@link AntPathMatcher} */
+  private final PathPatternParser antPathMatcher = new PathPatternParser();
 
   public PathRoutePredicateFactory() {
-    super(PathRoutePredicateFactory.Config.class);
+    super(Config.class);
   }
 
   @Override
@@ -25,7 +29,10 @@ public class PathRoutePredicateFactory
     return request -> {
       String requestPath = request.getRequestURI();
       List<String> patterns = config.getPatterns();
-      return patterns.stream().anyMatch(pattern -> antPathMatcher.match(pattern, requestPath));
+      return patterns.stream()
+          .anyMatch(
+              pattern ->
+                  antPathMatcher.parse(pattern).matches(PathContainer.parsePath(requestPath)));
     };
   }
 
@@ -40,7 +47,9 @@ public class PathRoutePredicateFactory
   }
 
   @Data
+  @Validated
   public static class Config {
-    private List<String> patterns = new ArrayList<>();
+
+    @NotEmpty private List<String> patterns;
   }
 }
