@@ -21,7 +21,7 @@ public class PathRoutePredicateFactory extends AbstractRoutePredicateFactory<Con
   }
 
   @Override
-  public RoutePredicate invoke(Config config) {
+  public RoutePredicate create(Config config) {
     return request -> {
       String requestPath = request.getRequestURI();
       List<String> patterns = config.getPatterns();

@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.Getter;
 
 /**
+ * Default filter chain for route.
+ *
  * @author lzhpo
  */
 @Getter

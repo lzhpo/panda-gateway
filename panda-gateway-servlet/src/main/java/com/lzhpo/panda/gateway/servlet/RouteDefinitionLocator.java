@@ -6,7 +6,12 @@ import java.util.List;
 /**
  * @author lzhpo
  */
-public interface RouteDefinitionLocator {
+public interface RouteDefinitionLocator extends RouteComponentLocator {
 
+  /**
+   * To get routes.
+   *
+   * @return routes
+   */
   List<RouteDefinition> getRoutes();
 }

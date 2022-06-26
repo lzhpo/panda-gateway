@@ -3,6 +3,8 @@ package com.lzhpo.panda.gateway.servlet.filter.factory;
 import com.lzhpo.panda.gateway.core.config.ConfigFactory;
 
 /**
+ * Just extends it if you want implements route filter.
+ *
  * @author lzhpo
  */
 public abstract class AbstractRouteFilterFactory<T>

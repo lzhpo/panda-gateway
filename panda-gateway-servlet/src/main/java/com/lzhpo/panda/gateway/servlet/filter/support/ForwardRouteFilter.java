@@ -3,7 +3,6 @@ package com.lzhpo.panda.gateway.servlet.filter.support;
 import com.lzhpo.panda.gateway.core.ExtractUtils;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
-import com.lzhpo.panda.gateway.servlet.CachingServletRequestWrapper;
 import com.lzhpo.panda.gateway.servlet.filter.RouteFilter;
 import com.lzhpo.panda.gateway.servlet.filter.chain.RouteFilterChain;
 import java.io.IOException;
@@ -65,7 +64,7 @@ public class ForwardRouteFilter implements RouteFilter {
       throws IOException {
     final HttpEntity<?> httpEntity;
     if (ExtractUtils.requireBody(httpMethod)) {
-      CachingServletRequestWrapper cachingRequest = new CachingServletRequestWrapper(request);
+      CacheRequestWrapper cachingRequest = new CacheRequestWrapper(request);
       ServletInputStream inputStream = cachingRequest.getInputStream();
       byte[] inputStreamBodyBytes = IOUtils.toByteArray(inputStream);
       httpEntity = new HttpEntity<>(inputStreamBodyBytes, headers);

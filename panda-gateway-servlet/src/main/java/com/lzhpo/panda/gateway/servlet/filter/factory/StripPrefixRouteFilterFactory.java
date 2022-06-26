@@ -22,7 +22,7 @@ public class StripPrefixRouteFilterFactory extends AbstractRouteFilterFactory<Co
   }
 
   @Override
-  public RouteFilter filter(Config config) {
+  public RouteFilter create(Config config) {
     return (request, response, chain) ->
         chain.doFilter(newRequest(request, config.getParts()), response);
   }

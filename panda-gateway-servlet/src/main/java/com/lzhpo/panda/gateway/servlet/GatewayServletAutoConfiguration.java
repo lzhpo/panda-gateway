@@ -34,21 +34,15 @@ public class GatewayServletAutoConfiguration {
   }
 
   @Bean
-  public RouteComponentLocator routeComponentLocator(List<GlobalFilter> globalFilters) {
-    return new RouteComponentLocator(globalFilters);
-  }
-
-  @Bean
   @ConditionalOnMissingBean
-  public RouteDefinitionLocator routeDefinitionLocator(GatewayProperties gatewayProperties) {
-    return new DefaultCacheRouteDefinitionLocator(gatewayProperties.getRoutes());
+  public RouteDefinitionLocator routeDefinitionLocator(
+      GatewayProperties gatewayProperties, List<GlobalFilter> globalFilters) {
+    return new MemoryRouteDefinitionLocator(gatewayProperties.getRoutes(), globalFilters);
   }
 
   @Bean
   public WebRequestFilter servletWebFilter(
-      RestTemplate restTemplate,
-      RouteDefinitionLocator routeDefinitionLocator,
-      RouteComponentLocator routeComponentLocator) {
-    return new WebRequestFilter(restTemplate, routeDefinitionLocator, routeComponentLocator);
+      RestTemplate restTemplate, RouteDefinitionLocator routeDefinitionLocator) {
+    return new WebRequestFilter(restTemplate, routeDefinitionLocator);
   }
 }

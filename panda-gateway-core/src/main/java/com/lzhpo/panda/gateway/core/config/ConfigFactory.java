@@ -3,7 +3,6 @@ package com.lzhpo.panda.gateway.core.config;
 import cn.hutool.core.util.ReflectUtil;
 import com.lzhpo.panda.gateway.core.ComponentDefinition;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.BeanUtils;
@@ -15,22 +14,50 @@ import org.springframework.util.ObjectUtils;
  */
 public interface ConfigFactory<T> {
 
+  /**
+   * Get config class
+   *
+   * @return config class
+   */
   Class<T> getConfigClass();
 
+  /**
+   * Get current component name.
+   *
+   * @return current component name
+   */
   String currentName();
 
+  /**
+   * Use {@code configClass} to new config instance.
+   *
+   * @param configClass configClass
+   * @return config instance
+   */
   default T newConfigInstance(Class<T> configClass) {
     return BeanUtils.instantiateClass(configClass);
   }
 
-  default List<String> configFieldOrder() {
-    return Collections.emptyList();
-  }
+  /**
+   * Have order of config fields.
+   *
+   * @return config fields
+   */
+  List<String> configFieldOrder();
 
-  default ConfigTypeEnum configFieldType() {
-    return ConfigTypeEnum.DEFAULT;
-  }
+  /**
+   * Config type
+   *
+   * @return {@link ConfigTypeEnum}
+   */
+  ConfigTypeEnum configFieldType();
 
+  /**
+   * Use {@code componentDefinition} to create config.
+   *
+   * @param componentDefinition {@link ComponentDefinition}
+   * @return created config
+   */
   default T getConfig(ComponentDefinition componentDefinition) {
     if (ObjectUtils.isEmpty(componentDefinition)) {
       return null;

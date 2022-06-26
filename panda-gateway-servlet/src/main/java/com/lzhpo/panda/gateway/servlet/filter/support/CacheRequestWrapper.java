@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway.servlet;
+package com.lzhpo.panda.gateway.servlet.filter.support;
 
 import java.io.IOException;
 import javax.servlet.ReadListener;
@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletRequestWrapper;
  *
  * @author lzhpo
  */
-public class CachingServletRequestWrapper extends HttpServletRequestWrapper {
+public class CacheRequestWrapper extends HttpServletRequestWrapper {
 
-  public CachingServletRequestWrapper(HttpServletRequest request) {
+  public CacheRequestWrapper(HttpServletRequest request) {
     super(request);
   }
 

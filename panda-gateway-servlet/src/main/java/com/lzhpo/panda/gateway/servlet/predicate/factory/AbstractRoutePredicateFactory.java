@@ -3,6 +3,8 @@ package com.lzhpo.panda.gateway.servlet.predicate.factory;
 import com.lzhpo.panda.gateway.core.config.ConfigFactory;
 
 /**
+ * Just extends it if you want implements route predicate.
+ *
  * @author lzhpo
  */
 public abstract class AbstractRoutePredicateFactory<T>

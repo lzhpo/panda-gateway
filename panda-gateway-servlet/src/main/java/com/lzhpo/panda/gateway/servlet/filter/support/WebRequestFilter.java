@@ -3,7 +3,6 @@ package com.lzhpo.panda.gateway.servlet.filter.support;
 import com.lzhpo.panda.gateway.core.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
-import com.lzhpo.panda.gateway.servlet.RouteComponentLocator;
 import com.lzhpo.panda.gateway.servlet.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.servlet.filter.RouteFilter;
 import com.lzhpo.panda.gateway.servlet.filter.chain.DefaultRouteFilterChain;
@@ -30,7 +29,6 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
 
   private final RestTemplate restTemplate;
   private final RouteDefinitionLocator routeDefinitionLocator;
-  private final RouteComponentLocator routeComponentLocator;
 
   @Override
   public int getOrder() {
@@ -41,7 +39,7 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
 
-    List<GlobalFilterAdapter> globalFilters = routeComponentLocator.getGlobalFilterAdapters();
+    List<GlobalFilterAdapter> globalFilters = routeDefinitionLocator.getGlobalFilterAdapters();
     List<RouteFilter> filters = new ArrayList<>(globalFilters);
     RouteDefinition route = lookupRoute(request);
 
@@ -51,7 +49,11 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
 
       List<RouteFilter> routeFilters =
           filterDefinitions.stream()
-              .map(filter -> routeComponentLocator.getFilterFactory(filter.getName()).apply(filter))
+              .map(
+                  filterDefinition ->
+                      routeDefinitionLocator
+                          .getFilterFactory(filterDefinition.getName())
+                          .create(filterDefinition))
               .filter(Objects::nonNull)
               .collect(Collectors.toList());
 
@@ -63,6 +65,12 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
     DefaultRouteFilterChain.create(filters).doFilter(request, response);
   }
 
+  /**
+   * Execute route predicate, in order to find match route.
+   *
+   * @param request {@link HttpServletRequest}
+   * @return matched route
+   */
   private RouteDefinition lookupRoute(HttpServletRequest request) {
     List<RouteDefinition> routes = routeDefinitionLocator.getRoutes();
     return routes.stream()
@@ -70,10 +78,10 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
             route ->
                 route.getPredicates().stream()
                     .map(
-                        predicate ->
-                            routeComponentLocator
-                                .getPredicateFactory(predicate.getName())
-                                .apply(predicate)
+                        predicateDefinition ->
+                            routeDefinitionLocator
+                                .getPredicateFactory(predicateDefinition.getName())
+                                .create(predicateDefinition)
                                 .test(request))
                     .filter(Boolean.TRUE::equals)
                     .findAny()
