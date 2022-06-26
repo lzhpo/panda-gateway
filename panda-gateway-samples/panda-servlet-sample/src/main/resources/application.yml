@@ -5,6 +5,7 @@ gateway:
     - id: service-sample
       uri: http://127.0.0.1:9000
       predicates:
-        - Path=/api/sample/**,/api/service-sample/**
+        - Path=/abc/**,/def/**
+        - Path=/api/service-sample/**,/sample/**
       filters:
         - StripPrefix=2

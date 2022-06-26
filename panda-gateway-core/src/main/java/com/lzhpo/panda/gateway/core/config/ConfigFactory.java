@@ -2,7 +2,6 @@ package com.lzhpo.panda.gateway.core.config;
 
 import cn.hutool.core.util.ReflectUtil;
 import com.lzhpo.panda.gateway.core.ComponentDefinition;
-import com.lzhpo.panda.gateway.core.GatewayCustomException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,23 +31,29 @@ public interface ConfigFactory<T> {
     return ConfigTypeEnum.DEFAULT;
   }
 
-  default T getConfig(List<ComponentDefinition> componentDefinitions) {
-    if (ObjectUtils.isEmpty(componentDefinitions)) {
+  default T getConfig(ComponentDefinition componentDefinition) {
+    if (ObjectUtils.isEmpty(componentDefinition)) {
       return null;
     }
 
     Class<T> configClass = getConfigClass();
     T config = newConfigInstance(configClass);
     List<String> fieldNames = configFieldOrder();
-    String currentPredicateName = currentName();
+    Map<String, String> args = componentDefinition.getArgs();
 
     ConfigTypeEnum configType = configFieldType();
     switch (configType) {
       case DEFAULT:
-        invokeDefault(componentDefinitions, config, fieldNames, currentPredicateName);
+        args.forEach(
+            (name, arg) -> {
+              String fieldName = fieldNames.get(Integer.parseInt(name));
+              ReflectUtil.setFieldValue(config, fieldName, arg);
+            });
         break;
       case LIST:
-        invokeList(componentDefinitions, config, fieldNames, currentPredicateName);
+        Assert.isTrue(fieldNames.size() == 1, "Config type of LIST should be 1 field order.");
+        List<String> values = new ArrayList<>(args.values());
+        ReflectUtil.setFieldValue(config, fieldNames.get(0), values);
         break;
       case MAP:
       default:
@@ -56,49 +61,5 @@ public interface ConfigFactory<T> {
     }
 
     return config;
-  }
-
-  private void invokeDefault(
-      List<ComponentDefinition> componentDefinitions,
-      T config,
-      List<String> fieldNames,
-      String currentPredicateName) {
-
-    componentDefinitions.stream()
-        .filter(predicate -> predicate.getName().equalsIgnoreCase(currentPredicateName))
-        .findAny()
-        .ifPresentOrElse(
-            predicate -> {
-              Map<String, String> args = predicate.getArgs();
-              args.forEach(
-                  (name, arg) -> {
-                    String fieldName = fieldNames.get(Integer.parseInt(name));
-                    ReflectUtil.setFieldValue(config, fieldName, arg);
-                  });
-            },
-            () -> {
-              throw new GatewayCustomException("Not found config.");
-            });
-  }
-
-  private void invokeList(
-      List<ComponentDefinition> componentDefinitions,
-      T config,
-      List<String> fieldNames,
-      String currentPredicateName) {
-
-    Assert.isTrue(fieldNames.size() == 1, "Config type of LIST should be 1 field order.");
-    componentDefinitions.stream()
-        .filter(predicate -> predicate.getName().equalsIgnoreCase(currentPredicateName))
-        .findAny()
-        .ifPresentOrElse(
-            predicate -> {
-              Map<String, String> args = predicate.getArgs();
-              List<String> values = new ArrayList<>(args.values());
-              ReflectUtil.setFieldValue(config, fieldNames.get(0), values);
-            },
-            () -> {
-              throw new GatewayCustomException("Not found config.");
-            });
   }
 }

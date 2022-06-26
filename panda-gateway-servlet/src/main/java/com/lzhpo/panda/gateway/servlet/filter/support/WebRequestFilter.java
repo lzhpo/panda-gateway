@@ -47,17 +47,14 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
 
     if (!ObjectUtils.isEmpty(route)) {
       request.setAttribute(GatewayConst.ROUTE_DEFINITION, route);
+      List<ComponentDefinition> filterDefinitions = route.getFilters();
+
       List<RouteFilter> routeFilters =
-          route.getFilters().stream()
-              .map(ComponentDefinition::getName)
-              .map(routeComponentLocator::getFilterFactory)
+          filterDefinitions.stream()
+              .map(filter -> routeComponentLocator.getFilterFactory(filter.getName()).apply(filter))
               .filter(Objects::nonNull)
-              .map(
-                  filterFactory -> {
-                    Object config = filterFactory.getConfig(route.getFilters());
-                    return filterFactory.filter(config);
-                  })
               .collect(Collectors.toList());
+
       filters.addAll(routeFilters);
       filters.add(new ForwardRouteFilter(restTemplate));
     }
@@ -72,15 +69,13 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
         .filter(
             route ->
                 route.getPredicates().stream()
-                    .map(ComponentDefinition::getName)
-                    .map(routeComponentLocator::getPredicateFactory)
-                    .filter(Objects::nonNull)
                     .map(
-                        predicateFactory -> {
-                          Object config = predicateFactory.getConfig(route.getPredicates());
-                          return predicateFactory.invoke(config);
-                        })
-                    .map(predicate -> predicate.test(request))
+                        predicate ->
+                            routeComponentLocator
+                                .getPredicateFactory(predicate.getName())
+                                .apply(predicate)
+                                .test(request))
+                    .filter(Boolean.TRUE::equals)
                     .findAny()
                     .orElse(false))
         .findAny()
