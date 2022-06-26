@@ -2,6 +2,7 @@ package com.lzhpo.panda.gateway.core.config;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.lzhpo.panda.gateway.core.ComponentDefinition;
+import com.lzhpo.panda.gateway.core.GatewayCustomException;
 import com.lzhpo.panda.gateway.core.ValidateUtil;
 import java.util.Map;
 import org.springframework.beans.BeanUtils;
@@ -46,7 +47,14 @@ public interface ConfigFactory<T> {
     Assert.notNull(componentDefinition, "componentDefinition cannot null.");
     Class<T> configClass = getConfigClass();
     Map<String, Object> args = componentDefinition.getArgs();
-    T config = BeanUtil.toBean(args, configClass);
+
+    T config;
+    try {
+      config = BeanUtil.toBean(args, configClass);
+    } catch (Exception e) {
+      throw new GatewayCustomException("args configuration is wrong", e);
+    }
+
     ValidateUtil.validate(config);
     return config;
   }
