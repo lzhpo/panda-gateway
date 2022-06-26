@@ -32,6 +32,7 @@ public class MemoryRouteDefinitionLocator implements RouteDefinitionLocator {
    */
   public MemoryRouteDefinitionLocator(
       List<RouteDefinition> routeDefinitions, List<GlobalFilter> globalFilters) {
+    validateRoute(routeDefinitions);
     this.routeDefinitions = sortRoutes(routeDefinitions);
     globalFilters.forEach(filter -> this.globalFilterAdapters.add(new GlobalFilterAdapter(filter)));
     log.info("Found {} of GlobalFilter.", globalFilters.size());
@@ -53,6 +54,11 @@ public class MemoryRouteDefinitionLocator implements RouteDefinitionLocator {
       RouteFilterFactory<Object> filterFactory = SpringUtil.getBean(filterFactoryName);
       filterFactories.put(filterFactory.currentName(), filterFactory);
     }
+  }
+
+  @Override
+  public RouteDefinition getRoute(String routeId) {
+    return routeDefinitions.stream().filter(x -> x.getId().equals(routeId)).findAny().orElse(null);
   }
 
   @Override

@@ -4,6 +4,7 @@ import com.lzhpo.panda.gateway.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.core.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
+import com.lzhpo.panda.gateway.predicate.factory.RoutePredicateFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,6 +13,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.ObjectUtils;
@@ -21,6 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * @author lzhpo
  */
+@Slf4j
 @RequiredArgsConstructor
 public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
 
@@ -71,9 +74,22 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
   private RouteDefinition lookupRoute(HttpServletRequest request) {
     List<RouteDefinition> routes = routeDefinitionLocator.getRoutes();
     return routes.stream()
+        .peek(
+            routeDefinition -> request.setAttribute(GatewayConst.ROUTE_DEFINITION, routeDefinition))
         .filter(
             route ->
                 route.getPredicates().stream()
+                    .filter(
+                        predicateDefinition -> {
+                          String predicateName = predicateDefinition.getName();
+                          RoutePredicateFactory<Object> predicateFactory =
+                              routeDefinitionLocator.getPredicateFactory(predicateName);
+                          if (Objects.isNull(predicateFactory)) {
+                            log.error("Not found [{}] predicateFactory.", predicateName);
+                            return false;
+                          }
+                          return true;
+                        })
                     .map(
                         predicateDefinition ->
                             routeDefinitionLocator
