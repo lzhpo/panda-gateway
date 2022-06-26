@@ -4,6 +4,8 @@ import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.filter.GlobalFilter;
 import com.lzhpo.panda.gateway.filter.WebRequestFilter;
 import com.lzhpo.panda.gateway.filter.factory.StripPrefixRouteFilterFactory;
+import com.lzhpo.panda.gateway.predicate.factory.AfterRoutePredicateFactory;
+import com.lzhpo.panda.gateway.predicate.factory.BeforeRoutePredicateFactory;
 import com.lzhpo.panda.gateway.predicate.factory.BetweenRoutePredicateFactory;
 import com.lzhpo.panda.gateway.predicate.factory.ClientIpRoutePredicateFactory;
 import com.lzhpo.panda.gateway.predicate.factory.CookieRoutePredicateFactory;
@@ -76,6 +78,16 @@ public class GatewayServletAutoConfiguration {
   public ClientIpRoutePredicateFactory clientIpRoutePredicateFactory(
       ClientIpResolver clientIpResolver) {
     return new ClientIpRoutePredicateFactory(clientIpResolver);
+  }
+
+  @Bean
+  public AfterRoutePredicateFactory afterRoutePredicateFactory() {
+    return new AfterRoutePredicateFactory();
+  }
+
+  @Bean
+  public BeforeRoutePredicateFactory beforeRoutePredicateFactory() {
+    return new BeforeRoutePredicateFactory();
   }
 
   @Bean
