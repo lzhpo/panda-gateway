@@ -26,5 +26,5 @@ public class RouteDefinition {
 
   private List<ComponentDefinition> filters = new ArrayList<>();
 
-  private Map<String, Object> metadata = new HashMap<>();
+  private Map<String, String> metadata = new HashMap<>();
 }
