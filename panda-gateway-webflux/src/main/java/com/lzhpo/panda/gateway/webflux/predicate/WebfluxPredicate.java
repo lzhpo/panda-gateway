@@ -1,6 +1,6 @@
 package com.lzhpo.panda.gateway.webflux.predicate;
 
-import com.lzhpo.panda.gateway.core.RouteDefinition;
+import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import org.springframework.web.server.ServerWebExchange;
 
 /**

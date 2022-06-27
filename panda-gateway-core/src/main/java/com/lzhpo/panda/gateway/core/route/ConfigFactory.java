@@ -1,9 +1,8 @@
-package com.lzhpo.panda.gateway.core.config;
+package com.lzhpo.panda.gateway.core.route;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.lzhpo.panda.gateway.core.ComponentDefinition;
-import com.lzhpo.panda.gateway.core.GatewayCustomException;
-import com.lzhpo.panda.gateway.core.ValidateUtil;
+import com.lzhpo.panda.gateway.core.exception.GatewayCustomException;
+import com.lzhpo.panda.gateway.core.utils.ValidateUtil;
 import java.util.Map;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;

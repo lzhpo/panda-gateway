@@ -1,7 +1,7 @@
 package com.lzhpo.panda.gateway.predicate.factory;
 
-import com.lzhpo.panda.gateway.core.ComponentDefinition;
-import com.lzhpo.panda.gateway.core.config.ConfigFactory;
+import com.lzhpo.panda.gateway.core.route.ComponentDefinition;
+import com.lzhpo.panda.gateway.core.route.ConfigFactory;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import java.util.HashMap;
 import java.util.Map;

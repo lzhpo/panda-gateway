@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway.core.config;
+package com.lzhpo.panda.gateway.core.route;
 
 /**
  * @author lzhpo

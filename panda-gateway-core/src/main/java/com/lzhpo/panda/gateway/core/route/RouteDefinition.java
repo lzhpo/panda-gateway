@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway.core;
+package com.lzhpo.panda.gateway.core.route;
 
 import java.util.ArrayList;
 import java.util.HashMap;

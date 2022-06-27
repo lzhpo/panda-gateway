@@ -1,6 +1,6 @@
 package com.lzhpo.panda.gateway.filter.factory;
 
-import com.lzhpo.panda.gateway.core.ExtractUtils;
+import com.lzhpo.panda.gateway.core.utils.ExtractUtil;
 import com.lzhpo.panda.gateway.filter.RouteFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -39,7 +39,7 @@ public class StripPrefixRouteFilterFactory
 
       @Override
       public String getRequestURI() {
-        return ExtractUtils.stripPrefix(super.getRequestURI(), parts);
+        return ExtractUtil.stripPrefix(super.getRequestURI(), parts);
       }
     };
   }

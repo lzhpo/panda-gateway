@@ -1,6 +1,6 @@
 package com.lzhpo.panda.gateway.webflux.filter;
 
-import com.lzhpo.panda.gateway.core.ExtractUtils;
+import com.lzhpo.panda.gateway.core.utils.ExtractUtil;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
@@ -18,7 +18,7 @@ public class StripPrefixWebfluxFilter implements WebfluxFilter, Ordered {
     return filterChain.filter(
         exchange
             .mutate()
-            .request(builder -> builder.path(ExtractUtils.stripPrefix(requestPath, 2)))
+            .request(builder -> builder.path(ExtractUtil.stripPrefix(requestPath, 2)))
             .build());
   }
 

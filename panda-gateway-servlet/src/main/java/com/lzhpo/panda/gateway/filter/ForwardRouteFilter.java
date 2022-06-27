@@ -1,8 +1,8 @@
 package com.lzhpo.panda.gateway.filter;
 
-import com.lzhpo.panda.gateway.core.ExtractUtils;
-import com.lzhpo.panda.gateway.core.RouteDefinition;
-import com.lzhpo.panda.gateway.core.consts.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.core.utils.ExtractUtil;
 import com.lzhpo.panda.gateway.support.CacheRequestWrapper;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -62,7 +62,7 @@ public class ForwardRouteFilter implements RouteFilter {
       HttpServletRequest request, HttpMethod httpMethod, MultiValueMap<String, String> headers)
       throws IOException {
     final HttpEntity<?> httpEntity;
-    if (ExtractUtils.requireBody(httpMethod)) {
+    if (ExtractUtil.requireBody(httpMethod)) {
       CacheRequestWrapper cachingRequest = new CacheRequestWrapper(request);
       ServletInputStream inputStream = cachingRequest.getInputStream();
       byte[] inputStreamBodyBytes = IOUtils.toByteArray(inputStream);
@@ -78,7 +78,7 @@ public class ForwardRouteFilter implements RouteFilter {
     if (!ObjectUtils.isEmpty(parameterMap)) {
       Map<String, String> queryParams = new HashMap<>(parameterMap.size());
       parameterMap.forEach((paramName, paramValues) -> queryParams.put(paramName, paramValues[0]));
-      String queryParamsInPath = ExtractUtils.mapToParamPath(queryParams);
+      String queryParamsInPath = ExtractUtil.mapToParamPath(queryParams);
       fullPath += "?" + queryParamsInPath;
     }
     return fullPath;

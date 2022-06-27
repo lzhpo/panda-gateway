@@ -1,8 +1,8 @@
 package com.lzhpo.panda.gateway.webflux.filter;
 
-import com.lzhpo.panda.gateway.core.ExtractUtils;
-import com.lzhpo.panda.gateway.core.RouteDefinition;
-import com.lzhpo.panda.gateway.core.consts.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.core.utils.ExtractUtil;
 import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +57,7 @@ public class ForwardWebfluxFilter implements WebfluxFilter {
             .headers(httpHeaders -> httpHeaders.addAll(headers));
 
     RequestHeadersSpec<?> headersSpec;
-    if (ExtractUtils.requireBody(httpMethod)) {
+    if (ExtractUtil.requireBody(httpMethod)) {
       headersSpec = bodySpec.body(BodyInserters.fromDataBuffers(request.getBody()));
     } else {
       headersSpec = bodySpec;
@@ -75,7 +75,7 @@ public class ForwardWebfluxFilter implements WebfluxFilter {
   private String buildPathWithParams(ServerHttpRequest request, String fullPath) {
     Map<String, String> queryParams = request.getQueryParams().toSingleValueMap();
     if (!ObjectUtils.isEmpty(queryParams)) {
-      String queryParamsInPath = ExtractUtils.mapToParamPath(queryParams);
+      String queryParamsInPath = ExtractUtil.mapToParamPath(queryParams);
       fullPath += "?" + queryParamsInPath;
     }
     return fullPath;

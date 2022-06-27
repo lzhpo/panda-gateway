@@ -1,6 +1,5 @@
-package com.lzhpo.panda.gateway.core.consts;
+package com.lzhpo.panda.gateway.core.route;
 
-import com.lzhpo.panda.gateway.core.RouteDefinition;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

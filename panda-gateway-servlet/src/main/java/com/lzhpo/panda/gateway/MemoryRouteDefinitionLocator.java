@@ -1,7 +1,7 @@
 package com.lzhpo.panda.gateway;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.lzhpo.panda.gateway.core.RouteDefinition;
+import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.filter.GlobalFilter;
 import com.lzhpo.panda.gateway.filter.GlobalFilterAdapter;
 import com.lzhpo.panda.gateway.filter.factory.RouteFilterFactory;

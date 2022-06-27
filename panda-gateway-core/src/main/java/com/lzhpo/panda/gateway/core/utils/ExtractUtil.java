@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway.core;
+package com.lzhpo.panda.gateway.core.utils;
 
 import cn.hutool.core.text.StrPool;
 import com.google.common.base.Joiner;
@@ -13,7 +13,7 @@ import org.springframework.http.HttpMethod;
  * @author lzhpo
  */
 @UtilityClass
-public class ExtractUtils {
+public class ExtractUtil {
 
   public static String mapToParamPath(Map<String, String> paramsMap) {
     return Joiner.on("&").useForNull("").withKeyValueSeparator("=").join(paramsMap);

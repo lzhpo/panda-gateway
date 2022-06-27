@@ -1,8 +1,10 @@
-package com.lzhpo.panda.gateway.core;
+package com.lzhpo.panda.gateway.core.utils;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.google.common.collect.Lists;
+import com.lzhpo.panda.gateway.core.route.ComponentDefinition;
+import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
