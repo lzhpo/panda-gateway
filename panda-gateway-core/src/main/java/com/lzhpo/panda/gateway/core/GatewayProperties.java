@@ -12,5 +12,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "gateway")
 public class GatewayProperties {
 
+  /** Whether to enable service discovery mode, otherwise, use http or https. */
+  private boolean discovery = true;
+
+  /** Gateway service routes */
   private List<RouteDefinition> routes = new ArrayList<>();
 }

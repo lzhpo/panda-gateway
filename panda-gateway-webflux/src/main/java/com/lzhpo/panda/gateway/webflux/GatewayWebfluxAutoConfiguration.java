@@ -10,10 +10,8 @@ import com.lzhpo.panda.gateway.webflux.predicate.PathWebfluxPredicate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -51,13 +49,6 @@ public class GatewayWebfluxAutoConfiguration {
   public WebfluxHandlerMapping webfluxHandlerMapping(
       GatewayProperties gatewayProperties, WebfluxWebHandler webfluxWebHandler) {
     return new WebfluxHandlerMapping(webfluxWebHandler, gatewayProperties);
-  }
-
-  @Bean
-  @LoadBalanced
-  @ConditionalOnMissingBean
-  public WebClient.Builder webClientBuilder() {
-    return WebClient.builder();
   }
 
   @Bean

@@ -1,6 +1,8 @@
 gateway:
+  discovery: true
   routes:
     - id: service1-sample
+      # uri: http://localhost:9000
       uri: lb://panda-service-sample
       order: 1
       predicates:
@@ -44,7 +46,8 @@ gateway:
           args:
             parts: 2
     - id: service2-sample
-      uri: http://127.0.0.1:9000
+      # uri: http://localhost:9000
+      uri: lb://panda-service-sample
       order: 2
       predicates:
         - name: Weight
