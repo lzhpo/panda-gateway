@@ -3,6 +3,7 @@ package com.lzhpo.panda.gateway;
 import cn.hutool.core.util.StrUtil;
 import com.lzhpo.panda.gateway.core.GatewayCustomException;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
+import com.lzhpo.panda.gateway.core.ValidateUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -38,6 +39,7 @@ public interface RouteDefinitionLocator extends RouteComponentLocator {
     Assert.notEmpty(routes, "routes cannot empty.");
     List<String> routeIdValidate = new ArrayList<>();
     for (RouteDefinition routeDefinition : routes) {
+      ValidateUtil.validate(routeDefinition);
       String routeId = routeDefinition.getId();
       if (!routeIdValidate.contains(routeId)) {
         routeIdValidate.add(routeId);

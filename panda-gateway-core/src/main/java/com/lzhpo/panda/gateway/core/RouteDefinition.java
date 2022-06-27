@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Route definition
@@ -12,19 +15,20 @@ import lombok.Data;
  * @author lzhpo
  */
 @Data
+@Validated
 public class RouteDefinition {
 
   /** Unique route id. */
-  private String id;
+  @NotBlank private String id;
 
   /** e.g: lb://<serviceId>, http://<serviceId>:<port>, https://<serviceId>:<port> */
-  private String uri;
+  @NotBlank private String uri;
 
   private int order;
 
-  private List<ComponentDefinition> predicates = new ArrayList<>();
+  @Valid private List<ComponentDefinition> predicates = new ArrayList<>();
 
-  private List<ComponentDefinition> filters = new ArrayList<>();
+  @Valid private List<ComponentDefinition> filters = new ArrayList<>();
 
   private Map<String, String> metadata = new HashMap<>();
 }

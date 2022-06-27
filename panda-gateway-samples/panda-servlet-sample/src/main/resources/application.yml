@@ -43,7 +43,7 @@ gateway:
         - name: StripPrefix
           args:
             parts: 8
-    - id: service1-sample
+    - id: service2-sample
       uri: http://127.0.0.1:9000
       order: 2
       predicates:
