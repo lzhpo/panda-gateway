@@ -4,10 +4,10 @@ import com.lzhpo.panda.gateway.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.core.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.RouteDefinition;
 import com.lzhpo.panda.gateway.core.consts.GatewayConst;
-import com.lzhpo.panda.gateway.predicate.factory.RoutePredicateFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -50,10 +50,16 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
       List<RouteFilter> routeFilters =
           filterDefinitions.stream()
               .map(
-                  filterDefinition ->
-                      routeDefinitionLocator
-                          .getFilterFactory(filterDefinition.getName())
-                          .create(filterDefinition))
+                  filterDefinition -> {
+                    String filterName = filterDefinition.getName();
+                    return Optional.ofNullable(routeDefinitionLocator.getFilterFactory(filterName))
+                        .map(filterFactory -> filterFactory.create(filterDefinition))
+                        .orElseGet(
+                            () -> {
+                              log.error("Not found [{}] filterFactory.", filterName);
+                              return null;
+                            });
+                  })
               .filter(Objects::nonNull)
               .collect(Collectors.toList());
 
@@ -74,28 +80,24 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
   private RouteDefinition lookupRoute(HttpServletRequest request) {
     List<RouteDefinition> routes = routeDefinitionLocator.getRoutes();
     return routes.stream()
-        .peek(
-            routeDefinition -> request.setAttribute(GatewayConst.ROUTE_DEFINITION, routeDefinition))
+        .peek(route -> request.setAttribute(GatewayConst.ROUTE_DEFINITION, route))
         .filter(
             route ->
                 route.getPredicates().stream()
-                    .filter(
+                    .map(
                         predicateDefinition -> {
                           String predicateName = predicateDefinition.getName();
-                          RoutePredicateFactory<Object> predicateFactory =
-                              routeDefinitionLocator.getPredicateFactory(predicateName);
-                          if (Objects.isNull(predicateFactory)) {
-                            log.error("Not found [{}] predicateFactory.", predicateName);
-                            return false;
-                          }
-                          return true;
+                          return Optional.ofNullable(
+                                  routeDefinitionLocator.getPredicateFactory(predicateName))
+                              .map(
+                                  predicateFactory ->
+                                      predicateFactory.create(predicateDefinition).test(request))
+                              .orElseGet(
+                                  () -> {
+                                    log.error("Not found [{}] predicateFactory.", predicateName);
+                                    return false;
+                                  });
                         })
-                    .map(
-                        predicateDefinition ->
-                            routeDefinitionLocator
-                                .getPredicateFactory(predicateDefinition.getName())
-                                .create(predicateDefinition)
-                                .test(request))
                     .filter(Boolean.TRUE::equals)
                     .findAny()
                     .orElse(false))
