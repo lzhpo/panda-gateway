@@ -1,12 +1,12 @@
-package com.lzhpo.panda.gateway.predicate.factory;
+package com.lzhpo.panda.gateway.webflux.predicate.factory;
 
 import cn.hutool.core.lang.WeightRandom;
 import cn.hutool.core.lang.WeightRandom.WeightObj;
-import com.lzhpo.panda.gateway.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.core.route.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.route.GatewayConst;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
-import com.lzhpo.panda.gateway.predicate.RoutePredicate;
+import com.lzhpo.panda.gateway.webflux.RouteDefinitionLocator;
+import com.lzhpo.panda.gateway.webflux.predicate.RoutePredicate;
 import java.util.List;
 import java.util.Objects;
 import javax.validation.constraints.Max;
@@ -34,9 +34,8 @@ public class WeightRoutePredicateFactory
 
   @Override
   public RoutePredicate create(Config config) {
-    return request -> {
-      RouteDefinition currentRoute =
-          (RouteDefinition) request.getAttribute(GatewayConst.ROUTE_DEFINITION);
+    return serverWebExchange -> {
+      RouteDefinition currentRoute = serverWebExchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
       if (Objects.isNull(currentRoute)) {
         return false;
       }
