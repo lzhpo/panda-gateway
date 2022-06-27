@@ -46,7 +46,7 @@ public interface ConfigFactory<T> {
   default T getConfig(ComponentDefinition componentDefinition) {
     Assert.notNull(componentDefinition, "componentDefinition cannot null.");
     Class<T> configClass = getConfigClass();
-    Map<String, Object> args = componentDefinition.getArgs();
+    Map<String, String> args = componentDefinition.getArgs();
 
     T config;
     try {
