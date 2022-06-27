@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
@@ -115,7 +116,7 @@ public class GatewayWebfluxAutoConfiguration {
 
   @Bean
   public WeightRoutePredicateFactory weightRoutePredicateFactory(
-      RouteDefinitionLocator routeDefinitionLocator) {
+      @Lazy RouteDefinitionLocator routeDefinitionLocator) {
     return new WeightRoutePredicateFactory(routeDefinitionLocator);
   }
 }
