@@ -9,17 +9,17 @@ import reactor.core.publisher.Mono;
  * @author lzhpo
  */
 @Getter
-public class DefaultWebfluxFilterChain implements WebfluxFilterChain {
+public class DefaultRouteFilterChain implements RouteFilterChain {
 
   private final int index;
-  private final List<WebfluxFilter> filters;
+  private final List<RouteFilter> filters;
 
-  public DefaultWebfluxFilterChain(List<WebfluxFilter> filters) {
+  public DefaultRouteFilterChain(List<RouteFilter> filters) {
     this.filters = filters;
     this.index = 0;
   }
 
-  private DefaultWebfluxFilterChain(DefaultWebfluxFilterChain parent, int index) {
+  private DefaultRouteFilterChain(DefaultRouteFilterChain parent, int index) {
     this.filters = parent.getFilters();
     this.index = index;
   }
@@ -29,8 +29,8 @@ public class DefaultWebfluxFilterChain implements WebfluxFilterChain {
     return Mono.defer(
         () -> {
           if (index < filters.size()) {
-            WebfluxFilter filter = filters.get(index);
-            DefaultWebfluxFilterChain chain = new DefaultWebfluxFilterChain(this, index + 1);
+            RouteFilter filter = filters.get(index);
+            DefaultRouteFilterChain chain = new DefaultRouteFilterChain(this, index + 1);
             return filter.filter(exchange, chain);
           } else {
             return Mono.empty();

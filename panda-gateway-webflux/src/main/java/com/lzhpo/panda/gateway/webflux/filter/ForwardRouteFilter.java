@@ -28,12 +28,12 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class ForwardWebfluxFilter implements WebfluxFilter {
+public class ForwardRouteFilter implements RouteFilter {
 
   private final WebClient.Builder webClientBuilder;
 
   @Override
-  public Mono<Void> filter(ServerWebExchange exchange, DefaultWebfluxFilterChain filterChain) {
+  public Mono<Void> filter(ServerWebExchange exchange, DefaultRouteFilterChain filterChain) {
     ServerHttpRequest request = exchange.getRequest();
     ServerHttpResponse response = exchange.getResponse();
 

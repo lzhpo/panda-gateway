@@ -2,7 +2,6 @@ package com.lzhpo.panda.gateway;
 
 import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.filter.GlobalFilter;
-import com.lzhpo.panda.gateway.filter.WebRequestFilter;
 import com.lzhpo.panda.gateway.filter.factory.StripPrefixRouteFilterFactory;
 import com.lzhpo.panda.gateway.predicate.factory.AfterRoutePredicateFactory;
 import com.lzhpo.panda.gateway.predicate.factory.BeforeRoutePredicateFactory;
@@ -108,8 +107,8 @@ public class GatewayServletAutoConfiguration {
   }
 
   @Bean
-  public WebRequestFilter servletWebFilter(
+  public GatewayRequestMapping servletWebFilter(
       RestTemplate restTemplate, RouteDefinitionLocator routeDefinitionLocator) {
-    return new WebRequestFilter(restTemplate, routeDefinitionLocator);
+    return new GatewayRequestMapping(restTemplate, routeDefinitionLocator);
   }
 }

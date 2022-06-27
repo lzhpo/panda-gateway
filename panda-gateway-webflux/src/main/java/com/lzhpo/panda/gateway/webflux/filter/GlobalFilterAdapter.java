@@ -8,12 +8,12 @@ import reactor.core.publisher.Mono;
  * @author lzhpo
  */
 @RequiredArgsConstructor
-public class GlobalWebfluxFilterAdapter implements WebfluxFilter {
+public class GlobalFilterAdapter implements RouteFilter {
 
-  private final GlobalWebfluxFilter globalFilter;
+  private final GlobalFilter globalFilter;
 
   @Override
-  public Mono<Void> filter(ServerWebExchange exchange, DefaultWebfluxFilterChain filterChain) {
+  public Mono<Void> filter(ServerWebExchange exchange, DefaultRouteFilterChain filterChain) {
     return globalFilter.filter(exchange, filterChain);
   }
 }

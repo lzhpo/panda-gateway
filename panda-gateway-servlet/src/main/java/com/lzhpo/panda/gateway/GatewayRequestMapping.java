@@ -1,9 +1,12 @@
-package com.lzhpo.panda.gateway.filter;
+package com.lzhpo.panda.gateway;
 
-import com.lzhpo.panda.gateway.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.core.route.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.route.GatewayConst;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.filter.DefaultRouteFilterChain;
+import com.lzhpo.panda.gateway.filter.ForwardRouteFilter;
+import com.lzhpo.panda.gateway.filter.GlobalFilterAdapter;
+import com.lzhpo.panda.gateway.filter.RouteFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,7 +29,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
+public class GatewayRequestMapping extends OncePerRequestFilter implements Ordered {
 
   private final RestTemplate restTemplate;
   private final RouteDefinitionLocator routeDefinitionLocator;
@@ -47,9 +50,7 @@ public class WebRequestFilter extends OncePerRequestFilter implements Ordered {
     RouteDefinition route = lookupRoute(request);
 
     if (!ObjectUtils.isEmpty(route)) {
-      request.setAttribute(GatewayConst.ROUTE_DEFINITION, route);
       List<ComponentDefinition> filterDefinitions = route.getFilters();
-
       List<RouteFilter> routeFilters =
           filterDefinitions.stream()
               .map(

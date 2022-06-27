@@ -1,12 +1,9 @@
 package com.lzhpo.panda.gateway.webflux;
 
 import com.lzhpo.panda.gateway.core.GatewayProperties;
-import com.lzhpo.panda.gateway.webflux.filter.GlobalWebfluxFilter;
-import com.lzhpo.panda.gateway.webflux.filter.LogGlobalWebfluxFilter;
-import com.lzhpo.panda.gateway.webflux.filter.StripPrefixWebfluxFilter;
-import com.lzhpo.panda.gateway.webflux.handler.WebfluxHandlerMapping;
-import com.lzhpo.panda.gateway.webflux.handler.WebfluxWebHandler;
-import com.lzhpo.panda.gateway.webflux.predicate.PathWebfluxPredicate;
+import com.lzhpo.panda.gateway.webflux.filter.GlobalFilter;
+import com.lzhpo.panda.gateway.webflux.filter.factory.StripPrefixRouteFilterFactory;
+import com.lzhpo.panda.gateway.webflux.predicate.factory.PathRoutePredicateFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -14,8 +11,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -29,30 +24,30 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class GatewayWebfluxAutoConfiguration {
 
   @Bean
-  @Order(Ordered.HIGHEST_PRECEDENCE)
-  public LogGlobalWebfluxFilter logGlobalWebfluxFilter() {
-    return new LogGlobalWebfluxFilter();
+  public GatewayRequestHandler gatewayRequestHandler(
+      WebClient.Builder webClientBuilder, RouteDefinitionLocator routeDefinitionLocator) {
+    return new GatewayRequestHandler(webClientBuilder, routeDefinitionLocator);
   }
 
   @Bean
-  public WebfluxWebHandler webfluxWebHandler(
-      WebClient.Builder webClientBuilder, List<GlobalWebfluxFilter> globalFilters) {
-    return new WebfluxWebHandler(webClientBuilder, globalFilters);
+  public GatewayRequestMapping gatewayRequestMapping(
+      GatewayRequestHandler webfluxWebHandler, RouteDefinitionLocator routeDefinitionLocator) {
+    return new GatewayRequestMapping(webfluxWebHandler, routeDefinitionLocator);
   }
 
   @Bean
-  public StripPrefixWebfluxFilter stripPrefixWebfluxFilter() {
-    return new StripPrefixWebfluxFilter();
+  public RouteDefinitionLocator routeDefinitionLocator(
+      GatewayProperties gatewayProperties, List<GlobalFilter> globalFilters) {
+    return new MemoryRouteDefinitionLocator(gatewayProperties.getRoutes(), globalFilters);
   }
 
   @Bean
-  public WebfluxHandlerMapping webfluxHandlerMapping(
-      GatewayProperties gatewayProperties, WebfluxWebHandler webfluxWebHandler) {
-    return new WebfluxHandlerMapping(webfluxWebHandler, gatewayProperties);
+  public StripPrefixRouteFilterFactory stripPrefixRouteFilterFactory() {
+    return new StripPrefixRouteFilterFactory();
   }
 
   @Bean
-  public PathWebfluxPredicate pathWebfluxPredicate() {
-    return new PathWebfluxPredicate();
+  public PathRoutePredicateFactory pathRoutePredicateFactory() {
+    return new PathRoutePredicateFactory();
   }
 }

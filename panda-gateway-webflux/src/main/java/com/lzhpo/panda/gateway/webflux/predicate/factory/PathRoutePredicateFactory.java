@@ -1,10 +1,11 @@
-package com.lzhpo.panda.gateway.predicate.factory;
+package com.lzhpo.panda.gateway.webflux.predicate.factory;
 
-import com.lzhpo.panda.gateway.predicate.RoutePredicate;
+import com.lzhpo.panda.gateway.webflux.predicate.RoutePredicate;
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.springframework.http.server.PathContainer;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.util.pattern.PathPatternParser;
@@ -26,8 +27,9 @@ public class PathRoutePredicateFactory
 
   @Override
   public RoutePredicate create(Config config) {
-    return request -> {
-      String requestPath = request.getRequestURI();
+    return serverWebExchange -> {
+      ServerHttpRequest request = serverWebExchange.getRequest();
+      String requestPath = request.getPath().value();
       List<String> patterns = config.getPatterns();
       return patterns.stream()
           .anyMatch(

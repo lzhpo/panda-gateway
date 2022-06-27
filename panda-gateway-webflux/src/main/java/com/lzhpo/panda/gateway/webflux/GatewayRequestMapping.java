@@ -1,11 +1,10 @@
-package com.lzhpo.panda.gateway.webflux.handler;
+package com.lzhpo.panda.gateway.webflux;
 
-import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.route.GatewayConst;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
-import com.lzhpo.panda.gateway.core.utils.RouteUtil;
-import com.lzhpo.panda.gateway.webflux.predicate.WebfluxPredicate;
 import java.util.List;
+import java.util.Optional;
+import javax.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.handler.AbstractHandlerMapping;
 import org.springframework.web.server.ServerWebExchange;
@@ -15,14 +14,15 @@ import reactor.core.publisher.Mono;
  * @author lzhpo
  */
 @Slf4j
-public class WebfluxHandlerMapping extends AbstractHandlerMapping {
+public class GatewayRequestMapping extends AbstractHandlerMapping {
 
-  private final WebfluxWebHandler webHandler;
-  private final GatewayProperties gatewayProperties;
+  private final GatewayRequestHandler webHandler;
+  private final RouteDefinitionLocator routeDefinitionLocator;
 
-  public WebfluxHandlerMapping(WebfluxWebHandler webHandler, GatewayProperties gatewayProperties) {
+  public GatewayRequestMapping(
+      GatewayRequestHandler webHandler, RouteDefinitionLocator routeDefinitionLocator) {
     this.webHandler = webHandler;
-    this.gatewayProperties = gatewayProperties;
+    this.routeDefinitionLocator = routeDefinitionLocator;
     // Default value is Ordered.LOWEST_PRECEDENCE
     // RequestMappingHandlerMapping order is 0
     // RouterFunctionMapping order is -1
@@ -30,8 +30,9 @@ public class WebfluxHandlerMapping extends AbstractHandlerMapping {
     setOrder(1);
   }
 
+  @Nonnull
   @Override
-  protected Mono<?> getHandlerInternal(ServerWebExchange exchange) {
+  protected Mono<?> getHandlerInternal(@Nonnull ServerWebExchange exchange) {
     return lookupRoute(exchange)
         .flatMap(
             route -> {
@@ -51,16 +52,30 @@ public class WebfluxHandlerMapping extends AbstractHandlerMapping {
   }
 
   private Mono<RouteDefinition> lookupRoute(ServerWebExchange exchange) {
-    List<RouteDefinition> routes = gatewayProperties.getRoutes();
+    List<RouteDefinition> routes = routeDefinitionLocator.getRoutes();
     return routes.stream()
+        .peek(route -> exchange.getAttributes().put(GatewayConst.ROUTE_DEFINITION, route))
         .filter(
             route ->
-                RouteUtil.parsePredicates(route, WebfluxPredicate.class).stream()
-                    .map(predicate -> predicate.apply(exchange, route))
+                route.getPredicates().stream()
+                    .map(
+                        predicateDefinition -> {
+                          String predicateName = predicateDefinition.getName();
+                          return Optional.ofNullable(
+                                  routeDefinitionLocator.getPredicateFactory(predicateName))
+                              .map(
+                                  predicateFactory ->
+                                      predicateFactory.create(predicateDefinition).test(exchange))
+                              .orElseGet(
+                                  () -> {
+                                    log.error("Not found [{}] predicateFactory.", predicateName);
+                                    return false;
+                                  });
+                        })
                     .filter(Boolean.TRUE::equals)
                     .findAny()
                     .orElse(false))
-        .findAny()
+        .findFirst()
         .map(Mono::just)
         .orElseGet(Mono::empty);
   }
