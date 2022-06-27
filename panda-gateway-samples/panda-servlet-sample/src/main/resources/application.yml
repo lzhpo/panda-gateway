@@ -38,11 +38,11 @@ gateway:
         - name: Weight
           args:
             group: service-sample
-            weight: 2
+            weight: 8
       filters:
         - name: StripPrefix
           args:
-            parts: 8
+            parts: 2
     - id: service2-sample
       uri: http://127.0.0.1:9000
       order: 2
