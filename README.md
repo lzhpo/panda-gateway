@@ -4,8 +4,10 @@
 `application.yml` example: 
 ```yaml
 gateway:
+  discovery: true
   routes:
-    - id: service1-sample
+    - id: panda-service-sample-01
+      # uri: http://localhost:9000
       uri: lb://panda-service-sample
       order: 1
       predicates:
@@ -43,13 +45,14 @@ gateway:
         - name: Weight
           args:
             group: service-sample
-            weight: 2
+            weight: 8
       filters:
         - name: StripPrefix
           args:
-            parts: 8
-    - id: service2-sample
-      uri: http://127.0.0.1:9000
+            parts: 2
+    - id: panda-service-sample-02
+      # uri: http://localhost:9000
+      uri: lb://panda-service-sample
       order: 2
       predicates:
         - name: Weight
