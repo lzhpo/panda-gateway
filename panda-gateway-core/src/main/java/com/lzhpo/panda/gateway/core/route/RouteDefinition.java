@@ -30,5 +30,5 @@ public class RouteDefinition {
 
   @Valid private List<ComponentDefinition> filters = new ArrayList<>();
 
-  private Map<String, String> metadata = new HashMap<>();
+  private Map<String, Object> metadata = new HashMap<>();
 }

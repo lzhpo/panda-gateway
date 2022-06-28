@@ -16,5 +16,5 @@ public class ComponentDefinition {
 
   @NotBlank private String name;
 
-  @NotEmpty private Map<String, String> args = new HashMap<>();
+  @NotEmpty private Map<String, Object> args = new HashMap<>();
 }

@@ -1,5 +1,6 @@
 package com.lzhpo.panda.gateway.core.utils;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import javax.validation.ConstraintViolation;
@@ -28,24 +29,46 @@ public class ValidateUtil {
     return VALIDATOR;
   }
 
+  public static <T> void validate(T bean, ErrorAction<String> errorAction) {
+    Set<ConstraintViolation<T>> violations = getValidator().validate(bean);
+    handleValidateResult(violations, errorAction);
+  }
+
   public static <T> void validate(T bean) {
     Set<ConstraintViolation<T>> violations = getValidator().validate(bean);
-    handleValidateResult(violations);
+    handleValidateResult(violations, null);
   }
 
   public static <T> void validate(T bean, Class<?>... groups) {
     Set<ConstraintViolation<T>> violations = getValidator().validate(bean, groups);
-    handleValidateResult(violations);
+    handleValidateResult(violations, null);
   }
 
-  private static <T> void handleValidateResult(Set<ConstraintViolation<T>> violations) {
+  private static <T> void handleValidateResult(
+      Set<ConstraintViolation<T>> violations, ErrorAction<String> errorAction) {
     if (!ObjectUtils.isEmpty(violations)) {
       StringJoiner validateErrors = new StringJoiner(";");
       for (ConstraintViolation<T> violation : violations) {
         String validateError = violation.getPropertyPath().toString() + violation.getMessage();
         validateErrors.add(validateError);
       }
-      throw new ValidationException(validateErrors.toString());
+
+      String errorMsg = validateErrors.toString();
+      if (Objects.nonNull(errorAction)) {
+        errorMsg = errorAction.accept(errorMsg);
+      }
+      throw new ValidationException(errorMsg);
     }
+  }
+
+  public interface ErrorAction<T> {
+
+    /**
+     * Customize validate error message
+     *
+     * @param errorMsg validate error message
+     * @return new validate error message
+     */
+    String accept(T errorMsg);
   }
 }

@@ -1,33 +1,32 @@
 package com.lzhpo.panda.gateway.webflux.filter.factory;
 
-import com.lzhpo.panda.gateway.core.utils.ExtractUtil;
 import com.lzhpo.panda.gateway.webflux.filter.RouteFilter;
-import javax.validation.constraints.Min;
+import java.util.List;
+import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.springframework.core.Ordered;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.validation.annotation.Validated;
 
 /**
  * @author lzhpo
  */
-public class StripPrefixRouteFilterFactory
-    extends AbstractRouteFilterFactory<StripPrefixRouteFilterFactory.Config> implements Ordered {
+public class RemoveHeaderRouteFilterFactory
+    extends AbstractRouteFilterFactory<RemoveHeaderRouteFilterFactory.Config> implements Ordered {
 
-  public StripPrefixRouteFilterFactory() {
+  public RemoveHeaderRouteFilterFactory() {
     super(Config.class);
   }
 
   @Override
   public RouteFilter create(Config config) {
     return (exchange, filterChain) -> {
-      ServerHttpRequest request = exchange.getRequest();
-      String requestPath = request.getPath().value();
+      List<String> removeHeaders = config.getHeaders();
       return filterChain.filter(
           exchange
               .mutate()
               .request(
-                  builder -> builder.path(ExtractUtil.stripPrefix(requestPath, config.getParts())))
+                  builder ->
+                      builder.headers(httpHeaders -> removeHeaders.forEach(httpHeaders::remove)))
               .build());
     };
   }
@@ -36,8 +35,7 @@ public class StripPrefixRouteFilterFactory
   @Validated
   public static class Config {
 
-    @Min(1)
-    private int parts;
+    @NotEmpty private List<String> headers;
   }
 
   @Override
