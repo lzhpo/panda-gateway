@@ -1,5 +1,6 @@
 package com.lzhpo.panda.gateway.filter;
 
+import cn.hutool.extra.servlet.ServletUtil;
 import com.lzhpo.panda.gateway.core.route.GatewayConst;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.core.utils.ExtractUtil;
@@ -24,6 +25,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 /**
  * @author lzhpo
@@ -61,15 +65,29 @@ public class ForwardRouteFilter implements RouteFilter {
   private HttpEntity<?> buildHttpEntity(
       HttpServletRequest request, HttpMethod httpMethod, MultiValueMap<String, String> headers)
       throws IOException {
+
     final HttpEntity<?> httpEntity;
     if (ExtractUtil.requireBody(httpMethod)) {
-      CacheRequestWrapper cachingRequest = new CacheRequestWrapper(request);
-      ServletInputStream inputStream = cachingRequest.getInputStream();
-      byte[] inputStreamBodyBytes = IOUtils.toByteArray(inputStream);
-      httpEntity = new HttpEntity<>(inputStreamBodyBytes, headers);
+      CacheRequestWrapper cachedRequest = new CacheRequestWrapper(request);
+
+      if (ServletUtil.isMultipart(request)) {
+        StandardServletMultipartResolver multipartResolver = new StandardServletMultipartResolver();
+        MultipartHttpServletRequest multipart = multipartResolver.resolveMultipart(cachedRequest);
+        Map<String, MultipartFile> fileMap = multipart.getFileMap();
+
+        MultiValueMap<String, Object> multiForm = new LinkedMultiValueMap<>();
+        fileMap.forEach((name, multipartFile) -> multiForm.add(name, multipartFile.getResource()));
+        httpEntity = new HttpEntity<>(multiForm, headers);
+      } else {
+        ServletInputStream inputStream = cachedRequest.getInputStream();
+        byte[] bodyBytes = IOUtils.toByteArray(inputStream);
+        httpEntity = new HttpEntity<>(bodyBytes, headers);
+      }
+
     } else {
       httpEntity = new HttpEntity<>(null, headers);
     }
+
     return httpEntity;
   }
 
