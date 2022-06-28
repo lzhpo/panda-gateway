@@ -50,6 +50,14 @@ gateway:
         - name: StripPrefix
           args:
             parts: 2
+        - name: AddHeader
+          args:
+            headers:
+              name: Lewis
+              age: 123
+        - name: RemoveHeader
+          args:
+            headers: X-B3-TraceId, X-B3-SpanId
     - id: panda-service-sample-02
       # uri: http://localhost:9000
       uri: lb://panda-service-sample
