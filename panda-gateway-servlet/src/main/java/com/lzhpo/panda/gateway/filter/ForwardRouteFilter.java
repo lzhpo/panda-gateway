@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,7 +59,12 @@ public class ForwardRouteFilter implements RouteFilter {
     byte[] responseBody = responseEntity.getBody();
     if (Objects.nonNull(responseBody)) {
       response.setStatus(responseEntity.getStatusCodeValue());
-      response.getOutputStream().write(responseBody);
+
+      ServletOutputStream outputStream = response.getOutputStream();
+      outputStream.write(responseBody);
+      // In order to make response.isCommitted() is true
+      outputStream.flush();
+      outputStream.close();
     }
   }
 

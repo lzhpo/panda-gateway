@@ -7,6 +7,7 @@ import com.lzhpo.panda.gateway.filter.DefaultRouteFilterChain;
 import com.lzhpo.panda.gateway.filter.ForwardRouteFilter;
 import com.lzhpo.panda.gateway.filter.GlobalFilterAdapter;
 import com.lzhpo.panda.gateway.filter.RouteFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +45,8 @@ public class GatewayRequestMapping extends OncePerRequestFilter implements Order
   protected void doFilterInternal(
       @Nonnull HttpServletRequest request,
       @Nonnull HttpServletResponse response,
-      @Nonnull FilterChain filterChain) {
+      @Nonnull FilterChain filterChain)
+      throws ServletException, IOException {
 
     List<GlobalFilterAdapter> globalFilters = routeDefinitionLocator.getGlobalFilterAdapters();
     List<RouteFilter> filters = new ArrayList<>(globalFilters);
@@ -73,6 +76,10 @@ public class GatewayRequestMapping extends OncePerRequestFilter implements Order
 
     AnnotationAwareOrderComparator.sort(filters);
     DefaultRouteFilterChain.create(filters).doFilter(request, response);
+
+    if (!response.isCommitted()) {
+      filterChain.doFilter(request, response);
+    }
   }
 
   /**
