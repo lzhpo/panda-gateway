@@ -45,7 +45,7 @@ public class ForwardRouteFilter implements RouteFilter {
     String method = request.getMethod();
     HttpMethod httpMethod = HttpMethod.resolve(method);
     Assert.notNull(httpMethod, "Bad request");
-    MultiValueMap<String, String> headers = filterHeaders(request);
+    MultiValueMap<String, String> headers = buildHeaders(request);
     RouteDefinition route = (RouteDefinition) request.getAttribute(GatewayConst.ROUTE_DEFINITION);
 
     String finallyRequestPath = request.getRequestURI();
@@ -102,7 +102,7 @@ public class ForwardRouteFilter implements RouteFilter {
     return fullPath;
   }
 
-  private MultiValueMap<String, String> filterHeaders(HttpServletRequest request) {
+  private MultiValueMap<String, String> buildHeaders(HttpServletRequest request) {
     Enumeration<String> headerNames = request.getHeaderNames();
     MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
     while (headerNames.hasMoreElements()) {
