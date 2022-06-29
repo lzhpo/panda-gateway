@@ -1,5 +1,6 @@
 package com.lzhpo.panda.gateway;
 
+import com.lzhpo.panda.gateway.actuator.GatewayControllerEndpoint;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.filter.GlobalFilter;
 import com.lzhpo.panda.gateway.support.ClientIpResolver;
@@ -18,6 +19,12 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @ConditionalOnWebApplication(type = Type.SERVLET)
 public class GatewayServletAutoConfiguration {
+
+  @Bean
+  public GatewayControllerEndpoint gatewayControllerEndpoint(
+      RouteDefinitionLocator routeDefinitionLocator) {
+    return new GatewayControllerEndpoint(routeDefinitionLocator);
+  }
 
   @Bean
   @ConditionalOnMissingBean

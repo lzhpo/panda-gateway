@@ -1,6 +1,7 @@
 package com.lzhpo.panda.gateway.webflux;
 
 import com.lzhpo.panda.gateway.core.GatewayProperties;
+import com.lzhpo.panda.gateway.webflux.actuator.GatewayControllerEndpoint;
 import com.lzhpo.panda.gateway.webflux.filter.GlobalFilter;
 import com.lzhpo.panda.gateway.webflux.support.ClientIpResolver;
 import java.util.List;
@@ -17,6 +18,12 @@ import org.springframework.web.server.ServerWebExchange;
 @Configuration
 @ConditionalOnWebApplication(type = Type.REACTIVE)
 public class GatewayWebfluxAutoConfiguration {
+
+  @Bean
+  public GatewayControllerEndpoint gatewayControllerEndpoint(
+      RouteDefinitionLocator routeDefinitionLocator) {
+    return new GatewayControllerEndpoint(routeDefinitionLocator);
+  }
 
   @Bean
   public GatewayRequestHandler gatewayRequestHandler(

@@ -2,9 +2,11 @@ package com.lzhpo.panda.gateway.predicate.factory;
 
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import java.util.Arrays;
+import javax.servlet.http.Cookie;
 import javax.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -25,8 +27,10 @@ public class CookieRoutePredicateFactory
     return request -> {
       String cookie = config.getCookie();
       String regexp = config.getRegexp();
-      return Arrays.stream(request.getCookies())
-          .anyMatch(x -> x.getName().equalsIgnoreCase(cookie) && x.getValue().matches(regexp));
+      Cookie[] cookies = request.getCookies();
+      return !ObjectUtils.isEmpty(cookies)
+          && Arrays.stream(cookies)
+              .anyMatch(x -> x.getName().equalsIgnoreCase(cookie) && x.getValue().matches(regexp));
     };
   }
 
