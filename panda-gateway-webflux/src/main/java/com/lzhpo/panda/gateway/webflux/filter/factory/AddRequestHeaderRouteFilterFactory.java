@@ -10,22 +10,22 @@ import org.springframework.validation.annotation.Validated;
 /**
  * @author lzhpo
  */
-public class AddHeaderRouteFilterFactory
-    extends AbstractRouteFilterFactory<AddHeaderRouteFilterFactory.Config> implements Ordered {
+public class AddRequestHeaderRouteFilterFactory
+    extends AbstractRouteFilterFactory<AddRequestHeaderRouteFilterFactory.Config>
+    implements Ordered {
 
-  public AddHeaderRouteFilterFactory() {
+  public AddRequestHeaderRouteFilterFactory() {
     super(Config.class);
   }
 
   @Override
   public RouteFilter create(Config config) {
     return (exchange, filterChain) -> {
-      Map<String, String> addHeaders = config.getHeaders();
+      Map<String, String> headers = config.getHeaders();
       return filterChain.filter(
           exchange
               .mutate()
-              .request(
-                  builder -> builder.headers(httpHeaders -> addHeaders.forEach(httpHeaders::add)))
+              .request(builder -> builder.headers(httpHeaders -> headers.forEach(httpHeaders::add)))
               .build());
     };
   }
@@ -39,6 +39,6 @@ public class AddHeaderRouteFilterFactory
 
   @Override
   public int getOrder() {
-    return Ordered.HIGHEST_PRECEDENCE;
+    return Ordered.LOWEST_PRECEDENCE;
   }
 }

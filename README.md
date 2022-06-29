@@ -24,24 +24,24 @@ gateway:
             regexp: 123456
         - name: Method
           args:
-            methods: POST, GET
+            methods: PUT, PATCH
         - name: Query
           args:
             param: name
             regexp: Lewis
         - name: ClientIp
           args:
-            sources: 127.0.0.1, 192.168.200.111
+            sources: 192.168.200.111, 192.168.200.112
         - name: Between
           args:
-            start: 2019-04-29T00:00:00+08:00[Asia/Shanghai]
-            end: 2030-05-01T00:00:00+08:00[Asia/Shanghai]
+            start: 2012-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
+            end: 2018-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
         - name: Before
           args:
-            time: 2030-05-01T00:00:00+08:00[Asia/Shanghai]
+            time: 2015-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
         - name: After
           args:
-            time: 2019-04-29T00:00:00+08:00[Asia/Shanghai]
+            time: 2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
         - name: Weight
           args:
             group: service-sample
@@ -50,14 +50,22 @@ gateway:
         - name: StripPrefix
           args:
             parts: 2
-        - name: AddHeader
+        - name: AddRequestHeader
           args:
             headers:
               name: Lewis
               age: 123
-        - name: RemoveHeader
+        - name: RemoveRequestHeader
           args:
             headers: X-B3-TraceId, X-B3-SpanId
+        - name: AddResponseHeader
+          args:
+            headers:
+              name: Jack
+              age: 20
+        - name: RemoveResponseHeader
+          args:
+            headers: country, city
     - id: panda-service-sample-02
       # uri: http://localhost:9000
       uri: lb://panda-service-sample
@@ -71,4 +79,13 @@ gateway:
         - name: StripPrefix
           args:
             parts: 2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
 ```

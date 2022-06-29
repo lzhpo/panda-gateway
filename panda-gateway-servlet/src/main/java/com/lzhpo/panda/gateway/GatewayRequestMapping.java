@@ -38,7 +38,7 @@ public class GatewayRequestMapping extends OncePerRequestFilter implements Order
 
   @Override
   public int getOrder() {
-    return Ordered.HIGHEST_PRECEDENCE;
+    return Ordered.LOWEST_PRECEDENCE;
   }
 
   @Override

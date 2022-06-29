@@ -2,7 +2,7 @@ package com.lzhpo.panda.gateway.filter.factory;
 
 import com.lzhpo.panda.gateway.filter.RouteFilter;
 import com.lzhpo.panda.gateway.support.ModifyHeaderRequestWrapper;
-import java.util.Map;
+import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.springframework.core.Ordered;
@@ -11,18 +11,19 @@ import org.springframework.validation.annotation.Validated;
 /**
  * @author lzhpo
  */
-public class AddHeaderRouteFilterFactory
-    extends AbstractRouteFilterFactory<AddHeaderRouteFilterFactory.Config> implements Ordered {
+public class RemoveRequestHeaderRouteFilterFactory
+    extends AbstractRouteFilterFactory<RemoveRequestHeaderRouteFilterFactory.Config>
+    implements Ordered {
 
-  public AddHeaderRouteFilterFactory() {
-    super(AddHeaderRouteFilterFactory.Config.class);
+  public RemoveRequestHeaderRouteFilterFactory() {
+    super(RemoveRequestHeaderRouteFilterFactory.Config.class);
   }
 
   @Override
   public RouteFilter create(Config config) {
     return (request, response, chain) -> {
-      Map<String, String> addHeaders = config.getHeaders();
-      chain.doFilter(ModifyHeaderRequestWrapper.addHeaders(request, addHeaders), response);
+      List<String> headers = config.getHeaders();
+      chain.doFilter(ModifyHeaderRequestWrapper.removeHeaders(request, headers), response);
     };
   }
 
@@ -30,11 +31,11 @@ public class AddHeaderRouteFilterFactory
   @Validated
   public static class Config {
 
-    @NotEmpty private Map<String, String> headers;
+    @NotEmpty private List<String> headers;
   }
 
   @Override
   public int getOrder() {
-    return Ordered.HIGHEST_PRECEDENCE;
+    return Ordered.LOWEST_PRECEDENCE;
   }
 }

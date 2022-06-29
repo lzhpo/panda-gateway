@@ -44,7 +44,11 @@ public interface ConfigFactory<T> {
    * @return created config
    */
   default T getConfig(ComponentDefinition componentDefinition) {
-    Assert.notNull(componentDefinition, "componentDefinition cannot null.");
+    String currentComponentName = getClass().getSimpleName();
+
+    Assert.notNull(
+        componentDefinition,
+        StrUtil.format("[{}] componentDefinition cannot null.", currentComponentName));
     Class<T> configClass = getConfigClass();
     Map<String, Object> args = componentDefinition.getArgs();
 
@@ -52,11 +56,12 @@ public interface ConfigFactory<T> {
     try {
       config = BeanUtil.toBean(args, configClass);
     } catch (Exception e) {
-      throw new GatewayCustomException("args configuration is wrong", e);
+      throw new GatewayCustomException(
+          StrUtil.format("[{}] args configuration is wrong", currentComponentName), e);
     }
 
     ValidateUtil.validate(
-        config, errorMsg -> StrUtil.format("[{}] {}", getClass().getSimpleName(), errorMsg));
+        config, errorMsg -> StrUtil.format("[{}] {}", currentComponentName, errorMsg));
     return config;
   }
 }

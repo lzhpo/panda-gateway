@@ -31,7 +31,7 @@ public class StripPrefixRouteFilterFactory
 
   @Override
   public int getOrder() {
-    return Ordered.HIGHEST_PRECEDENCE;
+    return Ordered.LOWEST_PRECEDENCE;
   }
 
   private HttpServletRequest newRequest(HttpServletRequest request, Integer parts) {

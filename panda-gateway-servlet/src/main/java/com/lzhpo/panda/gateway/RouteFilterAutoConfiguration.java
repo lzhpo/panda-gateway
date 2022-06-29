@@ -1,7 +1,9 @@
 package com.lzhpo.panda.gateway;
 
-import com.lzhpo.panda.gateway.filter.factory.AddHeaderRouteFilterFactory;
-import com.lzhpo.panda.gateway.filter.factory.RemoveHeaderRouteFilterFactory;
+import com.lzhpo.panda.gateway.filter.factory.AddRequestHeaderRouteFilterFactory;
+import com.lzhpo.panda.gateway.filter.factory.AddResponseHeaderRouteFilterFactory;
+import com.lzhpo.panda.gateway.filter.factory.RemoveRequestHeaderRouteFilterFactory;
+import com.lzhpo.panda.gateway.filter.factory.RemoveResponseHeaderRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.StripPrefixRouteFilterFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
@@ -21,12 +23,22 @@ public class RouteFilterAutoConfiguration {
   }
 
   @Bean
-  public AddHeaderRouteFilterFactory addHeaderRouteFilterFactory() {
-    return new AddHeaderRouteFilterFactory();
+  public AddRequestHeaderRouteFilterFactory addRequestHeaderRouteFilterFactory() {
+    return new AddRequestHeaderRouteFilterFactory();
   }
 
   @Bean
-  public RemoveHeaderRouteFilterFactory removeHeaderRouteFilterFactory() {
-    return new RemoveHeaderRouteFilterFactory();
+  public RemoveRequestHeaderRouteFilterFactory removeRequestHeaderRouteFilterFactory() {
+    return new RemoveRequestHeaderRouteFilterFactory();
+  }
+
+  @Bean
+  public AddResponseHeaderRouteFilterFactory addResponseHeaderRouteFilterFactory() {
+    return new AddResponseHeaderRouteFilterFactory();
+  }
+
+  @Bean
+  public RemoveResponseHeaderRouteFilterFactory removeResponseHeaderRouteFilterFactory() {
+    return new RemoveResponseHeaderRouteFilterFactory();
   }
 }

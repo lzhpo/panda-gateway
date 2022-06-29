@@ -74,13 +74,11 @@ public class ModifyHeaderRequestWrapper extends HttpServletRequestWrapper {
       return null;
     }
 
+    Set<String> finalHeaders = new HashSet<>(addHeaders.values());
     Enumeration<String> headers = super.getHeaders(name);
-    Set<String> finalHeaders = new HashSet<>(addHeaders.keySet());
-    if (addHeaders.containsKey(name)) {
-      while (headers.hasMoreElements()) {
-        String header = headers.nextElement();
-        finalHeaders.add(header);
-      }
+    while (headers.hasMoreElements()) {
+      String header = headers.nextElement();
+      finalHeaders.add(header);
     }
 
     return Collections.enumeration(finalHeaders);
@@ -88,8 +86,8 @@ public class ModifyHeaderRequestWrapper extends HttpServletRequestWrapper {
 
   @Override
   public Enumeration<String> getHeaderNames() {
-    Enumeration<String> headerNames = super.getHeaderNames();
     List<String> finalHeaderNames = new ArrayList<>(addHeaders.keySet());
+    Enumeration<String> headerNames = super.getHeaderNames();
     while (headerNames.hasMoreElements()) {
       String headerName = headerNames.nextElement();
       if (!isRemoveHeader(headerName)) {
