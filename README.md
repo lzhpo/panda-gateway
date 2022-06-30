@@ -1,3 +1,49 @@
+## TODO
+1. [ ] `AddRequestParameterRouteFilterFactory`
+    ```java
+    @Data
+    @Validated
+    public class Config {
+   
+      @NotBlank
+      private String name;
+   
+      @NotBlank
+      private String value;
+    }
+    ```
+2. [ ] `RemoveRequestParameterRouteFilterFactory`
+    ```java
+    @Data
+    @Validated
+    public class Config {
+   
+      @NotEmpty
+      private List<String> names;
+    }
+    ```
+3. [ ] `RedirectRouteFilterFactory`
+    ```java
+    @Data
+    @Validated
+    public class Config {
+      
+      @NotEmpty
+      private String status;
+      
+      @NotEmpty
+      private String url;
+    }
+    ```
+5. [ ] `RequestRateLimiterFilterFactory`
+    ```java
+    @Data
+    @Validated
+    public class Config {
+      
+      // ...
+    }
+    ```
 
 ## Quick start
 

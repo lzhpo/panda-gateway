@@ -1,7 +1,6 @@
 package com.lzhpo.panda.gateway.filter.factory;
 
 import com.lzhpo.panda.gateway.filter.RouteFilter;
-import com.lzhpo.panda.gateway.support.ModifyHeaderResponseWrapper;
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -19,12 +18,18 @@ public class RemoveResponseHeaderRouteFilterFactory
     super(RemoveResponseHeaderRouteFilterFactory.Config.class);
   }
 
+  /**
+   * {@link org.apache.catalina.connector.Response#setHeader(java.lang.String, java.lang.String)}
+   *
+   * @param config config
+   * @return {@link RouteFilter}
+   */
   @Override
   public RouteFilter create(Config config) {
     return (request, response, chain) -> {
       List<String> headers = config.getHeaders();
       // TODO: cannot remove response header
-      chain.doFilter(request, ModifyHeaderResponseWrapper.removeHeaders(response, headers));
+      chain.doFilter(request, response);
     };
   }
 
