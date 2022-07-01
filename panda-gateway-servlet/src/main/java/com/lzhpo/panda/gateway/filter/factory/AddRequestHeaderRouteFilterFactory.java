@@ -1,5 +1,6 @@
 package com.lzhpo.panda.gateway.filter.factory;
 
+import cn.hutool.core.map.CaseInsensitiveMap;
 import com.lzhpo.panda.gateway.filter.RouteFilter;
 import com.lzhpo.panda.gateway.support.ModifyHeaderRequestWrapper;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class AddRequestHeaderRouteFilterFactory
   @Override
   public RouteFilter create(Config config) {
     return (request, response, chain) -> {
-      Map<String, String> headers = config.getHeaders();
+      Map<String, String> headers = new CaseInsensitiveMap<>(config.getHeaders());
       chain.doFilter(ModifyHeaderRequestWrapper.addHeaders(request, headers), response);
     };
   }
