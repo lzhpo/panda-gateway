@@ -52,15 +52,27 @@ gateway:
               age: 123
         - name: RemoveRequestHeader
           args:
-            headers: X-B3-TraceId, X-B3-SpanId
+            headers:
+              X-B3-TraceId: 123
+              X-B3-SpanId: 456
         - name: AddResponseHeader
           args:
             headers:
               name: Jack
               age: 20
-        - name: RemoveResponseHeader
+#        - name: RemoveResponseHeader
+#          args:
+#            headers: country, city
+        - name: AddRequestParameter
           args:
-            headers: country, city
+            parameters:
+              name: Jerry
+              age: 20
+        - name: RemoveRequestParameter
+          args:
+            parameters:
+              age: 20
+              sex: 男
     - id: panda-service-sample-02
       # uri: http://localhost:9000
       uri: lb://panda-service-sample

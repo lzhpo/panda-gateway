@@ -1,7 +1,6 @@
 package com.lzhpo.panda.gateway.core.route;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
 import com.lzhpo.panda.gateway.core.exception.GatewayCustomException;
 import com.lzhpo.panda.gateway.core.utils.ValidateUtil;
 import java.util.Map;
@@ -48,7 +47,7 @@ public interface ConfigFactory<T> {
 
     Assert.notNull(
         componentDefinition,
-        StrUtil.format("[{}] componentDefinition cannot null.", currentComponentName));
+        String.format("[%s] componentDefinition cannot null.", currentComponentName));
     Class<T> configClass = getConfigClass();
     Map<String, Object> args = componentDefinition.getArgs();
 
@@ -57,11 +56,11 @@ public interface ConfigFactory<T> {
       config = BeanUtil.toBean(args, configClass);
     } catch (Exception e) {
       throw new GatewayCustomException(
-          StrUtil.format("[{}] args configuration is wrong", currentComponentName), e);
+          String.format("[%s] args configuration is wrong.", currentComponentName), e);
     }
 
     ValidateUtil.validate(
-        config, errorMsg -> StrUtil.format("[{}] {}", currentComponentName, errorMsg));
+        config, errorMsg -> String.format("[%s] %s", currentComponentName, errorMsg));
     return config;
   }
 }

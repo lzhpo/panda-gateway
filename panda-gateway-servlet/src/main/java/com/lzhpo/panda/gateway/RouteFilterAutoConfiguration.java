@@ -1,8 +1,10 @@
 package com.lzhpo.panda.gateway;
 
 import com.lzhpo.panda.gateway.filter.factory.AddRequestHeaderRouteFilterFactory;
+import com.lzhpo.panda.gateway.filter.factory.AddRequestParameterRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.AddResponseHeaderRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.RemoveRequestHeaderRouteFilterFactory;
+import com.lzhpo.panda.gateway.filter.factory.RemoveRequestParameterRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.RemoveResponseHeaderRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.StripPrefixRouteFilterFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -16,6 +18,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnWebApplication(type = Type.SERVLET)
 public class RouteFilterAutoConfiguration {
+
+  @Bean
+  public AddRequestParameterRouteFilterFactory addRequestParameterRouteFilterFactory() {
+    return new AddRequestParameterRouteFilterFactory();
+  }
+
+  @Bean
+  public RemoveRequestParameterRouteFilterFactory removeRequestParameterRouteFilterFactory() {
+    return new RemoveRequestParameterRouteFilterFactory();
+  }
 
   @Bean
   public StripPrefixRouteFilterFactory stripPrefixFilterFactory() {

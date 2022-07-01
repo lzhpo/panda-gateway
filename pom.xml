@@ -27,7 +27,7 @@
 
   <properties>
     <java.version>11</java.version>
-    <hutool.version>5.8.3</hutool.version>
+    <hutool.version>5.8.4</hutool.version>
     <guava.version>31.1-jre</guava.version>
     <commons-io.version>2.11.0</commons-io.version>
     <spring-cloud.version>2021.0.1</spring-cloud.version>
