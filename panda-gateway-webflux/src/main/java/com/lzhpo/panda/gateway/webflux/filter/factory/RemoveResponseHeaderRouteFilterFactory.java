@@ -1,7 +1,8 @@
 package com.lzhpo.panda.gateway.webflux.filter.factory;
 
 import com.lzhpo.panda.gateway.webflux.filter.RouteFilter;
-import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.springframework.core.Ordered;
@@ -22,9 +23,15 @@ public class RemoveResponseHeaderRouteFilterFactory
   @Override
   public RouteFilter create(Config config) {
     return (exchange, filterChain) -> {
-      List<String> headers = config.getHeaders();
+      Map<String, String> headers = config.getHeaders();
       HttpHeaders respHeaders = exchange.getResponse().getHeaders();
-      headers.forEach(respHeaders::remove);
+      headers.forEach(
+          (name, regexp) -> {
+            String headerValue = respHeaders.getFirst(name);
+            if (Objects.nonNull(headerValue) && headerValue.matches(regexp)) {
+              respHeaders.remove(name);
+            }
+          });
       return filterChain.filter(exchange);
     };
   }
@@ -33,7 +40,15 @@ public class RemoveResponseHeaderRouteFilterFactory
   @Validated
   public static class Config {
 
-    @NotEmpty private List<String> headers;
+    /**
+     * Request headers to delete
+     *
+     * <pre>
+     * key: response header name
+     * value: regexp expression
+     * </pre>
+     */
+    @NotEmpty private Map<String, String> headers;
   }
 
   @Override

@@ -1,50 +1,3 @@
-## TODO
-1. [ ] `AddRequestParameterRouteFilterFactory`
-    ```java
-    @Data
-    @Validated
-    public class Config {
-   
-      @NotBlank
-      private String name;
-   
-      @NotBlank
-      private String value;
-    }
-    ```
-2. [ ] `RemoveRequestParameterRouteFilterFactory`
-    ```java
-    @Data
-    @Validated
-    public class Config {
-   
-      @NotEmpty
-      private List<String> names;
-    }
-    ```
-3. [ ] `RedirectRouteFilterFactory`
-    ```java
-    @Data
-    @Validated
-    public class Config {
-      
-      @NotEmpty
-      private String status;
-      
-      @NotEmpty
-      private String url;
-    }
-    ```
-5. [ ] `RequestRateLimiterFilterFactory`
-    ```java
-    @Data
-    @Validated
-    public class Config {
-      
-      // ...
-    }
-    ```
-
 ## Quick start
 
 `application.yml` example: 
@@ -103,15 +56,23 @@ gateway:
               age: 123
         - name: RemoveRequestHeader
           args:
-            headers: X-B3-TraceId, X-B3-SpanId
+            headers:
+              X-B3-TraceId: 123
+              X-B3-SpanId: 456
         - name: AddResponseHeader
           args:
             headers:
               name: Jack
               age: 20
-        - name: RemoveResponseHeader
+        - name: AddRequestParameter
           args:
-            headers: country, city
+            parameters:
+              userId: 123
+        - name: RemoveRequestParameter
+          args:
+            parameters:
+              traceId: 123
+              spanId: 456
     - id: panda-service-sample-02
       # uri: http://localhost:9000
       uri: lb://panda-service-sample

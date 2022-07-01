@@ -37,10 +37,10 @@ gateway:
         - name: After
           args:
             time: 2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
-#        - name: Weight
-#          args:
-#            group: service-sample
-#            weight: 8
+        - name: Weight
+          args:
+            group: service-sample
+            weight: 8
       filters:
         - name: StripPrefix
           args:
@@ -60,28 +60,24 @@ gateway:
             headers:
               name: Jack
               age: 20
-#        - name: RemoveResponseHeader
-#          args:
-#            headers: country, city
         - name: AddRequestParameter
           args:
             parameters:
-              name: Jerry
-              age: 20
+              userId: 123
         - name: RemoveRequestParameter
           args:
             parameters:
-              age: 20
-              sex: 男
+              traceId: 123
+              spanId: 456
     - id: panda-service-sample-02
       # uri: http://localhost:9000
       uri: lb://panda-service-sample
       order: 2
-#      predicates:
-#        - name: Weight
-#          args:
-#            group: service-sample
-#            weight: 2
+      predicates:
+        - name: Weight
+          args:
+            group: service-sample
+            weight: 2
       filters:
         - name: StripPrefix
           args:
@@ -95,4 +91,3 @@ management:
   endpoint:
     health:
       show-details: always
-
