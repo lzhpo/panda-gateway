@@ -2,11 +2,21 @@ package com.lzhpo.panda.gateway.filter.factory;
 
 import cn.hutool.core.map.CaseInsensitiveMap;
 import com.lzhpo.panda.gateway.filter.RouteFilter;
-import com.lzhpo.panda.gateway.support.ModifyHeaderRequestWrapper;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.springframework.core.Ordered;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -22,9 +32,53 @@ public class AddRequestHeaderRouteFilterFactory
 
   @Override
   public RouteFilter create(Config config) {
-    return (request, response, chain) -> {
-      Map<String, String> headers = new CaseInsensitiveMap<>(config.getHeaders());
-      chain.doFilter(ModifyHeaderRequestWrapper.addHeaders(request, headers), response);
+    return (request, response, chain) ->
+        chain.doFilter(modifyRequestIfNecessary(config, request), response);
+  }
+
+  private HttpServletRequestWrapper modifyRequestIfNecessary(
+      Config config, HttpServletRequest request) {
+    Map<String, String> headers = new CaseInsensitiveMap<>(config.getHeaders());
+    return new HttpServletRequestWrapper(request) {
+      @Override
+      public String getHeader(String name) {
+        return Optional.ofNullable(headers.get(name))
+            .filter(StringUtils::hasText)
+            .orElseGet(() -> super.getHeader(name));
+      }
+
+      @Override
+      public Enumeration<String> getHeaders(String name) {
+        Set<String> finalHeaders = new HashSet<>();
+
+        Enumeration<String> originalHeaders = super.getHeaders(name);
+        while (originalHeaders.hasMoreElements()) {
+          String header = originalHeaders.nextElement();
+          finalHeaders.add(header);
+        }
+
+        String value = headers.get(name);
+        if (Objects.nonNull(value)) {
+          finalHeaders.add(value);
+        }
+
+        return Collections.enumeration(finalHeaders);
+      }
+
+      @Override
+      public Enumeration<String> getHeaderNames() {
+        List<String> finalHeaderNames = new ArrayList<>();
+
+        Enumeration<String> headerNames = super.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+          String headerName = headerNames.nextElement();
+          finalHeaderNames.add(headerName);
+        }
+
+        headers.forEach((key, value) -> finalHeaderNames.add(key));
+
+        return Collections.enumeration(finalHeaderNames);
+      }
     };
   }
 

@@ -1,7 +1,6 @@
 package com.lzhpo.panda.gateway.filter.factory;
 
 import com.lzhpo.panda.gateway.filter.RouteFilter;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
@@ -31,13 +30,12 @@ public class RemoveRequestParameterRouteFilterFactory
 
   private HttpServletRequestWrapper modifyRequestIfNecessary(
       HttpServletRequest request, Config config) {
+    Map<String, String> parameters = config.getParameters();
     return new HttpServletRequestWrapper(request) {
 
       @Override
       public Map<String, String[]> getParameterMap() {
         Map<String, String[]> parameterMap = super.getParameterMap();
-        Map<String, String[]> finalParameters = new HashMap<>(parameterMap);
-        Map<String, String> parameters = config.getParameters();
 
         for (Entry<String, String> entry : parameters.entrySet()) {
           String name = entry.getKey();
@@ -45,11 +43,11 @@ public class RemoveRequestParameterRouteFilterFactory
 
           String[] parameterValues = parameterMap.get(name);
           if (!ObjectUtils.isEmpty(parameterValues) && parameterValues[0].matches(regexp)) {
-            finalParameters.remove(name);
+            parameterMap.remove(name);
           }
         }
 
-        return finalParameters;
+        return parameterMap;
       }
     };
   }

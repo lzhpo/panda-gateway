@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
@@ -42,7 +43,7 @@ public class RemoveRequestParameterRouteFilterFactory
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.putAll(super.getQueryParams());
         parameters.forEach((name, value) -> queryParams.remove(name));
-        return queryParams;
+        return CollectionUtils.unmodifiableMultiValueMap(queryParams);
       }
     };
   }
