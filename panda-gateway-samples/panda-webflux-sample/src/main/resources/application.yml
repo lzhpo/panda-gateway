@@ -65,6 +65,11 @@ gateway:
             headers:
               name: Jack
               age: 20
+        - name: RemoveResponseHeader
+          args:
+            headers:
+              country: China
+              city: Guangzhou
         - name: AddRequestParameter
           args:
             parameters:

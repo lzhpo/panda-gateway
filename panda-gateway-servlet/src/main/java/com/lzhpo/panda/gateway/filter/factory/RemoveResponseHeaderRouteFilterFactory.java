@@ -1,7 +1,7 @@
 package com.lzhpo.panda.gateway.filter.factory;
 
 import com.lzhpo.panda.gateway.filter.RouteFilter;
-import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.springframework.core.Ordered;
@@ -19,7 +19,12 @@ public class RemoveResponseHeaderRouteFilterFactory
   }
 
   /**
-   * {@link org.apache.catalina.connector.Response#setHeader(java.lang.String, java.lang.String)}
+   * Some notes reference:
+   *
+   * <pre>
+   * - Tomcat: {@link org.apache.catalina.connector.Response#setHeader}
+   * - Undertow: {@link io.undertow.servlet.spec.HttpServletResponseImpl#setHeader}
+   * </pre>
    *
    * @param config config
    * @return {@link RouteFilter}
@@ -27,8 +32,16 @@ public class RemoveResponseHeaderRouteFilterFactory
   @Override
   public RouteFilter create(Config config) {
     return (request, response, chain) -> {
-      List<String> configHeaders = config.getHeaders();
-      // TODO: cannot remove response header
+      Map<String, String> configHeaders = config.getHeaders();
+      configHeaders.forEach(
+          (configHeader, configRegexp) -> {
+            String respHeaderValue = response.getHeader(configHeader);
+            if (respHeaderValue.matches(configRegexp)) {
+              // Tomcat doesn't support set the response header value is null, but undertow can do
+              // it.
+              response.setHeader(configHeader, null);
+            }
+          });
       chain.doFilter(request, response);
     };
   }
@@ -37,7 +50,7 @@ public class RemoveResponseHeaderRouteFilterFactory
   @Validated
   public static class Config {
 
-    @NotEmpty private List<String> headers;
+    @NotEmpty private Map<String, String> headers;
   }
 
   @Override

@@ -250,8 +250,8 @@ gateway:
         - name: RemoveResponseHeader
           args:
             headers:
-              name: Jack
-              age: 20
+              country: China
+              city: Guangzhou
 ```
 
 ### How to implement route filter?

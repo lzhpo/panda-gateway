@@ -6,7 +6,7 @@ gateway:
       uri: lb://panda-service-sample
       order: 1
       enhances:
-        predicates-relation: and
+        predicates-relation: or
       predicates:
         - name: Path
           args:
@@ -65,6 +65,11 @@ gateway:
             headers:
               name: Jack
               age: 20
+        - name: RemoveResponseHeader
+          args:
+            headers:
+              country: China
+              city: Guangzhou
         - name: AddRequestParameter
           args:
             parameters:
