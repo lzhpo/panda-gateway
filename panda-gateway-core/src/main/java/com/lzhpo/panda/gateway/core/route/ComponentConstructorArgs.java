@@ -1,6 +1,5 @@
-package com.lzhpo.panda.gateway.core;
+package com.lzhpo.panda.gateway.core.route;
 
-import com.lzhpo.panda.gateway.core.route.ComponentDefinition;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
