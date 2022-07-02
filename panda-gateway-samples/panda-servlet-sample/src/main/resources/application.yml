@@ -6,41 +6,44 @@ gateway:
       uri: lb://panda-service-sample
       order: 1
       predicates:
-        - name: Path
-          args:
-            paths: /api/service-sample/**, /api/sample/**
-        - name: Cookie
-          args:
-            cookies:
-              deviceId: 123456
-        - name: Header
-          args:
-            headers:
-              X-B3-TraceId: 123456
-        - name: Method
-          args:
-            methods: PUT, PATCH
-        - name: Parameter
-          args:
-            parameters:
-              nickName: Lewis
-        - name: ClientIp
-          args:
-            clientIps: 192.168.200.111, 192.168.200.112
+#        - name: Path
+#          args:
+#            paths: /api/service-sample/**, /api/sample/**
+#        - name: Cookie
+#          args:
+#            cookies:
+#              deviceId: 123456
+#        - name: Header
+#          args:
+#            headers:
+#              X-B3-TraceId: 123456
+#        - name: Method
+#          args:
+#            methods: PUT, PATCH
+#        - name: Parameter
+#          args:
+#            parameters:
+#              nickName: Lewis
+#        - name: ClientIp
+#          args:
+#            clientIps: 192.168.200.111, 192.168.200.112
         - name: Between
           args:
-            start: 2012-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
-            end: 2018-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
-        - name: Before
-          args:
-            time: 2015-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
-        - name: After
-          args:
-            time: 2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
-        - name: Weight
-          args:
-            group: service-sample
-            weight: 8
+            times:
+              - start: 2012-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
+                end: 2018-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
+              - start: 2020-10-01T01:29:48.0875598+08:00[Asia/Shanghai]
+                end: 2030-10-01T01:29:48.0875598+08:00[Asia/Shanghai]
+#        - name: Before
+#          args:
+#            time: 2015-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
+#        - name: After
+#          args:
+#            time: 2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
+#        - name: Weight
+#          args:
+#            group: service-sample
+#            weight: 8
       filters:
         - name: StripPrefix
           args:
@@ -73,11 +76,11 @@ gateway:
       # uri: http://localhost:9000
       uri: lb://panda-service-sample
       order: 2
-      predicates:
-        - name: Weight
-          args:
-            group: service-sample
-            weight: 2
+#      predicates:
+#        - name: Weight
+#          args:
+#            group: service-sample
+#            weight: 2
       filters:
         - name: StripPrefix
           args:

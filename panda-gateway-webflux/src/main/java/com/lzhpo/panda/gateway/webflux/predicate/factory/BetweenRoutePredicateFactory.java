@@ -1,11 +1,11 @@
 package com.lzhpo.panda.gateway.webflux.predicate.factory;
 
+import com.lzhpo.panda.gateway.core.BetweenZonedDateTimeConfig;
+import com.lzhpo.panda.gateway.core.BetweenZonedDateTimeConfig.ZonedDateTimePair;
 import com.lzhpo.panda.gateway.webflux.predicate.RoutePredicate;
 import java.time.ZonedDateTime;
-import javax.validation.constraints.NotNull;
-import lombok.Data;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 
 /**
  * Route predicate by between time.
@@ -14,28 +14,24 @@ import org.springframework.validation.annotation.Validated;
  */
 @Slf4j
 public class BetweenRoutePredicateFactory
-    extends AbstractRoutePredicateFactory<BetweenRoutePredicateFactory.Config> {
+    extends AbstractRoutePredicateFactory<BetweenZonedDateTimeConfig> {
 
   public BetweenRoutePredicateFactory() {
-    super(Config.class);
+    super(BetweenZonedDateTimeConfig.class);
   }
 
   @Override
-  public RoutePredicate create(Config config) {
+  public RoutePredicate create(BetweenZonedDateTimeConfig config) {
     return serverWebExchange -> {
       ZonedDateTime nowTime = ZonedDateTime.now();
-      ZonedDateTime startTime = config.getStart();
-      ZonedDateTime endTime = config.getEnd();
-      return nowTime.isAfter(startTime) && nowTime.isBefore(endTime);
+      List<ZonedDateTimePair> times = config.getTimes();
+      return times.stream()
+          .anyMatch(
+              zonedDateTimePair -> {
+                ZonedDateTime startTime = zonedDateTimePair.getStart();
+                ZonedDateTime endTime = zonedDateTimePair.getEnd();
+                return nowTime.isAfter(startTime) && nowTime.isBefore(endTime);
+              });
     };
-  }
-
-  @Data
-  @Validated
-  public static class Config {
-
-    @NotNull private ZonedDateTime start;
-
-    @NotNull private ZonedDateTime end;
   }
 }

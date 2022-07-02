@@ -1,9 +1,15 @@
 package com.lzhpo.panda.gateway.core.route;
 
+import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ReflectUtil;
+import com.lzhpo.panda.gateway.core.ComponentConstructorArgs;
 import com.lzhpo.panda.gateway.core.exception.GatewayCustomException;
 import com.lzhpo.panda.gateway.core.utils.ValidateUtil;
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 
@@ -50,10 +56,20 @@ public interface ConfigFactory<T> {
         String.format("[%s] componentDefinition cannot null.", currentComponentName));
     Class<T> configClass = getConfigClass();
     Map<String, Object> args = componentDefinition.getArgs();
-
     T config;
+
     try {
-      config = BeanUtil.toBean(args, configClass);
+      Constructor<T> constructor =
+          Arrays.stream(ReflectUtil.getConstructors(configClass))
+              .filter(x -> AnnotationUtil.hasAnnotation(x, ComponentConstructorArgs.class))
+              .findAny()
+              .orElse(null);
+
+      if (Objects.nonNull(constructor)) {
+        config = constructor.newInstance(args);
+      } else {
+        config = BeanUtil.toBean(args, configClass);
+      }
     } catch (Exception e) {
       throw new GatewayCustomException(
           String.format("[%s] args configuration is wrong.", currentComponentName), e);
