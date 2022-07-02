@@ -46,13 +46,15 @@ public class WeightRoutePredicateFactory
       routes.forEach(
           route -> {
             List<ComponentDefinition> predicateDefinitions = route.getPredicates();
-            predicateDefinitions.forEach(
-                predicateDefinition -> {
-                  Config weightConfig = getConfig(predicateDefinition);
-                  if (weightConfig.getGroup().equals(group)) {
-                    routeWeightRandom.add(new WeightObj<>(route, weightConfig.getWeight()));
-                  }
-                });
+            predicateDefinitions.stream()
+                .filter(predicateDefinition -> predicateDefinition.getName().equals(currentName()))
+                .forEach(
+                    predicateDefinition -> {
+                      Config weightConfig = getConfig(predicateDefinition);
+                      if (weightConfig.getGroup().equals(group)) {
+                        routeWeightRandom.add(new WeightObj<>(route, weightConfig.getWeight()));
+                      }
+                    });
           });
 
       RouteDefinition randomRoute = routeWeightRandom.next();
