@@ -1,6 +1,9 @@
 package com.lzhpo.panda.gateway.webflux;
 
+import com.lzhpo.panda.gateway.core.exception.GatewayCustomException;
+import com.lzhpo.panda.gateway.core.route.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.route.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.RelationType;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import java.util.List;
 import java.util.Optional;
@@ -51,32 +54,53 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
                         })));
   }
 
+  /**
+   * Execute route predicate, in order to find match route.
+   *
+   * @param exchange {@link ServerWebExchange}
+   * @return matched route
+   */
   private Mono<RouteDefinition> lookupRoute(ServerWebExchange exchange) {
     List<RouteDefinition> routes = routeDefinitionLocator.getRoutes();
     return routes.stream()
-        .peek(route -> exchange.getAttributes().put(GatewayConst.ROUTE_DEFINITION, route))
         .filter(
-            route ->
-                route.getPredicates().stream()
-                    .map(
-                        predicateDefinition -> {
-                          String predicateName = predicateDefinition.getName();
-                          return Optional.ofNullable(
-                                  routeDefinitionLocator.getPredicateFactory(predicateName))
-                              .map(
-                                  predicateFactory ->
-                                      predicateFactory.create(predicateDefinition).test(exchange))
-                              .orElseGet(
-                                  () -> {
-                                    log.error("Not found [{}] predicateFactory.", predicateName);
-                                    return false;
-                                  });
-                        })
-                    .filter(Boolean.TRUE::equals)
-                    .findAny()
-                    .orElse(false))
+            route -> {
+              exchange.getAttributes().put(GatewayConst.ROUTE_DEFINITION, route);
+              RelationType relationType = route.getEnhances().getPredicatesRelation();
+              switch (relationType) {
+                case AND:
+                  return route.getPredicates().stream()
+                      .allMatch(
+                          predicateDefinition -> testPredicate(exchange, predicateDefinition));
+                case OR:
+                  return route.getPredicates().stream()
+                      .anyMatch(
+                          predicateDefinition -> testPredicate(exchange, predicateDefinition));
+                default:
+                  throw new GatewayCustomException("Not support relation type " + relationType);
+              }
+            })
         .findFirst()
         .map(Mono::just)
         .orElseGet(Mono::empty);
+  }
+
+  /**
+   * Execute predicate
+   *
+   * @param exchange {@link ServerWebExchange}
+   * @param predicateDefinition {@link ComponentDefinition}
+   * @return test predicate result
+   */
+  private Boolean testPredicate(
+      ServerWebExchange exchange, ComponentDefinition predicateDefinition) {
+    String predicateName = predicateDefinition.getName();
+    return Optional.ofNullable(routeDefinitionLocator.getPredicateFactory(predicateName))
+        .map(predicateFactory -> predicateFactory.create(predicateDefinition).test(exchange))
+        .orElseGet(
+            () -> {
+              log.error("Not found [{}] predicateFactory.", predicateName);
+              return false;
+            });
   }
 }
