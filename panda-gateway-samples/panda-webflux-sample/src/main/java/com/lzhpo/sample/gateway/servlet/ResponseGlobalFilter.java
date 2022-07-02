@@ -1,7 +1,7 @@
 package com.lzhpo.sample.gateway.servlet;
 
-import com.lzhpo.panda.gateway.webflux.filter.DefaultRouteFilterChain;
-import com.lzhpo.panda.gateway.webflux.filter.GlobalFilter;
+import com.lzhpo.panda.gateway.filter.DefaultRouteFilterChain;
+import com.lzhpo.panda.gateway.filter.GlobalFilter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
