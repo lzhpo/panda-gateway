@@ -37,8 +37,7 @@ public class RemoveResponseHeaderRouteFilterFactory
           (configHeader, configRegexp) -> {
             String respHeaderValue = response.getHeader(configHeader);
             if (respHeaderValue.matches(configRegexp)) {
-              // Tomcat doesn't support set the response header value is null, but undertow can do
-              // it.
+              // Tomcat doesn't support set response header value is null, but undertow can.
               response.setHeader(configHeader, null);
             }
           });
