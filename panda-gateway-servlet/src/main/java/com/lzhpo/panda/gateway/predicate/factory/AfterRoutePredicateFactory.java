@@ -23,9 +23,9 @@ public class AfterRoutePredicateFactory
   @Override
   public RoutePredicate create(Config config) {
     return request -> {
-      ZonedDateTime now = ZonedDateTime.now();
-      ZonedDateTime zonedDateTime = config.getTime();
-      return now.isAfter(zonedDateTime);
+      ZonedDateTime nowTime = ZonedDateTime.now();
+      ZonedDateTime afterTime = config.getTime();
+      return nowTime.isAfter(afterTime);
     };
   }
 

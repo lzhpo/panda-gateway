@@ -23,9 +23,10 @@ public class MethodRoutePredicateFactory
   @Override
   public RoutePredicate create(Config config) {
     return request -> {
-      List<String> methods = config.getMethods();
-      String method = request.getMethod();
-      return methods.stream().anyMatch(x -> x.equalsIgnoreCase(method));
+      String requestMethod = request.getMethod();
+      List<String> configMethods = config.getMethods();
+      return configMethods.stream()
+          .anyMatch(configMethod -> configMethod.equalsIgnoreCase(requestMethod));
     };
   }
 

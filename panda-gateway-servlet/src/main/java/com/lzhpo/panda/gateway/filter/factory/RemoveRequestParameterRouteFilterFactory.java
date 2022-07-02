@@ -30,24 +30,25 @@ public class RemoveRequestParameterRouteFilterFactory
 
   private HttpServletRequestWrapper modifyRequestIfNecessary(
       HttpServletRequest request, Config config) {
-    Map<String, String> parameters = config.getParameters();
+    Map<String, String> configParameters = config.getParameters();
     return new HttpServletRequestWrapper(request) {
 
       @Override
       public Map<String, String[]> getParameterMap() {
-        Map<String, String[]> parameterMap = super.getParameterMap();
+        Map<String, String[]> originalParameterMap = super.getParameterMap();
 
-        for (Entry<String, String> entry : parameters.entrySet()) {
-          String name = entry.getKey();
-          String regexp = entry.getValue();
+        for (Entry<String, String> configParameterEntry : configParameters.entrySet()) {
+          String configParameterName = configParameterEntry.getKey();
+          String configParameterRegexp = configParameterEntry.getValue();
+          String[] parameterValues = originalParameterMap.get(configParameterName);
 
-          String[] parameterValues = parameterMap.get(name);
-          if (!ObjectUtils.isEmpty(parameterValues) && parameterValues[0].matches(regexp)) {
-            parameterMap.remove(name);
+          if (!ObjectUtils.isEmpty(parameterValues)
+              && parameterValues[0].matches(configParameterRegexp)) {
+            originalParameterMap.remove(configParameterName);
           }
         }
 
-        return parameterMap;
+        return originalParameterMap;
       }
     };
   }

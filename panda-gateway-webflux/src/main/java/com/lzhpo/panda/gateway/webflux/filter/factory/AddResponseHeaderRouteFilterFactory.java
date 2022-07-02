@@ -23,10 +23,10 @@ public class AddResponseHeaderRouteFilterFactory
   @Override
   public RouteFilter create(Config config) {
     return (exchange, filterChain) -> {
-      Map<String, String> headers = config.getHeaders();
+      Map<String, String> configHeaders = config.getHeaders();
       ServerHttpResponse response = exchange.getResponse();
       HttpHeaders respHeaders = response.getHeaders();
-      headers.forEach(respHeaders::remove);
+      configHeaders.forEach(respHeaders::remove);
       return filterChain.filter(exchange);
     };
   }

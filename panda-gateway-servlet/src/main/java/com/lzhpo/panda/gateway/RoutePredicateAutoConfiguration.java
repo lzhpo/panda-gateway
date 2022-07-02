@@ -7,8 +7,8 @@ import com.lzhpo.panda.gateway.predicate.factory.ClientIpRoutePredicateFactory;
 import com.lzhpo.panda.gateway.predicate.factory.CookieRoutePredicateFactory;
 import com.lzhpo.panda.gateway.predicate.factory.HeaderRoutePredicateFactory;
 import com.lzhpo.panda.gateway.predicate.factory.MethodRoutePredicateFactory;
+import com.lzhpo.panda.gateway.predicate.factory.ParameterRoutePredicateFactory;
 import com.lzhpo.panda.gateway.predicate.factory.PathRoutePredicateFactory;
-import com.lzhpo.panda.gateway.predicate.factory.QueryRoutePredicateFactory;
 import com.lzhpo.panda.gateway.predicate.factory.WeightRoutePredicateFactory;
 import com.lzhpo.panda.gateway.support.ClientIpResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -45,8 +45,8 @@ public class RoutePredicateAutoConfiguration {
   }
 
   @Bean
-  public QueryRoutePredicateFactory queryRoutePredicateFactory() {
-    return new QueryRoutePredicateFactory();
+  public ParameterRoutePredicateFactory parameterRoutePredicateFactory() {
+    return new ParameterRoutePredicateFactory();
   }
 
   @Bean

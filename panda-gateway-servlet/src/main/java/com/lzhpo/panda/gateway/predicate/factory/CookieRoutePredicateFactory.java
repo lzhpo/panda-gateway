@@ -2,8 +2,9 @@ package com.lzhpo.panda.gateway.predicate.factory;
 
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import java.util.Arrays;
+import java.util.Map;
 import javax.servlet.http.Cookie;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
@@ -25,12 +26,21 @@ public class CookieRoutePredicateFactory
   @Override
   public RoutePredicate create(Config config) {
     return request -> {
-      String cookie = config.getCookie();
-      String regexp = config.getRegexp();
-      Cookie[] cookies = request.getCookies();
-      return !ObjectUtils.isEmpty(cookies)
-          && Arrays.stream(cookies)
-              .anyMatch(x -> x.getName().equalsIgnoreCase(cookie) && x.getValue().matches(regexp));
+      Cookie[] requestCookies = request.getCookies();
+      if (ObjectUtils.isEmpty(requestCookies)) {
+        return false;
+      }
+
+      Map<String, String> configCookies = config.getCookies();
+      return Arrays.stream(requestCookies)
+          .anyMatch(
+              requestCookie -> {
+                String requestCookieName = requestCookie.getName();
+                String requestCookieValue = requestCookie.getValue();
+                String configCookieRegexp = configCookies.get(requestCookieName);
+                return configCookies.containsKey(requestCookieName)
+                    && requestCookieValue.matches(configCookieRegexp);
+              });
     };
   }
 
@@ -38,8 +48,14 @@ public class CookieRoutePredicateFactory
   @Validated
   public static class Config {
 
-    @NotBlank private String cookie;
-
-    @NotBlank private String regexp;
+    /**
+     * Predicate with cookies
+     *
+     * <pre>
+     * key: cookie name
+     * value: regexp expression
+     * </pre>
+     */
+    @NotEmpty private Map<String, String> cookies;
   }
 }

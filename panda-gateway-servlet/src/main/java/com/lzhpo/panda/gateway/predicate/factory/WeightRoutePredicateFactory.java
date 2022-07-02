@@ -9,8 +9,6 @@ import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import java.util.List;
 import java.util.Objects;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -69,8 +67,6 @@ public class WeightRoutePredicateFactory
 
     @NotBlank private String group;
 
-    @Min(0)
-    @Max(10)
     private double weight;
   }
 }

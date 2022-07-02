@@ -1,12 +1,13 @@
 package com.lzhpo.panda.gateway.webflux.predicate.factory;
 
 import com.lzhpo.panda.gateway.webflux.predicate.RoutePredicate;
-import java.util.Optional;
-import javax.validation.constraints.NotBlank;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -25,14 +26,17 @@ public class HeaderRoutePredicateFactory
   @Override
   public RoutePredicate create(Config config) {
     return serverWebExchange -> {
-      String header = config.getHeader();
-      String regexp = config.getRegexp();
-
-      ServerHttpRequest request = serverWebExchange.getRequest();
-      HttpHeaders headers = request.getHeaders();
-      return Optional.ofNullable(headers.getFirst(header))
-          .map(value -> value.matches(regexp))
-          .orElse(false);
+      Map<String, String> configHeaders = config.getHeaders();
+      HttpHeaders requestHeaders = serverWebExchange.getRequest().getHeaders();
+      for (Entry<String, String> configHeaderEntry : configHeaders.entrySet()) {
+        String configHeaderName = configHeaderEntry.getKey();
+        String configHeaderRegexp = configHeaderEntry.getValue();
+        String requestHeaderValue = requestHeaders.getFirst(configHeaderName);
+        if (Objects.nonNull(requestHeaderValue) && requestHeaderValue.matches(configHeaderRegexp)) {
+          return true;
+        }
+      }
+      return false;
     };
   }
 
@@ -40,8 +44,14 @@ public class HeaderRoutePredicateFactory
   @Validated
   public static class Config {
 
-    @NotBlank private String header;
-
-    @NotBlank private String regexp;
+    /**
+     * Predicate with headers
+     *
+     * <pre>
+     * key: header name
+     * value: regexp expression
+     * </pre>
+     */
+    @NotEmpty private Map<String, String> headers;
   }
 }

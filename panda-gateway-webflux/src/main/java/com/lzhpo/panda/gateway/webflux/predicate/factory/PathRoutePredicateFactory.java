@@ -30,11 +30,13 @@ public class PathRoutePredicateFactory
     return serverWebExchange -> {
       ServerHttpRequest request = serverWebExchange.getRequest();
       String requestPath = request.getPath().value();
-      List<String> patterns = config.getPatterns();
-      return patterns.stream()
+      List<String> configPaths = config.getPaths();
+      return configPaths.stream()
           .anyMatch(
-              pattern ->
-                  pathPatternParser.parse(pattern).matches(PathContainer.parsePath(requestPath)));
+              configPath ->
+                  pathPatternParser
+                      .parse(configPath)
+                      .matches(PathContainer.parsePath(requestPath)));
     };
   }
 
@@ -42,6 +44,6 @@ public class PathRoutePredicateFactory
   @Validated
   public static class Config {
 
-    @NotEmpty private List<String> patterns;
+    @NotEmpty private List<String> paths;
   }
 }

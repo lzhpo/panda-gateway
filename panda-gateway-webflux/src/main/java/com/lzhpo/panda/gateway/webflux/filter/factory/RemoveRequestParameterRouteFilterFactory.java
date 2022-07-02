@@ -2,6 +2,7 @@ package com.lzhpo.panda.gateway.webflux.filter.factory;
 
 import com.lzhpo.panda.gateway.webflux.filter.RouteFilter;
 import java.util.Map;
+import java.util.Objects;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.springframework.core.Ordered;
@@ -35,14 +36,23 @@ public class RemoveRequestParameterRouteFilterFactory
 
   private ServerHttpRequestDecorator modifyRequestIfNecessary(
       ServerHttpRequest request, Config config) {
-    Map<String, String> parameters = config.getParameters();
+    Map<String, String> configParameters = config.getParameters();
     return new ServerHttpRequestDecorator(request) {
 
       @Override
       public MultiValueMap<String, String> getQueryParams() {
-        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-        queryParams.putAll(super.getQueryParams());
-        parameters.forEach((name, value) -> queryParams.remove(name));
+        MultiValueMap<String, String> originalQueryParams = super.getQueryParams();
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>(originalQueryParams);
+
+        configParameters.forEach(
+            (configParameterName, configParameterRegexp) -> {
+              String queryParamValue = originalQueryParams.getFirst(configParameterName);
+              if (Objects.nonNull(queryParamValue)
+                  && queryParamValue.matches(configParameterRegexp)) {
+                queryParams.remove(configParameterName);
+              }
+            });
+
         return CollectionUtils.unmodifiableMultiValueMap(queryParams);
       }
     };

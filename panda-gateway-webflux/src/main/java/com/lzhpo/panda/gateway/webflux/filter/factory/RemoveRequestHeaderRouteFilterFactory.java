@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.springframework.core.Ordered;
+import org.springframework.http.server.reactive.ServerHttpRequest.Builder;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -21,25 +22,26 @@ public class RemoveRequestHeaderRouteFilterFactory
 
   @Override
   public RouteFilter create(Config config) {
-    return (exchange, filterChain) -> {
-      Map<String, String> headers = config.getHeaders();
-      return filterChain.filter(
-          exchange
-              .mutate()
-              .request(
-                  builder ->
-                      builder.headers(
-                          httpHeaders ->
-                              headers.forEach(
-                                  (name, regexp) -> {
-                                    String headerValue = httpHeaders.getFirst(name);
-                                    if (Objects.nonNull(headerValue)
-                                        && headerValue.matches(regexp)) {
-                                      httpHeaders.remove(name);
-                                    }
-                                  })))
-              .build());
-    };
+    return (exchange, filterChain) ->
+        filterChain.filter(
+            exchange
+                .mutate()
+                .request(builder -> modifyRequestHeaderIfNecessary(builder, config))
+                .build());
+  }
+
+  private void modifyRequestHeaderIfNecessary(Builder builder, Config config) {
+    builder.headers(
+        httpHeaders ->
+            config
+                .getHeaders()
+                .forEach(
+                    (configHeaderName, configHeaderRegexp) -> {
+                      String headerValue = httpHeaders.getFirst(configHeaderName);
+                      if (Objects.nonNull(headerValue) && headerValue.matches(configHeaderRegexp)) {
+                        httpHeaders.remove(configHeaderName);
+                      }
+                    }));
   }
 
   @Data

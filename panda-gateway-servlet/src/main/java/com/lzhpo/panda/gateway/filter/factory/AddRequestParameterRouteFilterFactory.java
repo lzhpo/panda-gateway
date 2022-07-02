@@ -29,14 +29,13 @@ public class AddRequestParameterRouteFilterFactory
 
   private HttpServletRequestWrapper modifyRequestIfNecessary(
       HttpServletRequest request, Config config) {
+    Map<String, String> configParameters = config.getParameters();
     return new HttpServletRequestWrapper(request) {
 
       @Override
       public Map<String, String[]> getParameterMap() {
-        Map<String, String[]> parameterMap = super.getParameterMap();
-        Map<String, String[]> finalParameters = new HashMap<>(parameterMap);
-        Map<String, String> parameters = config.getParameters();
-        parameters.forEach((name, value) -> finalParameters.put(name, new String[] {value}));
+        Map<String, String[]> finalParameters = new HashMap<>(super.getParameterMap());
+        configParameters.forEach((name, value) -> finalParameters.put(name, new String[] {value}));
         return finalParameters;
       }
     };

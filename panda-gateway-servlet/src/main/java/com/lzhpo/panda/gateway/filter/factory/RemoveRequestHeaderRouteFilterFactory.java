@@ -37,7 +37,7 @@ public class RemoveRequestHeaderRouteFilterFactory
 
   private HttpServletRequestWrapper modifyRequestIfNecessary(
       HttpServletRequest request, Config config) {
-    Map<String, String> headers = new CaseInsensitiveMap<>(config.getHeaders());
+    Map<String, String> configHeaders = new CaseInsensitiveMap<>(config.getHeaders());
     return new HttpServletRequestWrapper(request) {
 
       @Override
@@ -74,11 +74,11 @@ public class RemoveRequestHeaderRouteFilterFactory
       }
 
       private boolean isMatch(String name) {
-        String headerValue = request.getHeader(name);
-        String regexp = headers.get(name);
-        return StringUtils.hasText(regexp)
-            && Objects.nonNull(headerValue)
-            && headerValue.matches(regexp);
+        String requestHeaderValue = request.getHeader(name);
+        String configHeaderRegexp = configHeaders.get(name);
+        return StringUtils.hasText(configHeaderRegexp)
+            && Objects.nonNull(requestHeaderValue)
+            && requestHeaderValue.matches(configHeaderRegexp);
       }
     };
   }

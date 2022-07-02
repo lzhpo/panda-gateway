@@ -38,11 +38,11 @@ public class AddRequestHeaderRouteFilterFactory
 
   private HttpServletRequestWrapper modifyRequestIfNecessary(
       Config config, HttpServletRequest request) {
-    Map<String, String> headers = new CaseInsensitiveMap<>(config.getHeaders());
+    Map<String, String> configHeaders = new CaseInsensitiveMap<>(config.getHeaders());
     return new HttpServletRequestWrapper(request) {
       @Override
       public String getHeader(String name) {
-        return Optional.ofNullable(headers.get(name))
+        return Optional.ofNullable(configHeaders.get(name))
             .filter(StringUtils::hasText)
             .orElseGet(() -> super.getHeader(name));
       }
@@ -57,9 +57,9 @@ public class AddRequestHeaderRouteFilterFactory
           finalHeaders.add(header);
         }
 
-        String value = headers.get(name);
-        if (Objects.nonNull(value)) {
-          finalHeaders.add(value);
+        String configHeaderValue = configHeaders.get(name);
+        if (Objects.nonNull(configHeaderValue)) {
+          finalHeaders.add(configHeaderValue);
         }
 
         return Collections.enumeration(finalHeaders);
@@ -67,16 +67,12 @@ public class AddRequestHeaderRouteFilterFactory
 
       @Override
       public Enumeration<String> getHeaderNames() {
-        List<String> finalHeaderNames = new ArrayList<>();
-
+        List<String> finalHeaderNames = new ArrayList<>(configHeaders.keySet());
         Enumeration<String> headerNames = super.getHeaderNames();
         while (headerNames.hasMoreElements()) {
           String headerName = headerNames.nextElement();
           finalHeaderNames.add(headerName);
         }
-
-        headers.forEach((key, value) -> finalHeaderNames.add(key));
-
         return Collections.enumeration(finalHeaderNames);
       }
     };

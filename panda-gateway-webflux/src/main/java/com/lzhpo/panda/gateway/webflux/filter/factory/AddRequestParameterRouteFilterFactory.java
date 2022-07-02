@@ -36,14 +36,14 @@ public class AddRequestParameterRouteFilterFactory
 
   private ServerHttpRequestDecorator modifyRequestIfNecessary(
       ServerHttpRequest request, Config config) {
-    Map<String, String> parameters = config.getParameters();
+    Map<String, String> configParameters = config.getParameters();
     return new ServerHttpRequestDecorator(request) {
 
       @Override
       public MultiValueMap<String, String> getQueryParams() {
-        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-        queryParams.putAll(super.getQueryParams());
-        parameters.forEach((name, value) -> queryParams.put(name, Lists.newArrayList(value)));
+        MultiValueMap<String, String> queryParams =
+            new LinkedMultiValueMap<>(super.getQueryParams());
+        configParameters.forEach((name, value) -> queryParams.put(name, Lists.newArrayList(value)));
         return CollectionUtils.unmodifiableMultiValueMap(queryParams);
       }
     };

@@ -21,8 +21,8 @@ public class AddResponseHeaderRouteFilterFactory
   @Override
   public RouteFilter create(Config config) {
     return (request, response, chain) -> {
-      Map<String, String> headers = config.getHeaders();
-      headers.forEach(response::addHeader);
+      Map<String, String> configHeaders = config.getHeaders();
+      configHeaders.forEach(response::addHeader);
       chain.doFilter(request, response);
     };
   }

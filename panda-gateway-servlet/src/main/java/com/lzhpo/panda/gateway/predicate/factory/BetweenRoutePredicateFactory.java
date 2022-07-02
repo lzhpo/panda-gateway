@@ -23,10 +23,10 @@ public class BetweenRoutePredicateFactory
   @Override
   public RoutePredicate create(Config config) {
     return request -> {
-      ZonedDateTime now = ZonedDateTime.now();
-      ZonedDateTime start = config.getStart();
-      ZonedDateTime end = config.getEnd();
-      return now.isAfter(start) && now.isBefore(end);
+      ZonedDateTime nowTime = ZonedDateTime.now();
+      ZonedDateTime startTime = config.getStart();
+      ZonedDateTime endTime = config.getEnd();
+      return nowTime.isAfter(startTime) && nowTime.isBefore(endTime);
     };
   }
 

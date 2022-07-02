@@ -1,13 +1,16 @@
 package com.lzhpo.panda.gateway.webflux.predicate.factory;
 
 import com.lzhpo.panda.gateway.webflux.predicate.RoutePredicate;
-import java.util.Optional;
-import javax.validation.constraints.NotBlank;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -26,15 +29,23 @@ public class CookieRoutePredicateFactory
   @Override
   public RoutePredicate create(Config config) {
     return serverWebExchange -> {
-      String cookie = config.getCookie();
-      String regexp = config.getRegexp();
-
       ServerHttpRequest request = serverWebExchange.getRequest();
-      MultiValueMap<String, HttpCookie> cookies = request.getCookies();
-      return Optional.ofNullable(cookies.getFirst(cookie))
-          .map(HttpCookie::getValue)
-          .map(value -> value.matches(regexp))
-          .orElse(false);
+      MultiValueMap<String, HttpCookie> requestCookies = request.getCookies();
+      if (ObjectUtils.isEmpty(requestCookies)) {
+        return false;
+      }
+
+      Map<String, String> configCookies = config.getCookies();
+      for (Entry<String, String> requestCookieEntry : configCookies.entrySet()) {
+        String requestCookieName = requestCookieEntry.getKey();
+        String requestCookieValue = requestCookieEntry.getValue();
+        String configCookieRegexp = configCookies.get(requestCookieName);
+        if (Objects.nonNull(configCookieRegexp) && requestCookieValue.matches(configCookieRegexp)) {
+          return true;
+        }
+      }
+
+      return false;
     };
   }
 
@@ -42,8 +53,14 @@ public class CookieRoutePredicateFactory
   @Validated
   public static class Config {
 
-    @NotBlank private String cookie;
-
-    @NotBlank private String regexp;
+    /**
+     * Predicate with cookies
+     *
+     * <pre>
+     * key: cookie name
+     * value: regexp expression
+     * </pre>
+     */
+    @NotEmpty private Map<String, String> cookies;
   }
 }

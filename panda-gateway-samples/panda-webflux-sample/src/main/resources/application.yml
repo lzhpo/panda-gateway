@@ -8,25 +8,25 @@ gateway:
       predicates:
         - name: Path
           args:
-            patterns: /api/service-sample/**, /api/sample/**
+            paths: /api/service-sample/**, /api/sample/**
         - name: Cookie
           args:
-            cookie: deviceId
-            regexp: 123456
+            cookies:
+              deviceId: 123456
         - name: Header
           args:
-            header: X-B3-TraceId
-            regexp: 123456
+            headers:
+              X-B3-TraceId: 123456
         - name: Method
           args:
             methods: PUT, PATCH
-        - name: Query
+        - name: Parameter
           args:
-            param: name
-            regexp: Lewis
+            parameters:
+              nickName: Lewis
         - name: ClientIp
           args:
-            sources: 192.168.200.111, 192.168.200.112
+            clientIps: 192.168.200.111, 192.168.200.112
         - name: Between
           args:
             start: 2012-06-30T01:29:48.0875598+08:00[Asia/Shanghai]

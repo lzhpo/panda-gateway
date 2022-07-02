@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Route predicate by between time.
+ * Route predicate by request client ip.
  *
  * @author lzhpo
  */
@@ -27,9 +27,10 @@ public class ClientIpRoutePredicateFactory
   @Override
   public RoutePredicate create(Config config) {
     return request -> {
-      List<String> sources = config.getSources();
-      String clientIp = clientIpResolver.resolve(request);
-      return sources.stream().anyMatch(source -> source.equals(clientIp));
+      List<String> configClientIps = config.getClientIps();
+      String requestClientIp = clientIpResolver.resolve(request);
+      return configClientIps.stream()
+          .anyMatch(configClientIp -> configClientIp.equals(requestClientIp));
     };
   }
 
@@ -37,6 +38,6 @@ public class ClientIpRoutePredicateFactory
   @Validated
   public static class Config {
 
-    @NotEmpty private List<String> sources;
+    @NotEmpty private List<String> clientIps;
   }
 }

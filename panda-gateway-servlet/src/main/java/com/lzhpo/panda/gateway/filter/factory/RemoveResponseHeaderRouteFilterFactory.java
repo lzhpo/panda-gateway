@@ -27,7 +27,7 @@ public class RemoveResponseHeaderRouteFilterFactory
   @Override
   public RouteFilter create(Config config) {
     return (request, response, chain) -> {
-      List<String> headers = config.getHeaders();
+      List<String> configHeaders = config.getHeaders();
       // TODO: cannot remove response header
       chain.doFilter(request, response);
     };

@@ -25,10 +25,10 @@ public class MethodRoutePredicateFactory
   @Override
   public RoutePredicate create(Config config) {
     return serverWebExchange -> {
-      List<String> methods = config.getMethods();
+      List<String> configMethods = config.getMethods();
       ServerHttpRequest request = serverWebExchange.getRequest();
       return Optional.ofNullable(request.getMethod())
-          .map(httpMethod -> methods.stream().anyMatch(httpMethod::matches))
+          .map(requestMethod -> configMethods.stream().anyMatch(requestMethod::matches))
           .orElse(false);
     };
   }

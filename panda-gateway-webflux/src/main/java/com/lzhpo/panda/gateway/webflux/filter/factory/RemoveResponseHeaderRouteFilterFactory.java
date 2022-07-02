@@ -23,15 +23,17 @@ public class RemoveResponseHeaderRouteFilterFactory
   @Override
   public RouteFilter create(Config config) {
     return (exchange, filterChain) -> {
-      Map<String, String> headers = config.getHeaders();
+      Map<String, String> configHeaders = config.getHeaders();
       HttpHeaders respHeaders = exchange.getResponse().getHeaders();
-      headers.forEach(
-          (name, regexp) -> {
-            String headerValue = respHeaders.getFirst(name);
-            if (Objects.nonNull(headerValue) && headerValue.matches(regexp)) {
-              respHeaders.remove(name);
+
+      configHeaders.forEach(
+          (configHeaderName, configHeaderRegexp) -> {
+            String headerValue = respHeaders.getFirst(configHeaderName);
+            if (Objects.nonNull(headerValue) && headerValue.matches(configHeaderRegexp)) {
+              respHeaders.remove(configHeaderName);
             }
           });
+
       return filterChain.filter(exchange);
     };
   }
