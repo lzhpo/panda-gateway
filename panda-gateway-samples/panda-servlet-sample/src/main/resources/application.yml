@@ -96,7 +96,7 @@ gateway:
             burstCapacity: 1
             requestedTokens: 1
             limitedCode: 429
-            limitedMessage: Too Many Requests
+            limitedMessage: "Request too frequent"
             keyResolver: "#{@clientIpKeyResolver}"
             rateLimiter: "#{@redisRateLimiter}"
     - id: panda-service-sample-02
