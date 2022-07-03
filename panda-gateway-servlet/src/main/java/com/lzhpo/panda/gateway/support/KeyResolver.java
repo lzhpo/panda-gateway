@@ -5,13 +5,13 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author lzhpo
  */
-public interface ClientIpResolver {
+public interface KeyResolver {
 
   /**
-   * Resolve client ip from {@code request}
+   * Resolve key
    *
    * @param request {@link HttpServletRequest}
-   * @return client ip
+   * @return key
    */
   String resolve(HttpServletRequest request);
 }

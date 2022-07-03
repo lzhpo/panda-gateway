@@ -97,6 +97,8 @@ gateway:
             requestedTokens: 1
             limitedCode: 429
             limitedMessage: Too Many Requests
+            keyResolver: "#{@clientIpKeyResolver}"
+            rateLimiter: "#{@redisRateLimiter}"
     - id: panda-service-sample-02
       # uri: http://localhost:9000
       uri: lb://panda-service-sample
