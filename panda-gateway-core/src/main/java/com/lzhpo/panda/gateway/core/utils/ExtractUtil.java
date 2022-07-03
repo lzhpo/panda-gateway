@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpMethod;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author lzhpo
@@ -24,7 +25,7 @@ public class ExtractUtil {
       CopyOnWriteArrayList<String> paths =
           Arrays.stream(path.split(StrPool.SLASH))
               .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
-      while (stripPrefix > 0 && paths.size() > 0) {
+      while (stripPrefix > 0 && !CollectionUtils.isEmpty(paths)) {
         paths.remove(stripPrefix--);
       }
       path = String.join(StrPool.SLASH, paths);

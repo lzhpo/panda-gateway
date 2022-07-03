@@ -8,6 +8,7 @@ import com.lzhpo.panda.gateway.support.ClientIpResolver;
 import com.lzhpo.panda.gateway.support.KeyResolver;
 import com.lzhpo.panda.gateway.support.RedisRateLimiter;
 import java.util.List;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -37,6 +38,7 @@ public class GatewayServletAutoConfiguration {
   }
 
   @Bean
+  @ConditionalOnClass({RedisScript.class, StringRedisTemplate.class})
   @ConditionalOnProperty(prefix = "gateway.redis", value = "enabled", havingValue = "true")
   public RedisRateLimiter redisRateLimiter(
       RedisScript<List<Long>> rateLimitRedisScript, StringRedisTemplate stringRedisTemplate) {

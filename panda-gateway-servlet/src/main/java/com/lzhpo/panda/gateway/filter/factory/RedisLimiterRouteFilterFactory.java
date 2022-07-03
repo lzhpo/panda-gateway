@@ -59,8 +59,9 @@ public class RedisLimiterRouteFilterFactory
       if (!limiterResponse.isAllowed()) {
         limitedResponse(config, response);
         log.warn(
-            "Request [{}] triggered limiter, response: {}",
+            "Request [{}] triggered limiter, key: {}, response: {}",
             request.getRequestURI(),
+            key,
             limiterResponse);
         return;
       }
@@ -69,6 +70,12 @@ public class RedisLimiterRouteFilterFactory
     };
   }
 
+  /**
+   * {@link RateLimiter}
+   *
+   * @param config {@link Config}
+   * @return {@link RateLimiter}
+   */
   private RateLimiter getRateLimiter(Config config) {
     Expression rateLimiterExpression =
         EXPRESSION_PARSER.parseExpression(config.getRateLimiter(), PARSER_CONTEXT);
@@ -77,6 +84,12 @@ public class RedisLimiterRouteFilterFactory
     return rateLimiter;
   }
 
+  /**
+   * Get {@link KeyResolver}
+   *
+   * @param config {@link Config}
+   * @return {@link KeyResolver}
+   */
   private KeyResolver getKeyResolver(Config config) {
     Expression keyResolverExpression =
         EXPRESSION_PARSER.parseExpression(config.getKeyResolver(), PARSER_CONTEXT);
@@ -85,6 +98,12 @@ public class RedisLimiterRouteFilterFactory
     return keyResolver;
   }
 
+  /**
+   * Response when limited
+   *
+   * @param config {@link Config}
+   * @param response {@link HttpServletResponse}
+   */
   @SneakyThrows
   private void limitedResponse(Config config, HttpServletResponse response) {
     response.setStatus(config.getLimitedCode());
@@ -103,14 +122,14 @@ public class RedisLimiterRouteFilterFactory
      *
      * <p>Support spring el expression, e.g: {@code "#{@clientIpKeyResolver}"}
      */
-    @NotBlank private String rateLimiter;
+    @NotBlank private String rateLimiter = "#{@clientIpKeyResolver}";
 
     /**
      * {@link KeyResolver} bean name.
      *
      * <p>Support spring el expression, e.g: {@code "#{@redisRateLimiter}"}
      */
-    @NotBlank private String keyResolver;
+    @NotBlank private String keyResolver = "#{@redisRateLimiter}";
 
     /** Whether to include headers containing rate limiter information, defaults is true. */
     private boolean includeHeaders = true;

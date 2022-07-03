@@ -14,6 +14,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 
 /**
+ * Redis rate limiter
+ *
  * @author lzhpo
  */
 @Slf4j
