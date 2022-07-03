@@ -1,5 +1,15 @@
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+    database: 2
+
 gateway:
   discovery: true
+  redis:
+    enabled: true
+    route-locator: true
   routes:
     - id: panda-service-sample-01
       # uri: http://localhost:9000
@@ -79,6 +89,14 @@ gateway:
             parameters:
               traceId: 123
               spanId: 456
+        - name: RedisLimiter
+          args:
+            includeHeaders: true
+            replenishRate: 1
+            burstCapacity: 1
+            requestedTokens: 1
+            limitedCode: 429
+            limitedMessage: Too Many Requests
     - id: panda-service-sample-02
       # uri: http://localhost:9000
       uri: lb://panda-service-sample

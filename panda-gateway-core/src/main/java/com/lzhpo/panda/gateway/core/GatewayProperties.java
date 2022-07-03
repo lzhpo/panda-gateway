@@ -16,6 +16,18 @@ public class GatewayProperties {
   /** Whether to enable service discovery mode, otherwise, use http or https. */
   private boolean discovery = true;
 
+  /** About redis configurations. */
+  private RedisConfig redis;
+
   /** Gateway service routes */
   private List<RouteDefinition> routes = new ArrayList<>();
+
+  @Data
+  public static class RedisConfig {
+
+    private boolean enabled = true;
+
+    /** Use redis to save routes */
+    private boolean routeLocator = true;
+  }
 }
