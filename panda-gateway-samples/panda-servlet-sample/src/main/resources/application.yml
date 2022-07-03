@@ -89,7 +89,7 @@ gateway:
             parameters:
               traceId: 123
               spanId: 456
-        - name: RedisLimiter
+        - name: RateLimiter
           args:
             includeHeaders: true
             replenishRate: 1

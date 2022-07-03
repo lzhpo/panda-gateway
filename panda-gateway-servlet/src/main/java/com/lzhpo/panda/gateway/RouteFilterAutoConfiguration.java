@@ -3,12 +3,11 @@ package com.lzhpo.panda.gateway;
 import com.lzhpo.panda.gateway.filter.factory.AddRequestHeaderRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.AddRequestParameterRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.AddResponseHeaderRouteFilterFactory;
-import com.lzhpo.panda.gateway.filter.factory.RedisLimiterRouteFilterFactory;
+import com.lzhpo.panda.gateway.filter.factory.RateLimiterRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.RemoveRequestHeaderRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.RemoveRequestParameterRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.RemoveResponseHeaderRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.StripPrefixRouteFilterFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.context.annotation.Bean;
@@ -22,9 +21,8 @@ import org.springframework.context.annotation.Configuration;
 public class RouteFilterAutoConfiguration {
 
   @Bean
-  @ConditionalOnProperty(prefix = "gateway.redis", value = "enabled", havingValue = "true")
-  public RedisLimiterRouteFilterFactory redisLimiterRouteFilterFactory() {
-    return new RedisLimiterRouteFilterFactory();
+  public RateLimiterRouteFilterFactory rateLimiterRouteFilterFactory() {
+    return new RateLimiterRouteFilterFactory();
   }
 
   @Bean

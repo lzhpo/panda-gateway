@@ -1,6 +1,6 @@
 package com.lzhpo.panda.gateway.support;
 
-import com.lzhpo.panda.gateway.filter.factory.RedisLimiterRouteFilterFactory.Config;
+import com.lzhpo.panda.gateway.filter.factory.RateLimiterRouteFilterFactory.Config;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Data;

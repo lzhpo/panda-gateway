@@ -2,7 +2,7 @@ package com.lzhpo.panda.gateway.support;
 
 import com.google.common.collect.Lists;
 import com.lzhpo.panda.gateway.core.route.GatewayConst;
-import com.lzhpo.panda.gateway.filter.factory.RedisLimiterRouteFilterFactory.Config;
+import com.lzhpo.panda.gateway.filter.factory.RateLimiterRouteFilterFactory.Config;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

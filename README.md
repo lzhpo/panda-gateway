@@ -8,7 +8,7 @@
 
 ### Internal route predicate
 
-#### `Path`RoutePredicateFactory
+#### `Path` route predicate
 
 ```yaml
 gateway:
@@ -21,7 +21,7 @@ gateway:
             paths: /api/service-sample/**, /api/sample/**
 ```
 
-#### `Weight`RoutePredicateFactory
+#### `Weight` route predicate
 
 ```yaml
 gateway:
@@ -44,7 +44,7 @@ gateway:
             weight: 2
 ```
 
-#### `Parameter`RoutePredicateFactory
+#### `Parameter` route predicate
 
 ```yaml
 gateway:
@@ -58,7 +58,7 @@ gateway:
               nickName: Lewis
 ```
 
-#### `ClientIp`RoutePredicateFactory
+#### `ClientIp` route predicate
 
 ```yaml
 gateway:
@@ -71,7 +71,7 @@ gateway:
             clientIps: 192.168.200.111, 192.168.200.112
 ```
 
-#### `Cookie`RoutePredicateFactory
+#### `Cookie` route predicate
 
 ```yaml
 gateway:
@@ -85,7 +85,7 @@ gateway:
               deviceId: 123456
 ```
 
-#### `Header`RoutePredicateFactory
+#### `Header` route predicate
 
 ```yaml
 gateway:
@@ -99,7 +99,7 @@ gateway:
               X-B3-TraceId: 123456
 ```
 
-#### `Method`RoutePredicateFactory
+#### `Method` route predicate
 
 ```yaml
 gateway:
@@ -112,7 +112,7 @@ gateway:
             methods: PUT, PATCH
 ```
 
-#### `After` RoutePredicateFactory
+#### `After` route predicate
 
 ```yaml
 gateway:
@@ -125,7 +125,7 @@ gateway:
             time: 2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
 ```
 
-#### `Before`RoutePredicateFactory
+#### `Before` route predicate
 
 ```yaml
 gateway:
@@ -138,7 +138,7 @@ gateway:
             time: 2015-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
 ```
 
-#### `Between`RoutePredicateFactory
+#### `Between` route predicate
 
 ```yaml
 gateway:
@@ -290,7 +290,7 @@ gateway:
 
 ### Internal route filter
 
-#### `AddRequestHeader`RouteFilterFactory
+#### `AddRequestHeader` route filter
 
 ```yaml
 gateway:
@@ -305,7 +305,7 @@ gateway:
               age: 123
 ```
 
-#### `AddRequestParameter`RouteFilterFactory
+#### `AddRequestParameter` route filter
 
 ```yaml
 gateway:
@@ -319,7 +319,7 @@ gateway:
               userId: 123
 ```
 
-#### `AddResponseHeader`RouteFilterFactory
+#### `AddResponseHeader` route filter
 
 ```yaml
 gateway:
@@ -334,7 +334,7 @@ gateway:
               age: 20
 ```
 
-#### `RemoveRequestHeader`RouteFilterFactory
+#### `RemoveRequestHeader` route filter
 
 ```yaml
 gateway:
@@ -349,7 +349,7 @@ gateway:
               X-B3-SpanId: 456
 ```
 
-#### `RemoveRequestParameter`RouteFilterFactory
+#### `RemoveRequestParameter` route filter
 
 ```yaml
 gateway:
@@ -364,7 +364,7 @@ gateway:
               spanId: 456
 ```
 
-#### `RemoveResponseHeader`RouteFilterFactory
+#### `RemoveResponseHeader` route filter
 
 ```yaml
 gateway:
@@ -377,6 +377,26 @@ gateway:
             headers:
               country: China
               city: Guangzhou
+```
+
+#### `RateLimiter` route filter
+
+```yaml
+gateway:
+  routes:
+    - id: panda-service-sample-01
+      uri: lb://panda-service-sample
+      filters:
+        - name: RateLimiter
+          args:
+            includeHeaders: true
+            replenishRate: 1
+            burstCapacity: 1
+            requestedTokens: 1
+            limitedCode: 429
+            limitedMessage: "Request too frequent"
+            keyResolver: "#{@clientIpKeyResolver}"
+            rateLimiter: "#{@redisRateLimiter}"
 ```
 
 ### How to implement route filter?

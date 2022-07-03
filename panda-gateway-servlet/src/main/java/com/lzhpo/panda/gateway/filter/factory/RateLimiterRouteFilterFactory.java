@@ -28,8 +28,8 @@ import org.springframework.validation.annotation.Validated;
  * @author lzhpo
  */
 @Slf4j
-public class RedisLimiterRouteFilterFactory
-    extends AbstractRouteFilterFactory<RedisLimiterRouteFilterFactory.Config> implements Ordered {
+public class RateLimiterRouteFilterFactory
+    extends AbstractRouteFilterFactory<RateLimiterRouteFilterFactory.Config> implements Ordered {
 
   private static final TemplateParserContext PARSER_CONTEXT = new TemplateParserContext();
   private static final SpelExpressionParser EXPRESSION_PARSER = new SpelExpressionParser();
@@ -40,8 +40,8 @@ public class RedisLimiterRouteFilterFactory
     EVALUATION_CONTEXT.setBeanResolver(new BeanFactoryResolver(SpringUtil.getBeanFactory()));
   }
 
-  public RedisLimiterRouteFilterFactory() {
-    super(RedisLimiterRouteFilterFactory.Config.class);
+  public RateLimiterRouteFilterFactory() {
+    super(RateLimiterRouteFilterFactory.Config.class);
   }
 
   @Override
