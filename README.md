@@ -329,6 +329,8 @@ gateway:
 
 ### How to implement route filter?
 
+> Format: `[FilterName]`RouteFilterFactory
+
 I will use `AddResponseHeader` route filter to tell you how to implement it.
 
 #### Servlet environment
