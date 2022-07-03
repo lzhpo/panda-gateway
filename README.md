@@ -155,6 +155,58 @@ gateway:
                 end: 2030-10-01T01:29:48.0875598+08:00[Asia/Shanghai]
 ```
 
+### Custom predicate relation
+
+#### `AND`
+
+> This route is used when the X-B3-TraceId in the request header is equal to 123456 and the nickName in the request parameter is equal to Lewis.
+
+You can set `gateway.routes[x].enhances.predicates-relation=and`, and the default value also is `and`.
+
+```yaml
+gateway:
+  routes:
+    - id: panda-service-sample-01
+      uri: lb://panda-service-sample
+      order: 1
+      enhances:
+        predicates-relation: and
+      predicates:
+        - name: Header
+          args:
+            headers:
+              X-B3-TraceId: 123456
+        - name: Parameter
+          args:
+            parameters:
+              nickName: Lewis 
+```
+
+#### `OR`
+
+> This route is used when the `X-B3-TraceId` in the request header is equal to 123456, or the `nickName` in the request parameter is equal to Lewis.
+
+You can set `gateway.routes[x].enhances.predicates-relation=or`
+
+```yaml
+gateway:
+  routes:
+    - id: panda-service-sample-01
+      uri: lb://panda-service-sample
+      order: 1
+      enhances:
+        predicates-relation: or
+      predicates:
+        - name: Header
+          args:
+            headers:
+              X-B3-TraceId: 123456
+        - name: Parameter
+          args:
+            parameters:
+              nickName: Lewis 
+```
+
 ### How to implement route predicate?
 
 > Format: `[PredicateName]`RoutePredicateFactory
