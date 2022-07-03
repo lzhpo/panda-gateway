@@ -99,19 +99,16 @@ public class RedisLimiterRouteFilterFactory
   public static class Config {
 
     /**
-     * Support spring el expression <br>
-     * e.g:
+     * {@link RateLimiter} bean name.
      *
-     * <pre>{@code "#{@clientIpKeyResolver}"}</pre>
+     * <p>Support spring el expression, e.g: {@code "#{@clientIpKeyResolver}"}
      */
     @NotBlank private String rateLimiter;
 
     /**
-     * Support spring el expression <br>
-     * <br>
-     * e.g:
+     * {@link KeyResolver} bean name.
      *
-     * <pre>{@code "#{@redisRateLimiter}"}</pre>
+     * <p>Support spring el expression, e.g: {@code "#{@redisRateLimiter}"}
      */
     @NotBlank private String keyResolver;
 
