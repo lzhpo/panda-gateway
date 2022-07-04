@@ -1,5 +1,15 @@
 ![style check](https://github.com/lzhpo/panda-gateway/actions/workflows/style-check.yml/badge.svg)
 
+## What's it?
+
+> This project aims to handwrite `SpringCloud-Gateway`, refer to its core idea, I implemented most of its functions in my own way.
+> you can use it to understand the internal working principle of SpringCloud-Gateway and secondary development more quickly.
+
+Its features:
+1. Powerful predicates and filters, expand them more easily.
+2. Routing information storage can be dynamically switched to memory or redis.
+3. Supports both servlet and webflux environments, as well as microservice mode and http/https mode.
+
 ## How it works?
 
 ```java
