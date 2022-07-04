@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway;
+package com.lzhpo.panda.gateway.route;
 
 import cn.hutool.core.util.StrUtil;
 import com.lzhpo.panda.gateway.core.exception.GatewayCustomException;

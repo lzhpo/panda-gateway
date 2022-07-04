@@ -10,6 +10,7 @@ import com.lzhpo.panda.gateway.predicate.factory.MethodRoutePredicateFactory;
 import com.lzhpo.panda.gateway.predicate.factory.ParameterRoutePredicateFactory;
 import com.lzhpo.panda.gateway.predicate.factory.PathRoutePredicateFactory;
 import com.lzhpo.panda.gateway.predicate.factory.WeightRoutePredicateFactory;
+import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.support.ClientIpResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;

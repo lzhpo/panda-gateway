@@ -1,7 +1,7 @@
 package com.lzhpo.panda.gateway.actuator;
 
-import com.lzhpo.panda.gateway.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpoint;

@@ -3,7 +3,8 @@ package com.lzhpo.panda.gateway;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.lzhpo.panda.gateway.actuator.GatewayControllerEndpoint;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
-import com.lzhpo.panda.gateway.filter.GlobalFilter;
+import com.lzhpo.panda.gateway.route.MemoryRouteDefinitionLocator;
+import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.support.ClientIpResolver;
 import com.lzhpo.panda.gateway.support.KeyResolver;
 import com.lzhpo.panda.gateway.support.RedisRateLimiter;
@@ -53,9 +54,8 @@ public class GatewayServletAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public RouteDefinitionLocator routeDefinitionLocator(
-      GatewayProperties gatewayProperties, List<GlobalFilter> globalFilters) {
-    return new MemoryRouteDefinitionLocator(gatewayProperties.getRoutes(), globalFilters);
+  public RouteDefinitionLocator routeDefinitionLocator(GatewayProperties gatewayProperties) {
+    return new MemoryRouteDefinitionLocator(gatewayProperties.getRoutes());
   }
 
   @Bean

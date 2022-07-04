@@ -5,6 +5,7 @@ import com.lzhpo.panda.gateway.core.route.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.route.GatewayConst;
 import com.lzhpo.panda.gateway.core.route.RelationType;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;

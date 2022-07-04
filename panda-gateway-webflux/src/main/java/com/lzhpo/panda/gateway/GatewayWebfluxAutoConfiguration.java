@@ -2,7 +2,8 @@ package com.lzhpo.panda.gateway;
 
 import com.lzhpo.panda.gateway.actuator.GatewayControllerEndpoint;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
-import com.lzhpo.panda.gateway.filter.GlobalFilter;
+import com.lzhpo.panda.gateway.route.MemoryRouteDefinitionLocator;
+import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.support.ClientIpResolver;
 import com.lzhpo.panda.gateway.support.KeyResolver;
 import com.lzhpo.panda.gateway.support.RedisRateLimiter;
@@ -11,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
@@ -73,8 +75,8 @@ public class GatewayWebfluxAutoConfiguration {
   }
 
   @Bean
-  public RouteDefinitionLocator routeDefinitionLocator(
-      GatewayProperties gatewayProperties, List<GlobalFilter> globalFilters) {
-    return new MemoryRouteDefinitionLocator(gatewayProperties.getRoutes(), globalFilters);
+  @ConditionalOnMissingBean
+  public RouteDefinitionLocator routeDefinitionLocator(GatewayProperties gatewayProperties) {
+    return new MemoryRouteDefinitionLocator(gatewayProperties.getRoutes());
   }
 }
