@@ -2,10 +2,14 @@
 
 ## What's it?
 
-> This project aims to handwrite `SpringCloud-Gateway`, refer to its core idea, I implemented most of its functions in my own way.
-> you can use it to understand the internal working principle of SpringCloud-Gateway and secondary development more quickly.
+### Foreword
 
-Its features:
+- This project aims to handwrite SpringCloud Gateway.
+- Referring to the core idea of SpringCloud Gateway, I basically implemented all its functions in my own way.
+- You can use it to understand the internal working principle of SpringCloud Gateway and secondary development more quickly.
+
+#### Features
+
 1. Powerful predicates and filters, expand them more easily.
 2. Routing information storage can be dynamically switched to memory or redis.
 3. Supports both servlet and webflux environments, as well as microservice mode and http/https mode.
