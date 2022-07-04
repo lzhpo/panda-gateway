@@ -12,7 +12,7 @@
 
 1. Powerful predicates and filters, easier to understand and expand.
 2. Route information storage can be dynamically switched to memory or redis.
-3. Supports both servlet and webflux environments, as well as microservice mode and http/https mode.
+3. Supports servlet and webflux environments, as well as microservice mode and http/https mode.
 
 ## How it works?
 
