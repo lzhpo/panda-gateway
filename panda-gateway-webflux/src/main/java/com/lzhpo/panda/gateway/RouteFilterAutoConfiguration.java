@@ -3,6 +3,7 @@ package com.lzhpo.panda.gateway;
 import com.lzhpo.panda.gateway.filter.factory.AddRequestHeaderRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.AddRequestParameterRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.AddResponseHeaderRouteFilterFactory;
+import com.lzhpo.panda.gateway.filter.factory.RateLimiterRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.RemoveRequestHeaderRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.RemoveRequestParameterRouteFilterFactory;
 import com.lzhpo.panda.gateway.filter.factory.RemoveResponseHeaderRouteFilterFactory;
@@ -18,6 +19,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnWebApplication(type = Type.REACTIVE)
 public class RouteFilterAutoConfiguration {
+
+  @Bean
+  public RateLimiterRouteFilterFactory rateLimiterRouteFilterFactory() {
+    return new RateLimiterRouteFilterFactory();
+  }
 
   @Bean
   public AddRequestParameterRouteFilterFactory addRequestParameterRouteFilterFactory() {

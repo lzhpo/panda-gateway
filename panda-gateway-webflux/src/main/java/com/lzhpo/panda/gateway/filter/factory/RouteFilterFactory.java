@@ -36,7 +36,7 @@ public interface RouteFilterFactory<T> extends ConfigFactory<T> {
    * @return current route filter name
    */
   @Override
-  default String currentName() {
+  default String name() {
     return getClass().getSimpleName().replace(RouteFilterFactory.class.getSimpleName(), "");
   }
 }

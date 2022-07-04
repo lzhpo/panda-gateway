@@ -1,4 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.lzhpo.panda.gateway.GatewayWebfluxAutoConfiguration,\
   com.lzhpo.panda.gateway.RoutePredicateAutoConfiguration,\
-  com.lzhpo.panda.gateway.RouteFilterAutoConfiguration
+  com.lzhpo.panda.gateway.RouteFilterAutoConfiguration,\
+  com.lzhpo.panda.gateway.GatewayRedisAutoConfiguration

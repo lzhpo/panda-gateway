@@ -36,7 +36,7 @@ public interface RoutePredicateFactory<T> extends ConfigFactory<T> {
    * @return current route predicate name
    */
   @Override
-  default String currentName() {
+  default String name() {
     return getClass().getSimpleName().replace(RoutePredicateFactory.class.getSimpleName(), "");
   }
 }

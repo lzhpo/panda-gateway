@@ -23,7 +23,7 @@ import org.springframework.data.redis.core.script.RedisScript;
 public class RedisRateLimiter implements RateLimiter {
 
   private final RedisScript<List<Long>> rateLimitRedisScript;
-  private final StringRedisTemplate stringRedisTemplate;
+  private final StringRedisTemplate redisTemplate;
 
   @Override
   public RateLimiterResponse isAllowed(Config config, String id) {
@@ -36,7 +36,7 @@ public class RedisRateLimiter implements RateLimiter {
 
     List<Long> executeResult =
         Optional.ofNullable(
-                stringRedisTemplate.execute(rateLimitRedisScript, keys, scriptArgs.toArray()))
+                redisTemplate.execute(rateLimitRedisScript, keys, scriptArgs.toArray()))
             .orElseGet(
                 () -> {
                   log.error("rateLimitRedisScript cannot normal execute, please check! id: {}", id);

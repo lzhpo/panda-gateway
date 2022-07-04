@@ -47,7 +47,7 @@ public class WeightRoutePredicateFactory
           route -> {
             List<ComponentDefinition> predicateDefinitions = route.getPredicates();
             predicateDefinitions.stream()
-                .filter(predicateDefinition -> predicateDefinition.getName().equals(currentName()))
+                .filter(predicateDefinition -> predicateDefinition.getName().equals(name()))
                 .forEach(
                     predicateDefinition -> {
                       Config weightConfig = getConfig(predicateDefinition);

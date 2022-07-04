@@ -12,6 +12,12 @@ public final class GatewayConst {
   /** Route definition attribute name */
   public static final String ROUTE_DEFINITION = RouteDefinition.class.getName();
 
+  /** Spring EL expression prefix */
+  public static final String EXPRESSION_PREFIX = "#{";
+
+  /** Spring EL expression suffix */
+  public static final String EXPRESSION_SUFFIX = "}";
+
   /** Remaining Rate Limit header name. */
   public static final String REMAINING_HEADER = "X-RateLimit-Remaining";
 

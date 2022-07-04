@@ -9,8 +9,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
+import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
@@ -19,8 +19,8 @@ import org.springframework.scripting.support.ResourceScriptSource;
  * @author lzhpo
  */
 @Configuration
-@ConditionalOnWebApplication(type = Type.SERVLET)
-@ConditionalOnClass({RedisScript.class, StringRedisTemplate.class})
+@ConditionalOnWebApplication(type = Type.REACTIVE)
+@ConditionalOnClass({RedisScript.class, ReactiveStringRedisTemplate.class})
 @ConditionalOnProperty(prefix = "gateway.redis", value = "enabled", havingValue = "true")
 public class GatewayRedisAutoConfiguration {
 
@@ -36,7 +36,8 @@ public class GatewayRedisAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
-    return new StringRedisTemplate(connectionFactory);
+  public ReactiveStringRedisTemplate reactiveStringRedisTemplate(
+      ReactiveRedisConnectionFactory connectionFactory) {
+    return new ReactiveStringRedisTemplate(connectionFactory);
   }
 }

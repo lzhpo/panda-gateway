@@ -57,7 +57,7 @@ class ConfigFactoryTest extends ZonedDateTimeMethod {
     }
 
     @Override
-    public String currentName() {
+    public String name() {
       return "Test";
     }
   }

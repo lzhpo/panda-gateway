@@ -5,19 +5,18 @@ import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.filter.RouteFilter;
 import com.lzhpo.panda.gateway.support.KeyResolver;
 import com.lzhpo.panda.gateway.support.RateLimiter;
-import com.lzhpo.panda.gateway.support.RateLimiter.RateLimiterResponse;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
+import reactor.core.publisher.Flux;
 
 /**
  * @author lzhpo
@@ -27,46 +26,41 @@ public class RateLimiterRouteFilterFactory
     extends AbstractRouteFilterFactory<RateLimiterRouteFilterFactory.Config> implements Ordered {
 
   public RateLimiterRouteFilterFactory() {
-    super(RateLimiterRouteFilterFactory.Config.class);
+    super(Config.class);
   }
 
   @Override
   public RouteFilter create(Config config) {
-    return (request, response, chain) -> {
-      RouteDefinition route = (RouteDefinition) request.getAttribute(GatewayConst.ROUTE_DEFINITION);
+    return (exchange, filterChain) -> {
+      RouteDefinition route = exchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
       Assert.notNull(route, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 
       KeyResolver keyResolver = config.getKeyResolver();
       RateLimiter rateLimiter = config.getRateLimiter();
-      String key = keyResolver.resolve(request);
-      RateLimiterResponse limiterResponse = rateLimiter.isAllowed(config, key);
 
-      if (!limiterResponse.isAllowed()) {
-        limitedResponse(config, response);
-        log.warn(
-            "Request [{}] triggered limiter, response: {}",
-            request.getRequestURI(),
-            limiterResponse);
-        return;
-      }
+      return keyResolver
+          .resolve(exchange)
+          .flatMap(key -> rateLimiter.isAllowed(config, key))
+          .flatMap(
+              limiterResponse -> {
+                if (limiterResponse.isAllowed()) {
+                  return filterChain.filter(exchange);
+                }
 
-      chain.doFilter(request, response);
+                ServerHttpResponse httpResponse = exchange.getResponse();
+                httpResponse.setStatusCode(HttpStatus.resolve(config.getLimitedCode()));
+                byte[] messageBytes = config.getLimitedMessage().getBytes();
+                DataBuffer messageBuffer = httpResponse.bufferFactory().wrap(messageBytes);
+                return httpResponse
+                    .writeWith(Flux.just(messageBuffer))
+                    .doFinally(
+                        x ->
+                            log.warn(
+                                "Request [{}] triggered limiter, response: {}",
+                                exchange.getRequest().getPath().value(),
+                                limiterResponse));
+              });
     };
-  }
-
-  /**
-   * Response when limited
-   *
-   * @param config {@link Config}
-   * @param response {@link HttpServletResponse}
-   */
-  @SneakyThrows
-  private void limitedResponse(Config config, HttpServletResponse response) {
-    response.setStatus(config.getLimitedCode());
-    ServletOutputStream outputStream = response.getOutputStream();
-    outputStream.write(config.getLimitedMessage().getBytes());
-    outputStream.flush();
-    outputStream.close();
   }
 
   @Data

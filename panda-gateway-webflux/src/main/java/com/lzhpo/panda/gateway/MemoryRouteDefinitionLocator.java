@@ -45,14 +45,14 @@ public class MemoryRouteDefinitionLocator implements RouteDefinitionLocator {
     log.info("Found {} of RoutePredicateFactory.", predicateFactoryNames.length);
     for (String predicateFactoryName : predicateFactoryNames) {
       RoutePredicateFactory<Object> predicateFactory = SpringUtil.getBean(predicateFactoryName);
-      predicateFactories.put(predicateFactory.currentName(), predicateFactory);
+      predicateFactories.put(predicateFactory.name(), predicateFactory);
     }
 
     String[] filterFactoryNames = SpringUtil.getBeanNamesForType(RouteFilterFactory.class);
     log.info("Found {} of RouteFilterFactory.", filterFactoryNames.length);
     for (String filterFactoryName : filterFactoryNames) {
       RouteFilterFactory<Object> filterFactory = SpringUtil.getBean(filterFactoryName);
-      filterFactories.put(filterFactory.currentName(), filterFactory);
+      filterFactories.put(filterFactory.name(), filterFactory);
     }
   }
 
