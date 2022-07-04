@@ -32,7 +32,7 @@ public class MemoryRouteDefinitionLocator implements RouteDefinitionLocator {
 
   @Override
   public Mono<Void> saveRoute(RouteDefinition route) {
-    return validateRoute(Lists.newArrayList(route)).doOnNext(x -> routeDefinitions.add(route));
+    return validateRoute(Lists.newArrayList(route)).doFinally(x -> routeDefinitions.add(route));
   }
 
   @Override

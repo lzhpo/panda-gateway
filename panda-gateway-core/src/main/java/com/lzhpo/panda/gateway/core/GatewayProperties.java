@@ -25,9 +25,9 @@ public class GatewayProperties {
   @Data
   public static class RedisConfig {
 
-    private boolean enabled = true;
+    private boolean enabled = false;
 
     /** Use redis to save routes */
-    private boolean routeLocator = true;
+    private boolean routeLocator = false;
   }
 }
