@@ -9,12 +9,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.experimental.UtilityClass;
 import org.springframework.util.ObjectUtils;
 
 /**
  * @author lzhpo
  */
-public interface RouteComponentLocator {
+@UtilityClass
+public class RouteComponentUtil {
 
   /**
    * Use {@code predicateFactoryName} to get route predicate factory.
@@ -23,7 +25,7 @@ public interface RouteComponentLocator {
    * @return route predicate factory
    */
   @SuppressWarnings({"unchecked"})
-  default RoutePredicateFactory<Object> getPredicateFactory(String predicateFactoryName) {
+  public static RoutePredicateFactory<Object> getPredicateFactory(String predicateFactoryName) {
     return SpringUtil.getBean(predicateFactoryName, RoutePredicateFactory.class);
   }
 
@@ -34,7 +36,7 @@ public interface RouteComponentLocator {
    * @return route filter factory
    */
   @SuppressWarnings({"unchecked"})
-  default RouteFilterFactory<Object> getFilterFactory(String filterFactoryName) {
+  public static RouteFilterFactory<Object> getFilterFactory(String filterFactoryName) {
     return SpringUtil.getBean(filterFactoryName, RouteFilterFactory.class);
   }
 
@@ -43,7 +45,7 @@ public interface RouteComponentLocator {
    *
    * @return all global filter adapters
    */
-  default List<GlobalFilterAdapter> getGlobalFilterAdapters() {
+  public static List<GlobalFilterAdapter> getGlobalFilterAdapters() {
     String[] names = SpringUtil.getBeanNamesForType(GlobalFilter.class);
     if (ObjectUtils.isEmpty(names)) {
       return Collections.emptyList();

@@ -4,6 +4,7 @@ import com.lzhpo.panda.gateway.actuator.GatewayControllerEndpoint;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.route.MemoryRouteDefinitionLocator;
+import com.lzhpo.panda.gateway.route.RedisRouteDefinitionLocator;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.support.ClientIpResolver;
 import com.lzhpo.panda.gateway.support.KeyResolver;
@@ -20,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -87,7 +89,17 @@ public class GatewayWebfluxAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
+  @ConditionalOnProperty(prefix = "gateway.redis", value = "route-locator", havingValue = "false")
   public RouteDefinitionLocator routeDefinitionLocator() {
     return new MemoryRouteDefinitionLocator();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  @ConditionalOnClass({ReactiveRedisTemplate.class})
+  @ConditionalOnProperty(prefix = "gateway.redis", value = "route-locator", havingValue = "true")
+  public RouteDefinitionLocator routeDefinitionLocator(
+      ReactiveRedisTemplate<String, RouteDefinition> redisTemplate) {
+    return new RedisRouteDefinitionLocator(redisTemplate);
   }
 }

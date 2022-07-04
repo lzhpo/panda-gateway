@@ -9,6 +9,7 @@ import com.lzhpo.panda.gateway.filter.DefaultRouteFilterChain;
 import com.lzhpo.panda.gateway.filter.ForwardRouteFilter;
 import com.lzhpo.panda.gateway.filter.GlobalFilterAdapter;
 import com.lzhpo.panda.gateway.filter.RouteFilter;
+import com.lzhpo.panda.gateway.route.RouteComponentUtil;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class GatewayRequestMapping extends OncePerRequestFilter implements Order
       @Nonnull FilterChain filterChain)
       throws ServletException, IOException {
 
-    List<GlobalFilterAdapter> globalFilters = routeDefinitionLocator.getGlobalFilterAdapters();
+    List<GlobalFilterAdapter> globalFilters = RouteComponentUtil.getGlobalFilterAdapters();
     List<RouteFilter> filters = new ArrayList<>(globalFilters);
     RouteDefinition route = lookupRoute(request);
 
@@ -62,7 +63,7 @@ public class GatewayRequestMapping extends OncePerRequestFilter implements Order
               .map(
                   filterDefinition -> {
                     String filterName = filterDefinition.getName();
-                    return Optional.ofNullable(routeDefinitionLocator.getFilterFactory(filterName))
+                    return Optional.ofNullable(RouteComponentUtil.getFilterFactory(filterName))
                         .map(filterFactory -> filterFactory.create(filterDefinition))
                         .orElseGet(
                             () -> {
@@ -123,7 +124,7 @@ public class GatewayRequestMapping extends OncePerRequestFilter implements Order
   private Boolean testPredicate(
       HttpServletRequest request, ComponentDefinition predicateDefinition) {
     String predicateName = predicateDefinition.getName();
-    return Optional.ofNullable(routeDefinitionLocator.getPredicateFactory(predicateName))
+    return Optional.ofNullable(RouteComponentUtil.getPredicateFactory(predicateName))
         .map(predicateFactory -> predicateFactory.create(predicateDefinition).test(request))
         .orElseGet(
             () -> {

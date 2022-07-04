@@ -52,6 +52,7 @@ public class GatewayServletAutoConfiguration {
   }
 
   @Bean
+  @ConditionalOnMissingBean
   @ConditionalOnClass({RedisTemplate.class})
   @ConditionalOnProperty(prefix = "gateway.redis", value = "route-locator", havingValue = "true")
   public RouteDefinitionLocator routeDefinitionLocator(

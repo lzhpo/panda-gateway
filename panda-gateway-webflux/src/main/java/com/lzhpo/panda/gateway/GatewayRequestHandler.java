@@ -7,6 +7,7 @@ import com.lzhpo.panda.gateway.filter.DefaultRouteFilterChain;
 import com.lzhpo.panda.gateway.filter.ForwardRouteFilter;
 import com.lzhpo.panda.gateway.filter.GlobalFilterAdapter;
 import com.lzhpo.panda.gateway.filter.RouteFilter;
+import com.lzhpo.panda.gateway.route.RouteComponentUtil;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +36,7 @@ public class GatewayRequestHandler implements WebHandler {
   @Override
   public Mono<Void> handle(ServerWebExchange exchange) {
     RouteDefinition route = exchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
-    List<GlobalFilterAdapter> globalFilterAdapters =
-        routeDefinitionLocator.getGlobalFilterAdapters();
+    List<GlobalFilterAdapter> globalFilterAdapters = RouteComponentUtil.getGlobalFilterAdapters();
     List<RouteFilter> filters = new ArrayList<>(globalFilterAdapters);
 
     if (!ObjectUtils.isEmpty(route)) {
@@ -46,7 +46,7 @@ public class GatewayRequestHandler implements WebHandler {
               .map(
                   filterDefinition -> {
                     String filterName = filterDefinition.getName();
-                    return Optional.ofNullable(routeDefinitionLocator.getFilterFactory(filterName))
+                    return Optional.ofNullable(RouteComponentUtil.getFilterFactory(filterName))
                         .map(filterFactory -> filterFactory.create(filterDefinition))
                         .orElseGet(
                             () -> {

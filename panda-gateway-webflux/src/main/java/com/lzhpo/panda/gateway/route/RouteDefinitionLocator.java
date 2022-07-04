@@ -6,13 +6,14 @@ import com.lzhpo.panda.gateway.core.utils.ValidateUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.util.Assert;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * @author lzhpo
  */
-public interface RouteDefinitionLocator extends RouteComponentLocator {
+public interface RouteDefinitionLocator {
 
   /**
    * According to routeId to get route.
@@ -20,35 +21,38 @@ public interface RouteDefinitionLocator extends RouteComponentLocator {
    * @param routeId routeId
    * @return route
    */
-  RouteDefinition getRoute(String routeId);
+  Mono<RouteDefinition> getRoute(String routeId);
 
   /**
    * To get routes.
    *
    * @return routes
    */
-  List<RouteDefinition> getRoutes();
+  Flux<RouteDefinition> getRoutes();
 
   /**
    * Save route
    *
    * @param route route
+   * @return Void
    */
-  void saveRoute(RouteDefinition route);
+  Mono<Void> saveRoute(RouteDefinition route);
 
   /**
    * Delete route
    *
    * @param routeId routeId
+   * @return Void
    */
-  void deleteRoute(String routeId);
+  Mono<Void> deleteRoute(String routeId);
 
   /**
    * Validate route
    *
    * @param routes routes
+   * @return Void
    */
-  default void validateRoute(List<RouteDefinition> routes) {
+  default Mono<Void> validateRoute(List<RouteDefinition> routes) {
     Assert.notEmpty(routes, "routes cannot empty.");
     List<String> routeIdValidate = new ArrayList<>();
     for (RouteDefinition routeDefinition : routes) {
@@ -60,6 +64,7 @@ public interface RouteDefinitionLocator extends RouteComponentLocator {
         throw new GatewayCustomException("Duplicate with routeId of " + routeId);
       }
     }
+    return Mono.empty();
   }
 
   /**
@@ -68,10 +73,11 @@ public interface RouteDefinitionLocator extends RouteComponentLocator {
    * @param routes routes
    * @return sorted routes
    */
-  default List<RouteDefinition> sortRoutes(List<RouteDefinition> routes) {
+  default Flux<RouteDefinition> sortRoutes(List<RouteDefinition> routes) {
     Assert.notEmpty(routes, "Need sort routes cannot empty.");
-    return routes.stream()
-        .sorted(Comparator.comparingInt(RouteDefinition::getOrder))
-        .collect(Collectors.toList());
+    return Flux.fromArray(
+        routes.stream()
+            .sorted(Comparator.comparingInt(RouteDefinition::getOrder))
+            .toArray(RouteDefinition[]::new));
   }
 }

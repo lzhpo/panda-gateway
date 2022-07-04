@@ -12,7 +12,7 @@ import org.springframework.util.Assert;
 /**
  * @author lzhpo
  */
-public interface RouteDefinitionLocator extends RouteComponentLocator {
+public interface RouteDefinitionLocator {
 
   /**
    * According to routeId to get route.

@@ -5,9 +5,8 @@ import com.lzhpo.panda.gateway.core.route.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.route.GatewayConst;
 import com.lzhpo.panda.gateway.core.route.RelationType;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.route.RouteComponentUtil;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
-import java.util.List;
-import java.util.Optional;
 import javax.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.handler.AbstractHandlerMapping;
@@ -38,11 +37,7 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
   @Override
   protected Mono<?> getHandlerInternal(@Nonnull ServerWebExchange exchange) {
     return lookupRoute(exchange)
-        .flatMap(
-            route -> {
-              exchange.getAttributes().put(GatewayConst.ROUTE_DEFINITION, route);
-              return Mono.just(webHandler);
-            })
+        .flatMap(route -> Mono.just(webHandler))
         .switchIfEmpty(
             Mono.empty()
                 .then(
@@ -62,28 +57,28 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
    * @return matched route
    */
   private Mono<RouteDefinition> lookupRoute(ServerWebExchange exchange) {
-    List<RouteDefinition> routes = routeDefinitionLocator.getRoutes();
-    return routes.stream()
-        .filter(
+    return routeDefinitionLocator
+        .getRoutes()
+        .filterWhen(
             route -> {
               exchange.getAttributes().put(GatewayConst.ROUTE_DEFINITION, route);
               RelationType relationType = route.getEnhances().getPredicatesRelation();
               switch (relationType) {
                 case AND:
-                  return route.getPredicates().stream()
-                      .allMatch(
-                          predicateDefinition -> testPredicate(exchange, predicateDefinition));
+                  return Mono.just(
+                      route.getPredicates().stream()
+                          .allMatch(
+                              predicateDefinition -> testPredicate(exchange, predicateDefinition)));
                 case OR:
-                  return route.getPredicates().stream()
-                      .anyMatch(
-                          predicateDefinition -> testPredicate(exchange, predicateDefinition));
+                  return Mono.just(
+                      route.getPredicates().stream()
+                          .anyMatch(
+                              predicateDefinition -> testPredicate(exchange, predicateDefinition)));
                 default:
                   throw new GatewayCustomException("Not support relation type " + relationType);
               }
             })
-        .findFirst()
-        .map(Mono::just)
-        .orElseGet(Mono::empty);
+        .next();
   }
 
   /**
@@ -96,12 +91,8 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
   private Boolean testPredicate(
       ServerWebExchange exchange, ComponentDefinition predicateDefinition) {
     String predicateName = predicateDefinition.getName();
-    return Optional.ofNullable(routeDefinitionLocator.getPredicateFactory(predicateName))
-        .map(predicateFactory -> predicateFactory.create(predicateDefinition).test(exchange))
-        .orElseGet(
-            () -> {
-              log.error("Not found [{}] predicateFactory.", predicateName);
-              return false;
-            });
+    return RouteComponentUtil.getPredicateFactory(predicateName)
+        .create(predicateDefinition)
+        .test(exchange);
   }
 }
