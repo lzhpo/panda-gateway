@@ -1,3 +1,5 @@
+![style check](https://github.com/lzhpo/panda-gateway/actions/workflows/style-check.yml/badge.svg)
+
 ## How it works?
 
 ```java
