@@ -35,8 +35,7 @@ public class RedisRateLimiter implements RateLimiter {
     List<String> scriptArgs = Lists.newArrayList(replenishRate, burstCapacity, requestedTokens);
 
     List<Long> executeResult =
-        Optional.ofNullable(
-                redisTemplate.execute(rateLimitRedisScript, keys, scriptArgs.toArray()))
+        Optional.ofNullable(redisTemplate.execute(rateLimitRedisScript, keys, scriptArgs.toArray()))
             .orElseGet(
                 () -> {
                   log.error("rateLimitRedisScript cannot normal execute, please check! id: {}", id);
