@@ -1,6 +1,5 @@
 package com.lzhpo.panda.gateway.route;
 
-import cn.hutool.core.util.StrUtil;
 import com.lzhpo.panda.gateway.core.exception.GatewayCustomException;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.core.utils.ValidateUtil;
@@ -44,7 +43,7 @@ public interface RouteDefinitionLocator extends RouteComponentLocator {
       if (!routeIdValidate.contains(routeId)) {
         routeIdValidate.add(routeId);
       } else {
-        throw new GatewayCustomException(StrUtil.format("Duplicate with routeId of {}.", routeId));
+        throw new GatewayCustomException("Duplicate with routeId of " + routeId);
       }
     }
   }
