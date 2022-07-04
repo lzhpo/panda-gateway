@@ -30,6 +30,20 @@ public interface RouteDefinitionLocator extends RouteComponentLocator {
   List<RouteDefinition> getRoutes();
 
   /**
+   * Save route
+   *
+   * @param route route
+   */
+  void saveRoute(RouteDefinition route);
+
+  /**
+   * Delete route
+   *
+   * @param routeId routeId
+   */
+  void deleteRoute(String routeId);
+
+  /**
    * Validate route
    *
    * @param routes routes

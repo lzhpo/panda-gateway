@@ -1,6 +1,8 @@
 package com.lzhpo.panda.gateway.route;
 
+import com.google.common.collect.Lists;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,12 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MemoryRouteDefinitionLocator implements RouteDefinitionLocator {
 
-  private final List<RouteDefinition> routeDefinitions;
-
-  public MemoryRouteDefinitionLocator(List<RouteDefinition> routeDefinitions) {
-    validateRoute(routeDefinitions);
-    this.routeDefinitions = sortRoutes(routeDefinitions);
-  }
+  private final List<RouteDefinition> routeDefinitions = new ArrayList<>();
 
   @Override
   public RouteDefinition getRoute(String routeId) {
@@ -24,6 +21,17 @@ public class MemoryRouteDefinitionLocator implements RouteDefinitionLocator {
 
   @Override
   public List<RouteDefinition> getRoutes() {
-    return routeDefinitions;
+    return sortRoutes(routeDefinitions);
+  }
+
+  @Override
+  public void saveRoute(RouteDefinition route) {
+    validateRoute(Lists.newArrayList(route));
+    routeDefinitions.add(route);
+  }
+
+  @Override
+  public void deleteRoute(String routeId) {
+    routeDefinitions.removeIf(route -> route.getId().equals(routeId));
   }
 }
