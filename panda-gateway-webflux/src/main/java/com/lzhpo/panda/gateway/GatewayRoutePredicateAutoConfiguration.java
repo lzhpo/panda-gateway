@@ -22,8 +22,29 @@ import org.springframework.context.annotation.Lazy;
  * @author lzhpo
  */
 @Configuration
-@ConditionalOnWebApplication(type = Type.SERVLET)
-public class RoutePredicateAutoConfiguration {
+@ConditionalOnWebApplication(type = Type.REACTIVE)
+public class GatewayRoutePredicateAutoConfiguration {
+
+  @Bean
+  public AfterRoutePredicateFactory afterRoutePredicateFactory() {
+    return new AfterRoutePredicateFactory();
+  }
+
+  @Bean
+  public BeforeRoutePredicateFactory beforeRoutePredicateFactory() {
+    return new BeforeRoutePredicateFactory();
+  }
+
+  @Bean
+  public BetweenRoutePredicateFactory betweenRoutePredicateFactory() {
+    return new BetweenRoutePredicateFactory();
+  }
+
+  @Bean
+  public ClientIpRoutePredicateFactory clientIpRoutePredicateFactory(
+      ClientIpResolver clientIpResolver) {
+    return new ClientIpRoutePredicateFactory(clientIpResolver);
+  }
 
   @Bean
   public CookieRoutePredicateFactory cookieRoutePredicateFactory() {
@@ -41,34 +62,13 @@ public class RoutePredicateAutoConfiguration {
   }
 
   @Bean
-  public PathRoutePredicateFactory pathPredicateFactory() {
+  public PathRoutePredicateFactory pathRoutePredicateFactory() {
     return new PathRoutePredicateFactory();
   }
 
   @Bean
   public ParameterRoutePredicateFactory parameterRoutePredicateFactory() {
     return new ParameterRoutePredicateFactory();
-  }
-
-  @Bean
-  public ClientIpRoutePredicateFactory clientIpRoutePredicateFactory(
-      ClientIpResolver clientIpResolver) {
-    return new ClientIpRoutePredicateFactory(clientIpResolver);
-  }
-
-  @Bean
-  public AfterRoutePredicateFactory afterRoutePredicateFactory() {
-    return new AfterRoutePredicateFactory();
-  }
-
-  @Bean
-  public BeforeRoutePredicateFactory beforeRoutePredicateFactory() {
-    return new BeforeRoutePredicateFactory();
-  }
-
-  @Bean
-  public BetweenRoutePredicateFactory betweenRoutePredicateFactory() {
-    return new BetweenRoutePredicateFactory();
   }
 
   @Bean

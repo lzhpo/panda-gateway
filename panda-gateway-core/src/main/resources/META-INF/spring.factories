@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.lzhpo.panda.gateway.core.GatewayAutoConfiguration
+  com.lzhpo.panda.gateway.core.GatewayDiscoveryAutoConfiguration

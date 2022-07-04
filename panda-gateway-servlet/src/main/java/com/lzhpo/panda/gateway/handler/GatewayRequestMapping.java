@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway;
+package com.lzhpo.panda.gateway.handler;
 
 import com.lzhpo.panda.gateway.core.exception.GatewayCustomException;
 import com.lzhpo.panda.gateway.core.route.ComponentDefinition;

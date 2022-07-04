@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GatewayConst {
 
-  /** Route definition attribute name */
-  public static final String ROUTE_DEFINITION = RouteDefinition.class.getName();
+  /** Route definition attribute name or redis cache key prefix */
+  public static final String ROUTE_DEFINITION = "route_definition";
 
   /** Spring EL expression prefix */
   public static final String EXPRESSION_PREFIX = "#{";

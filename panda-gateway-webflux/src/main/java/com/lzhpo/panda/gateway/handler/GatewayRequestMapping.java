@@ -1,4 +1,4 @@
-package com.lzhpo.panda.gateway;
+package com.lzhpo.panda.gateway.handler;
 
 import com.lzhpo.panda.gateway.core.exception.GatewayCustomException;
 import com.lzhpo.panda.gateway.core.route.ComponentDefinition;
@@ -19,12 +19,12 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class GatewayRequestMapping extends AbstractHandlerMapping {
 
-  private final GatewayRequestHandler webHandler;
+  private final GatewayRequestHandler requestHandler;
   private final RouteDefinitionLocator routeDefinitionLocator;
 
   public GatewayRequestMapping(
-      GatewayRequestHandler webHandler, RouteDefinitionLocator routeDefinitionLocator) {
-    this.webHandler = webHandler;
+      GatewayRequestHandler requestHandler, RouteDefinitionLocator routeDefinitionLocator) {
+    this.requestHandler = requestHandler;
     this.routeDefinitionLocator = routeDefinitionLocator;
     // Default value is Ordered.LOWEST_PRECEDENCE
     // RequestMappingHandlerMapping order is 0
@@ -37,7 +37,7 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
   @Override
   protected Mono<?> getHandlerInternal(@Nonnull ServerWebExchange exchange) {
     return lookupRoute(exchange)
-        .flatMap(route -> Mono.just(webHandler))
+        .flatMap(route -> Mono.just(requestHandler))
         .switchIfEmpty(
             Mono.empty()
                 .then(

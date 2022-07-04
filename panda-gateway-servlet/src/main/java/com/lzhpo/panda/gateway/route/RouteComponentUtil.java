@@ -1,5 +1,6 @@
 package com.lzhpo.panda.gateway.route;
 
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.lzhpo.panda.gateway.filter.GlobalFilter;
 import com.lzhpo.panda.gateway.filter.GlobalFilterAdapter;
@@ -19,25 +20,33 @@ import org.springframework.util.ObjectUtils;
 public class RouteComponentUtil {
 
   /**
-   * Use {@code predicateFactoryName} to get route predicate factory.
+   * Use {@code name} to get route predicate factory.
    *
-   * @param predicateFactoryName predicate factory name
+   * @param name predicate factory name
    * @return route predicate factory
    */
   @SuppressWarnings({"unchecked"})
-  public static RoutePredicateFactory<Object> getPredicateFactory(String predicateFactoryName) {
-    return SpringUtil.getBean(predicateFactoryName, RoutePredicateFactory.class);
+  public static RoutePredicateFactory<Object> getPredicateFactory(String name) {
+    String suffix = RoutePredicateFactory.class.getSimpleName();
+    if (!name.endsWith(suffix)) {
+      name += suffix;
+    }
+    return SpringUtil.getBean(CharSequenceUtil.lowerFirst(name), RoutePredicateFactory.class);
   }
 
   /**
-   * Use {@code filterFactoryName} to get route filter factory.
+   * Use {@code name} to get route filter factory.
    *
-   * @param filterFactoryName filter factory name
+   * @param name filter factory name
    * @return route filter factory
    */
   @SuppressWarnings({"unchecked"})
-  public static RouteFilterFactory<Object> getFilterFactory(String filterFactoryName) {
-    return SpringUtil.getBean(filterFactoryName, RouteFilterFactory.class);
+  public static RouteFilterFactory<Object> getFilterFactory(String name) {
+    String suffix = RouteFilterFactory.class.getSimpleName();
+    if (!name.endsWith(suffix)) {
+      name += suffix;
+    }
+    return SpringUtil.getBean(CharSequenceUtil.lowerFirst(name), RouteFilterFactory.class);
   }
 
   /**

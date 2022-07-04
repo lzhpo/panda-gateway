@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Configuration;
  * @author lzhpo
  */
 @Configuration
-@ConditionalOnWebApplication(type = Type.SERVLET)
-public class RouteFilterAutoConfiguration {
+@ConditionalOnWebApplication(type = Type.REACTIVE)
+public class GatewayRouteFilterAutoConfiguration {
 
   @Bean
   public RateLimiterRouteFilterFactory rateLimiterRouteFilterFactory() {
@@ -36,7 +36,7 @@ public class RouteFilterAutoConfiguration {
   }
 
   @Bean
-  public StripPrefixRouteFilterFactory stripPrefixFilterFactory() {
+  public StripPrefixRouteFilterFactory stripPrefixRouteFilterFactory() {
     return new StripPrefixRouteFilterFactory();
   }
 

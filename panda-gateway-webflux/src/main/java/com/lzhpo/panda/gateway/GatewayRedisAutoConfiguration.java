@@ -17,7 +17,7 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.scripting.support.ResourceScriptSource;
 
 /**
@@ -47,16 +47,20 @@ public class GatewayRedisAutoConfiguration {
   }
 
   @Bean
-  @ConditionalOnMissingBean
   public ReactiveRedisTemplate<String, RouteDefinition> reactiveRedisTemplate(
       ReactiveRedisConnectionFactory connectionFactory) {
-    StringRedisSerializer keySerializer = new StringRedisSerializer();
+    RedisSerializer<String> keySerializer = RedisSerializer.string();
     Jackson2JsonRedisSerializer<RouteDefinition> valueSerializer =
         new Jackson2JsonRedisSerializer<>(RouteDefinition.class);
     RedisSerializationContext.RedisSerializationContextBuilder<String, RouteDefinition> builder =
-        RedisSerializationContext.newSerializationContext(keySerializer);
-    RedisSerializationContext<String, RouteDefinition> context =
-        builder.value(valueSerializer).build();
-    return new ReactiveRedisTemplate<>(connectionFactory, context);
+        RedisSerializationContext.newSerializationContext();
+    return new ReactiveRedisTemplate<>(
+        connectionFactory,
+        builder
+            .key(keySerializer)
+            .value(valueSerializer)
+            .hashKey(keySerializer)
+            .hashValue(valueSerializer)
+            .build());
   }
 }

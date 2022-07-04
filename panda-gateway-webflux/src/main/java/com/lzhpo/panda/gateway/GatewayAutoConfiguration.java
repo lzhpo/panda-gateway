@@ -2,10 +2,10 @@ package com.lzhpo.panda.gateway;
 
 import com.lzhpo.panda.gateway.actuator.GatewayControllerEndpoint;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
-import com.lzhpo.panda.gateway.core.route.RouteDefinition;
-import com.lzhpo.panda.gateway.route.MemoryRouteDefinitionLocator;
-import com.lzhpo.panda.gateway.route.RedisRouteDefinitionLocator;
+import com.lzhpo.panda.gateway.handler.GatewayRequestHandler;
+import com.lzhpo.panda.gateway.handler.GatewayRequestMapping;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
+import com.lzhpo.panda.gateway.runner.RouteDefinitionLocatorRunner;
 import com.lzhpo.panda.gateway.support.ClientIpResolver;
 import com.lzhpo.panda.gateway.support.KeyResolver;
 import com.lzhpo.panda.gateway.support.RedisRateLimiter;
@@ -13,19 +13,16 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -33,15 +30,16 @@ import reactor.core.publisher.Mono;
  * @author lzhpo
  */
 @Configuration
+@RequiredArgsConstructor
 @ConditionalOnWebApplication(type = Type.REACTIVE)
-public class GatewayWebfluxAutoConfiguration {
+public class GatewayAutoConfiguration {
 
-  @PostConstruct
-  public void initRoutes(RouteDefinitionLocator routeLocator, GatewayProperties properties) {
-    List<RouteDefinition> routes = properties.getRoutes();
-    if (!CollectionUtils.isEmpty(routes)) {
-      routes.forEach(routeLocator::saveRoute);
-    }
+  private final RouteDefinitionLocator routeDefinitionLocator;
+
+  @Bean
+  public RouteDefinitionLocatorRunner routeDefinitionLocatorRunner(
+      GatewayProperties gatewayProperties) {
+    return new RouteDefinitionLocatorRunner(gatewayProperties, routeDefinitionLocator);
   }
 
   @Bean
@@ -70,36 +68,17 @@ public class GatewayWebfluxAutoConfiguration {
   }
 
   @Bean
-  public GatewayControllerEndpoint gatewayControllerEndpoint(
-      RouteDefinitionLocator routeDefinitionLocator) {
+  public GatewayControllerEndpoint gatewayControllerEndpoint() {
     return new GatewayControllerEndpoint(routeDefinitionLocator);
   }
 
   @Bean
-  public GatewayRequestHandler gatewayRequestHandler(
-      WebClient.Builder webClientBuilder, RouteDefinitionLocator routeDefinitionLocator) {
+  public GatewayRequestHandler gatewayRequestHandler(WebClient.Builder webClientBuilder) {
     return new GatewayRequestHandler(webClientBuilder, routeDefinitionLocator);
   }
 
   @Bean
-  public GatewayRequestMapping gatewayRequestMapping(
-      GatewayRequestHandler webfluxWebHandler, RouteDefinitionLocator routeDefinitionLocator) {
-    return new GatewayRequestMapping(webfluxWebHandler, routeDefinitionLocator);
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  @ConditionalOnProperty(prefix = "gateway.redis", value = "route-locator", havingValue = "false")
-  public RouteDefinitionLocator routeDefinitionLocator() {
-    return new MemoryRouteDefinitionLocator();
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  @ConditionalOnClass({ReactiveRedisTemplate.class})
-  @ConditionalOnProperty(prefix = "gateway.redis", value = "route-locator", havingValue = "true")
-  public RouteDefinitionLocator routeDefinitionLocator(
-      ReactiveRedisTemplate<String, RouteDefinition> redisTemplate) {
-    return new RedisRouteDefinitionLocator(redisTemplate);
+  public GatewayRequestMapping gatewayRequestMapping(GatewayRequestHandler gatewayRequestHandler) {
+    return new GatewayRequestMapping(gatewayRequestHandler, routeDefinitionLocator);
   }
 }

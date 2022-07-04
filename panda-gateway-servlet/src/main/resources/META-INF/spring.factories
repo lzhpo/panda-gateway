@@ -1,5 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.lzhpo.panda.gateway.GatewayServletAutoConfiguration,\
-  com.lzhpo.panda.gateway.RoutePredicateAutoConfiguration,\
-  com.lzhpo.panda.gateway.RouteFilterAutoConfiguration,\
-  com.lzhpo.panda.gateway.GatewayRedisAutoConfiguration
+  com.lzhpo.panda.gateway.GatewayRedisAutoConfiguration,\
+  com.lzhpo.panda.gateway.GatewayRouteAutoConfiguration,\
+  com.lzhpo.panda.gateway.GatewayRoutePredicateAutoConfiguration,\
+  com.lzhpo.panda.gateway.GatewayRouteFilterAutoConfiguration,\
+  com.lzhpo.panda.gateway.GatewayAutoConfiguration

@@ -42,7 +42,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties({GatewayProperties.class})
-public class GatewayAutoConfiguration {
+public class GatewayDiscoveryAutoConfiguration {
 
   private final GatewayProperties gatewayProperties;
   private final ApplicationContext applicationContext;
