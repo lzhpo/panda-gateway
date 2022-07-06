@@ -24,14 +24,14 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
   @Override
   public RouteDefinition getRoute(String routeId) {
     return Optional.ofNullable(
-            redisTemplate.opsForHash().get(GatewayConst.ROUTE_DEFINITION, routeId))
+            redisTemplate.opsForHash().get(GatewayConst.ROUTE_ATTRIBUTE, routeId))
         .map(RouteDefinition.class::cast)
         .orElse(null);
   }
 
   @Override
   public List<RouteDefinition> getRoutes() {
-    return Optional.of(redisTemplate.opsForHash().values(GatewayConst.ROUTE_DEFINITION))
+    return Optional.of(redisTemplate.opsForHash().values(GatewayConst.ROUTE_ATTRIBUTE))
         .filter(x -> !CollectionUtils.isEmpty(x))
         .orElse(Lists.newArrayList())
         .stream()
@@ -42,11 +42,11 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
 
   @Override
   public void saveRoute(RouteDefinition route) {
-    redisTemplate.opsForHash().put(GatewayConst.ROUTE_DEFINITION, route.getId(), route);
+    redisTemplate.opsForHash().put(GatewayConst.ROUTE_ATTRIBUTE, route.getId(), route);
   }
 
   @Override
   public void deleteRoute(String routeId) {
-    redisTemplate.opsForHash().delete(GatewayConst.ROUTE_DEFINITION, routeId);
+    redisTemplate.opsForHash().delete(GatewayConst.ROUTE_ATTRIBUTE, routeId);
   }
 }

@@ -1,7 +1,5 @@
 package com.lzhpo.panda.gateway.filter.factory;
 
-import com.lzhpo.panda.gateway.core.route.GatewayConst;
-import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.filter.RouteFilter;
 import com.lzhpo.panda.gateway.support.KeyResolver;
 import com.lzhpo.panda.gateway.support.RateLimiter;
@@ -14,7 +12,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import reactor.core.publisher.Flux;
 
@@ -32,9 +29,6 @@ public class RateLimiterRouteFilterFactory
   @Override
   public RouteFilter create(Config config) {
     return (exchange, filterChain) -> {
-      RouteDefinition route = exchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
-      Assert.notNull(route, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
-
       KeyResolver keyResolver = config.getKeyResolver();
       RateLimiter rateLimiter = config.getRateLimiter();
 

@@ -2,7 +2,9 @@ package com.lzhpo.panda.gateway.route;
 
 import com.google.common.collect.Lists;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.core.route.RouteRefreshEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
@@ -31,13 +33,34 @@ public class MemoryRouteDefinitionLocator implements RouteDefinitionLocator {
   }
 
   @Override
-  public Mono<Void> saveRoute(RouteDefinition route) {
-    return validateRoute(Lists.newArrayList(route)).doFinally(x -> routeDefinitions.add(route));
+  public Mono<Boolean> saveRoutes(RouteDefinition... routeDefinitions) {
+    return validateRoute(routeDefinitions)
+        .doOnNext(
+            x -> {
+              this.routeDefinitions.addAll(Lists.newArrayList(routeDefinitions));
+              publishRefreshEvent(new RouteRefreshEvent(this));
+            });
   }
 
   @Override
-  public Mono<Void> deleteRoute(String routeId) {
-    return Mono.just(routeDefinitions.removeIf(route -> route.getId().equals(routeId)))
-        .flatMap(x -> Mono.empty());
+  public Mono<Long> deleteRoutes(String... routeIds) {
+    long deletedNum = 0L;
+    Iterator<RouteDefinition> iterator = routeDefinitions.iterator();
+    for (String routeId : routeIds) {
+      while (iterator.hasNext()) {
+        RouteDefinition routeDefinition = iterator.next();
+        if (routeDefinition.getId().equals(routeId)) {
+          iterator.remove();
+          deletedNum++;
+          break;
+        }
+      }
+    }
+
+    if (deletedNum > 0) {
+      publishRefreshEvent(new RouteRefreshEvent(this));
+    }
+
+    return Mono.just(deletedNum);
   }
 }

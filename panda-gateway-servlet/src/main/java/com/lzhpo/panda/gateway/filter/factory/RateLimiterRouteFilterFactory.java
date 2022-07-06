@@ -33,7 +33,7 @@ public class RateLimiterRouteFilterFactory
   @Override
   public RouteFilter create(Config config) {
     return (request, response, chain) -> {
-      RouteDefinition route = (RouteDefinition) request.getAttribute(GatewayConst.ROUTE_DEFINITION);
+      RouteDefinition route = (RouteDefinition) request.getAttribute(GatewayConst.ROUTE_ATTRIBUTE);
       Assert.notNull(route, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 
       KeyResolver keyResolver = config.getKeyResolver();

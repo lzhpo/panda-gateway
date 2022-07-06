@@ -8,10 +8,10 @@ import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import java.util.List;
-import java.util.Objects;
 import javax.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -33,12 +33,11 @@ public class WeightRoutePredicateFactory
   @Override
   public RoutePredicate create(Config config) {
     return serverWebExchange -> {
-      RouteDefinition currentRoute = serverWebExchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
-      if (Objects.isNull(currentRoute)) {
+      String currentRouteId = serverWebExchange.getAttribute(GatewayConst.ROUTE_ID);
+      if (!StringUtils.hasText(currentRouteId)) {
         return false;
       }
 
-      String currentRouteId = currentRoute.getId();
       String group = config.getGroup();
       WeightRandom<RouteDefinition> routeWeightRandom = new WeightRandom<>();
 

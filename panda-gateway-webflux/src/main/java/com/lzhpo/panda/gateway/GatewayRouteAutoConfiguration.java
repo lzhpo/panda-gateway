@@ -1,10 +1,12 @@
 package com.lzhpo.panda.gateway;
 
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.route.CacheRouteLocator;
 import com.lzhpo.panda.gateway.route.MemoryRouteDefinitionLocator;
 import com.lzhpo.panda.gateway.route.RedisRouteDefinitionLocator;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
@@ -18,6 +20,12 @@ import org.springframework.data.redis.core.ReactiveRedisTemplate;
 @Configuration
 @ConditionalOnWebApplication(type = Type.REACTIVE)
 public class GatewayRouteAutoConfiguration {
+
+  @Bean
+  @ConditionalOnMissingBean
+  public CacheRouteLocator cacheRouteLocator(RouteDefinitionLocator routeDefinitionLocator) {
+    return new CacheRouteLocator(routeDefinitionLocator);
+  }
 
   @Bean
   @ConditionalOnClass({ReactiveRedisTemplate.class})

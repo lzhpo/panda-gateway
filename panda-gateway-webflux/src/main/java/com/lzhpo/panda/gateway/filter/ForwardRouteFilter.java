@@ -1,12 +1,11 @@
 package com.lzhpo.panda.gateway.filter;
 
-import com.lzhpo.panda.gateway.core.route.GatewayConst;
-import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.core.utils.ExtractUtil;
+import com.lzhpo.panda.gateway.route.Route;
 import java.util.Map;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,8 +27,9 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class ForwardRouteFilter implements RouteFilter {
+public class ForwardRouteFilter implements RouteFilter, Ordered {
 
+  private final Route route;
   private final WebClient.Builder webClientBuilder;
 
   @Override
@@ -43,11 +43,6 @@ public class ForwardRouteFilter implements RouteFilter {
 
     requestPath = buildPathWithParams(request, requestPath);
     HttpHeaders headers = request.getHeaders();
-
-    RouteDefinition route = exchange.getAttribute(GatewayConst.ROUTE_DEFINITION);
-    if (Objects.isNull(route)) {
-      return filterChain.filter(exchange);
-    }
 
     RequestBodySpec bodySpec =
         webClientBuilder
@@ -79,5 +74,10 @@ public class ForwardRouteFilter implements RouteFilter {
       fullPath += "?" + queryParamsInPath;
     }
     return fullPath;
+  }
+
+  @Override
+  public int getOrder() {
+    return Ordered.LOWEST_PRECEDENCE;
   }
 }

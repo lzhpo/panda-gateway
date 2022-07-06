@@ -1,11 +1,11 @@
 package com.lzhpo.panda.gateway;
 
 import com.lzhpo.panda.gateway.actuator.GatewayControllerEndpoint;
-import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.handler.GatewayRequestHandler;
 import com.lzhpo.panda.gateway.handler.GatewayRequestMapping;
+import com.lzhpo.panda.gateway.route.DefaultRouteInitializer;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
-import com.lzhpo.panda.gateway.runner.RouteDefinitionLocatorRunner;
+import com.lzhpo.panda.gateway.route.RouteLocator;
 import com.lzhpo.panda.gateway.support.ClientIpResolver;
 import com.lzhpo.panda.gateway.support.KeyResolver;
 import com.lzhpo.panda.gateway.support.RedisRateLimiter;
@@ -34,12 +34,12 @@ import reactor.core.publisher.Mono;
 @ConditionalOnWebApplication(type = Type.REACTIVE)
 public class GatewayAutoConfiguration {
 
+  private final RouteLocator routeLocator;
   private final RouteDefinitionLocator routeDefinitionLocator;
 
   @Bean
-  public RouteDefinitionLocatorRunner routeDefinitionLocatorRunner(
-      GatewayProperties gatewayProperties) {
-    return new RouteDefinitionLocatorRunner(gatewayProperties, routeDefinitionLocator);
+  public DefaultRouteInitializer defaultRouteInitializer() {
+    return new DefaultRouteInitializer(routeDefinitionLocator);
   }
 
   @Bean
@@ -74,11 +74,11 @@ public class GatewayAutoConfiguration {
 
   @Bean
   public GatewayRequestHandler gatewayRequestHandler(WebClient.Builder webClientBuilder) {
-    return new GatewayRequestHandler(webClientBuilder, routeDefinitionLocator);
+    return new GatewayRequestHandler(routeLocator, webClientBuilder);
   }
 
   @Bean
-  public GatewayRequestMapping gatewayRequestMapping(GatewayRequestHandler gatewayRequestHandler) {
-    return new GatewayRequestMapping(gatewayRequestHandler, routeDefinitionLocator);
+  public GatewayRequestMapping gatewayRequestMapping(GatewayRequestHandler requestHandler) {
+    return new GatewayRequestMapping(routeLocator, requestHandler);
   }
 }

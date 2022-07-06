@@ -97,7 +97,7 @@ public class GatewayRequestMapping extends OncePerRequestFilter implements Order
     return routes.stream()
         .filter(
             route -> {
-              request.setAttribute(GatewayConst.ROUTE_DEFINITION, route);
+              request.setAttribute(GatewayConst.ROUTE_ATTRIBUTE, route);
               RelationType relationType = route.getEnhances().getPredicatesRelation();
               switch (relationType) {
                 case AND:

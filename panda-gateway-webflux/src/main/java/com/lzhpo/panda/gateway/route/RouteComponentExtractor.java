@@ -17,7 +17,7 @@ import org.springframework.util.ObjectUtils;
  * @author lzhpo
  */
 @UtilityClass
-public class RouteComponentUtil {
+public class RouteComponentExtractor {
 
   /**
    * Use {@code name} to get route predicate factory.
@@ -59,7 +59,6 @@ public class RouteComponentUtil {
     if (ObjectUtils.isEmpty(names)) {
       return Collections.emptyList();
     }
-
     return Arrays.stream(names)
         .map(name -> SpringUtil.getBean(name, GlobalFilter.class))
         .map(GlobalFilterAdapter::new)

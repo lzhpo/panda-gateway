@@ -34,7 +34,7 @@ public class WeightRoutePredicateFactory
   public RoutePredicate create(Config config) {
     return request -> {
       RouteDefinition currentRoute =
-          (RouteDefinition) request.getAttribute(GatewayConst.ROUTE_DEFINITION);
+          (RouteDefinition) request.getAttribute(GatewayConst.ROUTE_ATTRIBUTE);
       if (Objects.isNull(currentRoute)) {
         return false;
       }

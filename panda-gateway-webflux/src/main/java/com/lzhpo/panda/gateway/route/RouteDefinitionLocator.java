@@ -1,7 +1,9 @@
 package com.lzhpo.panda.gateway.route;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.lzhpo.panda.gateway.core.exception.GatewayCustomException;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.core.route.RouteRefreshEvent;
 import com.lzhpo.panda.gateway.core.utils.ValidateUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,28 +33,28 @@ public interface RouteDefinitionLocator {
   Flux<RouteDefinition> getRoutes();
 
   /**
-   * Save route
-   *
-   * @param route route
-   * @return Void
-   */
-  Mono<Void> saveRoute(RouteDefinition route);
-
-  /**
-   * Delete route
-   *
-   * @param routeId routeId
-   * @return Void
-   */
-  Mono<Void> deleteRoute(String routeId);
-
-  /**
-   * Validate route
+   * Save routes.
    *
    * @param routes routes
    * @return Void
    */
-  default Mono<Void> validateRoute(List<RouteDefinition> routes) {
+  Mono<Boolean> saveRoutes(RouteDefinition... routes);
+
+  /**
+   * Delete routes.
+   *
+   * @param routeIds routeIds
+   * @return deleted num
+   */
+  Mono<Long> deleteRoutes(String... routeIds);
+
+  /**
+   * Validate routes.
+   *
+   * @param routes routes
+   * @return Void
+   */
+  default Mono<Boolean> validateRoute(RouteDefinition... routes) {
     Assert.notEmpty(routes, "routes cannot empty.");
     List<String> routeIdValidate = new ArrayList<>();
     for (RouteDefinition routeDefinition : routes) {
@@ -64,7 +66,7 @@ public interface RouteDefinitionLocator {
         throw new GatewayCustomException("Duplicate with routeId of " + routeId);
       }
     }
-    return Mono.empty();
+    return Mono.just(true);
   }
 
   /**
@@ -79,5 +81,14 @@ public interface RouteDefinitionLocator {
         routes.stream()
             .sorted(Comparator.comparingInt(RouteDefinition::getOrder))
             .toArray(RouteDefinition[]::new));
+  }
+
+  /**
+   * Publish {@link RouteRefreshEvent}
+   *
+   * @param event {@link RouteRefreshEvent}
+   */
+  default void publishRefreshEvent(RouteRefreshEvent event) {
+    SpringUtil.publishEvent(event);
   }
 }

@@ -47,7 +47,7 @@ public class ForwardRouteFilter implements RouteFilter {
     HttpMethod httpMethod = HttpMethod.resolve(method);
     Assert.notNull(httpMethod, "Bad request");
     MultiValueMap<String, String> headers = buildHeaders(request);
-    RouteDefinition route = (RouteDefinition) request.getAttribute(GatewayConst.ROUTE_DEFINITION);
+    RouteDefinition route = (RouteDefinition) request.getAttribute(GatewayConst.ROUTE_ATTRIBUTE);
 
     String finallyRequestPath = request.getRequestURI();
     finallyRequestPath = buildPathWithParams(request, finallyRequestPath);
