@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
@@ -36,16 +35,4 @@ public class RouteDefinition {
 
   /** Route metadata */
   private Map<String, String> metadata = new HashMap<>();
-
-  /** Enhance config */
-  private EnhanceConfig enhances;
-
-  /** Some enhance config for route */
-  @Data
-  @Validated
-  public static class EnhanceConfig {
-
-    /** Predicates relation */
-    @NotNull private RelationType predicatesRelation = RelationType.AND;
-  }
 }

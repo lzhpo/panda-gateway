@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GatewayConst {
 
-  public static final String ROUTE_ATTRIBUTE = "ROUTE";
-
   public static final String ROUTE_ID = "ROUTE-ID";
 
   /** Route definitions cache key for redis */

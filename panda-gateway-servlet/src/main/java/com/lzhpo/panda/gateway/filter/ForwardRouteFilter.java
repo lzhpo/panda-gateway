@@ -1,9 +1,8 @@
 package com.lzhpo.panda.gateway.filter;
 
 import cn.hutool.extra.servlet.ServletUtil;
-import com.lzhpo.panda.gateway.core.route.GatewayConst;
-import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.core.utils.ExtractUtil;
+import com.lzhpo.panda.gateway.route.Route;
 import com.lzhpo.panda.gateway.support.CacheRequestWrapper;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -18,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +34,9 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
  * @author lzhpo
  */
 @RequiredArgsConstructor
-public class ForwardRouteFilter implements RouteFilter {
+public class ForwardRouteFilter implements RouteFilter, Ordered {
 
+  private final Route route;
   private final RestTemplate restTemplate;
 
   @Override
@@ -47,7 +48,6 @@ public class ForwardRouteFilter implements RouteFilter {
     HttpMethod httpMethod = HttpMethod.resolve(method);
     Assert.notNull(httpMethod, "Bad request");
     MultiValueMap<String, String> headers = buildHeaders(request);
-    RouteDefinition route = (RouteDefinition) request.getAttribute(GatewayConst.ROUTE_ATTRIBUTE);
 
     String finallyRequestPath = request.getRequestURI();
     finallyRequestPath = buildPathWithParams(request, finallyRequestPath);
@@ -116,5 +116,10 @@ public class ForwardRouteFilter implements RouteFilter {
       headers.add(headerName, request.getHeader(headerName));
     }
     return headers;
+  }
+
+  @Override
+  public int getOrder() {
+    return Ordered.LOWEST_PRECEDENCE;
   }
 }

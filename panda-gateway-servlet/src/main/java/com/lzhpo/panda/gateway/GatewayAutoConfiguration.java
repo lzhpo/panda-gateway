@@ -2,10 +2,9 @@ package com.lzhpo.panda.gateway;
 
 import cn.hutool.extra.servlet.ServletUtil;
 import com.lzhpo.panda.gateway.actuator.GatewayControllerEndpoint;
-import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.handler.GatewayRequestMapping;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
-import com.lzhpo.panda.gateway.runner.RouteDefinitionLocatorRunner;
+import com.lzhpo.panda.gateway.route.RouteLocator;
 import com.lzhpo.panda.gateway.support.ClientIpResolver;
 import com.lzhpo.panda.gateway.support.KeyResolver;
 import com.lzhpo.panda.gateway.support.RedisRateLimiter;
@@ -33,11 +32,6 @@ public class GatewayAutoConfiguration {
   private final RouteDefinitionLocator routeDefinitionLocator;
 
   @Bean
-  public RouteDefinitionLocatorRunner routeRunner(GatewayProperties gatewayProperties) {
-    return new RouteDefinitionLocatorRunner(gatewayProperties, routeDefinitionLocator);
-  }
-
-  @Bean
   public GatewayControllerEndpoint gatewayControllerEndpoint() {
     return new GatewayControllerEndpoint(routeDefinitionLocator);
   }
@@ -62,7 +56,8 @@ public class GatewayAutoConfiguration {
   }
 
   @Bean
-  public GatewayRequestMapping servletWebFilter(RestTemplate restTemplate) {
-    return new GatewayRequestMapping(restTemplate, routeDefinitionLocator);
+  public GatewayRequestMapping servletWebFilter(
+      RouteLocator routeLocator, RestTemplate restTemplate) {
+    return new GatewayRequestMapping(routeLocator, restTemplate);
   }
 }

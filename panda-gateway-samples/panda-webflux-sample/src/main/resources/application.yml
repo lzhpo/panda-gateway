@@ -16,7 +16,7 @@ gateway:
       uri: lb://panda-service-sample
       order: 1
       metadata:
-        # or, and. default value: and
+        # choose one: ["or", "and"], default is "and"
         predicate.relation: or
       predicates:
         - name: Path
@@ -105,7 +105,7 @@ gateway:
       uri: lb://panda-service-sample
       order: 2
       metadata:
-        # or, and. default value: and
+        # choose one: ["or", "and"], default is "and"
         predicate.relation: or
       predicates:
         - name: Weight

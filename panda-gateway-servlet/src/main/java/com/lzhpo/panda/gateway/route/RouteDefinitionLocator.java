@@ -1,7 +1,9 @@
 package com.lzhpo.panda.gateway.route;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.lzhpo.panda.gateway.core.exception.GatewayCustomException;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.core.route.RouteRefreshEvent;
 import com.lzhpo.panda.gateway.core.utils.ValidateUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -30,18 +32,18 @@ public interface RouteDefinitionLocator {
   List<RouteDefinition> getRoutes();
 
   /**
-   * Save route
+   * Save routes
    *
-   * @param route route
+   * @param routes routes
    */
-  void saveRoute(RouteDefinition route);
+  void saveRoutes(RouteDefinition... routes);
 
   /**
-   * Delete route
+   * Delete routes
    *
-   * @param routeId routeId
+   * @param routeIds routeIds
    */
-  void deleteRoute(String routeId);
+  void deleteRoutes(String... routeIds);
 
   /**
    * Validate route
@@ -73,5 +75,14 @@ public interface RouteDefinitionLocator {
     return routes.stream()
         .sorted(Comparator.comparingInt(RouteDefinition::getOrder))
         .collect(Collectors.toList());
+  }
+
+  /**
+   * Publish {@link RouteRefreshEvent}
+   *
+   * @param event {@link RouteRefreshEvent}
+   */
+  default void publishRefreshEvent(RouteRefreshEvent event) {
+    SpringUtil.publishEvent(event);
   }
 }

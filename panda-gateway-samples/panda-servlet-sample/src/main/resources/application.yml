@@ -15,8 +15,9 @@ gateway:
       # uri: http://localhost:9000
       uri: lb://panda-service-sample
       order: 1
-      enhances:
-        predicates-relation: or
+      metadata:
+        # choose one: ["or", "and"], default is "and"
+        predicate.relation: or
       predicates:
         - name: Path
           args:
@@ -103,8 +104,9 @@ gateway:
       # uri: http://localhost:9000
       uri: lb://panda-service-sample
       order: 2
-      enhances:
-        predicates-relation: and
+      metadata:
+        # choose one: ["or", "and"], default is "and"
+        predicate.relation: or
       predicates:
         - name: Weight
           args:

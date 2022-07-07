@@ -38,12 +38,13 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
   }
 
   @Override
-  public Mono<Boolean> saveRoutes(RouteDefinition... routes) {
-    return validateRoute(routes)
+  public Mono<Boolean> saveRoutes(RouteDefinition... routeDefinitions) {
+    return validateRoute(routeDefinitions)
         .flatMap(
             x -> {
-              Map<String, RouteDefinition> routeDefinitionMap = new HashMap<>(routes.length);
-              for (RouteDefinition routeDefinition : routes) {
+              Map<String, RouteDefinition> routeDefinitionMap =
+                  new HashMap<>(routeDefinitions.length);
+              for (RouteDefinition routeDefinition : routeDefinitions) {
                 routeDefinitionMap.put(routeDefinition.getId(), routeDefinition);
               }
               return redisTemplate

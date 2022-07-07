@@ -46,9 +46,9 @@ public class MemoryRouteDefinitionLocator implements RouteDefinitionLocator {
   public Mono<Long> deleteRoutes(String... routeIds) {
     long deletedNum = 0L;
     Iterator<RouteDefinition> iterator = routeDefinitions.iterator();
-    for (String routeId : routeIds) {
-      while (iterator.hasNext()) {
-        RouteDefinition routeDefinition = iterator.next();
+    while (iterator.hasNext()) {
+      RouteDefinition routeDefinition = iterator.next();
+      for (String routeId : routeIds) {
         if (routeDefinition.getId().equals(routeId)) {
           iterator.remove();
           deletedNum++;

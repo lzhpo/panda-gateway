@@ -1,9 +1,12 @@
 package com.lzhpo.panda.gateway.route;
 
-import com.google.common.collect.Lists;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.core.route.RouteRefreshEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -25,13 +28,30 @@ public class MemoryRouteDefinitionLocator implements RouteDefinitionLocator {
   }
 
   @Override
-  public void saveRoute(RouteDefinition route) {
-    validateRoute(Lists.newArrayList(route));
-    routeDefinitions.add(route);
+  public void saveRoutes(RouteDefinition... routeDefinitions) {
+    List<RouteDefinition> finalRouteDefinitions =
+        Arrays.stream(routeDefinitions).collect(Collectors.toList());
+    validateRoute(finalRouteDefinitions);
+    this.routeDefinitions.addAll(finalRouteDefinitions);
+    publishRefreshEvent(new RouteRefreshEvent(this));
   }
 
   @Override
-  public void deleteRoute(String routeId) {
-    routeDefinitions.removeIf(route -> route.getId().equals(routeId));
+  public void deleteRoutes(String... routeIds) {
+    long deletedNum = 0L;
+    Iterator<RouteDefinition> iterator = routeDefinitions.iterator();
+    while (iterator.hasNext()) {
+      RouteDefinition routeDefinition = iterator.next();
+      for (String routeId : routeIds) {
+        if (routeDefinition.getId().equals(routeId)) {
+          iterator.remove();
+          deletedNum++;
+        }
+      }
+    }
+
+    if (deletedNum > 0) {
+      publishRefreshEvent(new RouteRefreshEvent(this));
+    }
   }
 }

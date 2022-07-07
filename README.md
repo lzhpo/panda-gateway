@@ -173,11 +173,13 @@ gateway:
 
 ### Custom predicate relation
 
+> You can custom define the relation for the route predicates, whether **match all**(AND) or **match anyone**(OR).
+
 #### `AND`
 
 > This route is used when the X-B3-TraceId in the request header is equal to 123456 and the nickName in the request parameter is equal to Lewis.
 
-You can set `gateway.routes[x].enhances.predicates-relation=and`, and the default value also is `and`.
+You can set `gateway.routes[x].metadata.predicate.relation=and`, and the default value also is `and`.
 
 ```yaml
 gateway:
@@ -185,8 +187,8 @@ gateway:
     - id: panda-service-sample-01
       uri: lb://panda-service-sample
       order: 1
-      enhances:
-        predicates-relation: and
+      metadata:
+        predicate.relation: and
       predicates:
         - name: Header
           args:
@@ -202,7 +204,7 @@ gateway:
 
 > This route is used when the `X-B3-TraceId` in the request header is equal to 123456, or the `nickName` in the request parameter is equal to Lewis.
 
-You can set `gateway.routes[x].enhances.predicates-relation=or`
+You can set`gateway.routes[x].metadata.predicate.relation=or`
 
 ```yaml
 gateway:
@@ -210,8 +212,8 @@ gateway:
     - id: panda-service-sample-01
       uri: lb://panda-service-sample
       order: 1
-      enhances:
-        predicates-relation: or
+      metadata:
+        predicate.relation: or
       predicates:
         - name: Header
           args:

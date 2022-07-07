@@ -1,6 +1,8 @@
 package com.lzhpo.panda.gateway;
 
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.route.CacheRouteLocator;
+import com.lzhpo.panda.gateway.route.DefaultRouteInitializer;
 import com.lzhpo.panda.gateway.route.MemoryRouteDefinitionLocator;
 import com.lzhpo.panda.gateway.route.RedisRouteDefinitionLocator;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
@@ -19,6 +21,17 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration
 @ConditionalOnWebApplication(type = Type.SERVLET)
 public class GatewayRouteAutoConfiguration {
+
+  @Bean
+  public DefaultRouteInitializer defaultRouteInitializer(
+      RouteDefinitionLocator routeDefinitionLocator) {
+    return new DefaultRouteInitializer(routeDefinitionLocator);
+  }
+
+  @Bean
+  public CacheRouteLocator cacheRouteLocator(RouteDefinitionLocator routeDefinitionLocator) {
+    return new CacheRouteLocator(routeDefinitionLocator);
+  }
 
   @Bean
   @ConditionalOnMissingBean
