@@ -2,6 +2,7 @@ package com.lzhpo.panda.gateway.route;
 
 import com.lzhpo.panda.gateway.core.route.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
+import com.lzhpo.panda.gateway.core.route.RouteRefreshEvent;
 import com.lzhpo.panda.gateway.filter.RouteFilter;
 import com.lzhpo.panda.gateway.filter.factory.RouteFilterFactory;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
@@ -9,12 +10,13 @@ import com.lzhpo.panda.gateway.predicate.factory.RoutePredicateFactory;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationListener;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
  * @author lzhpo
  */
-public interface RouteLocator {
+public interface RouteLocator extends ApplicationListener<RouteRefreshEvent> {
 
   /**
    * Get {@link Route} by routeId.

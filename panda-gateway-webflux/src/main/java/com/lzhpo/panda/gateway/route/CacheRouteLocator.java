@@ -10,14 +10,13 @@ import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationListener;
 
 /**
  * @author lzhpo
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CacheRouteLocator implements RouteLocator, ApplicationListener<RouteRefreshEvent> {
+public class CacheRouteLocator implements RouteLocator {
 
   private final RouteDefinitionLocator routeDefinitionLocator;
   private final Map<String, Route> cacheRoutes = new ConcurrentHashMap<>();
