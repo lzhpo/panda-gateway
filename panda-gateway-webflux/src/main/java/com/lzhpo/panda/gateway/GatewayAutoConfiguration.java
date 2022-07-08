@@ -69,7 +69,7 @@ public class GatewayAutoConfiguration {
 
   @Bean
   public GatewayControllerEndpoint gatewayControllerEndpoint() {
-    return new GatewayControllerEndpoint(routeLocator, routeDefinitionLocator);
+    return new GatewayControllerEndpoint(routeDefinitionLocator);
   }
 
   @Bean
