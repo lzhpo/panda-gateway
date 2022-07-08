@@ -1,30 +1,30 @@
 ![style check](https://github.com/lzhpo/panda-gateway/actions/workflows/style-check.yml/badge.svg)
 
-English | [中文](README-CN.md)
+中文 | [English](README.md)
 
-## What's it?
+## 它是什么？
 
-### Foreword
+### 前言
 
-- This project aims to handwrite SpringCloud Gateway.
-- Referring to the core idea of SpringCloud Gateway, I basically implemented all its functions in my own way.
-- You can use it to understand the internal working principle of SpringCloud Gateway and secondary development more quickly.
+- 本项目旨在手写SpringCloud Gateway。
+- 参考SpringCloud Gateway的核心思想，我基本上都是自己实现了它的所有功能。
+- 可以使用它更快的了解SpringCloud Gateway的内部工作原理和二次开发。
 
-### Features
+### 特点
 
-1. Powerful predicates and filters, easier to understand and expand.
-2. Route information storage can be dynamically switched to memory or redis.
-3. Supports servlet and webflux environments, as well as microservice mode and http/https mode.
+1. 强大的谓词和过滤器，更容易理解和扩展。
+2. 路由信息存储可以动态切换到内存或者redis。
+3. 支持servlet和webflux环境，以及微服务模式和http/https模式。
 
-## How it works?
+## 它是如何工作的？
 
 ```java
 // TODO
 ```
 
-## Route predicate
+## 路由谓词
 
-### Exist route predicate
+### 已存在的谓词
 
 #### 1.`Path` route predicate
 
@@ -218,7 +218,7 @@ gateway:
                 end: 2030-10-01T01:29:48.0875598+08:00[Asia/Shanghai]
 ```
 
-**Notes**: 
+**Notes**:
 
 1. Support many time pair.
 
@@ -230,7 +230,7 @@ gateway:
    ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
    ```
 
-### Custom route predicate relation
+### 自定义路由谓词关系
 
 > You can custom define the relation for the route predicates, whether **match all**(AND) or **match anyone**(OR).
 
@@ -284,13 +284,13 @@ gateway:
               nickName: Lewis 
 ```
 
-### How to implement route predicate?
+### 如何实现一个路由谓词？
 
 > Format: `[PredicateName]`RoutePredicateFactory
 
 I will use `After` route predicate as example to tell you how to implement it.
 
-#### Servlet environment
+#### Servlet环境
 
 ```java
 @Component
@@ -320,7 +320,7 @@ public class AfterRoutePredicateFactory
 }
 ```
 
-#### Webflux environment
+#### Webflux环境
 
 ```java
 @Component
@@ -350,7 +350,7 @@ public class AfterRoutePredicateFactory
 }
 ```
 
-#### Use the `After` route predicate
+#### 使用这个`After`路由谓词
 
 ```yaml
 gateway:
@@ -363,9 +363,9 @@ gateway:
             time: 2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
 ```
 
-## Route filter
+## 路由过滤器
 
-### Exist route filter
+### 已存在的路由过滤器
 
 #### 1.`AddRequestHeader` route filter
 
@@ -496,13 +496,13 @@ gateway:
             rateLimiter: "#{@redisRateLimiter}"
 ```
 
-### How to implement route filter?
+### 如何实现一个路由过滤器？
 
 > Format: `[FilterName]`RouteFilterFactory
 
 I will use `AddResponseHeader` route filter to tell you how to implement it.
 
-#### Servlet environment
+#### Servlet环境
 
 ```java
 @Component
@@ -538,7 +538,7 @@ public class AddResponseHeaderRouteFilterFactory
 }
 ```
 
-#### Webflux environment
+#### Webflux环境
 
 ```java
 @Component
@@ -576,7 +576,7 @@ public class AddResponseHeaderRouteFilterFactory
 }
 ```
 
-#### Use the `AddResponseHeader` route filter
+#### 使用这个`AddResponseHeader`路由过滤器
 
 ```yaml
 gateway:
@@ -591,13 +591,13 @@ gateway:
               age: 20
 ```
 
-## Global filter
+## 全局过滤器
 
 > The global filter will apply all routes, and the global filter not have anything name constraint.
 
-### How to implement global filter?
+### 如何实现一个全局过滤器？
 
-#### Servlet environment
+#### Servlet环境
 
 ```java
 @Component
@@ -613,7 +613,7 @@ public class ResponseGlobalFilter implements GlobalFilter {
 }
 ```
 
-#### Webflux environment
+#### Webflux环境
 
 ```java
 @Component
