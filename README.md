@@ -22,9 +22,11 @@
 
 ## Route predicate
 
-### Internal route predicate
+### Exist route predicate
 
-#### `Path` route predicate
+#### 1.`Path` route predicate
+
+> e.g: If I want make request path `/api/service-sample/**` and `/api/sample/**` proxy to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -37,7 +39,9 @@ gateway:
             paths: /api/service-sample/**, /api/sample/**
 ```
 
-#### `Weight` route predicate
+#### 2.`Weight` route predicate
+
+> e.g: If I want to assign weight for route.
 
 ```yaml
 gateway:
@@ -60,7 +64,9 @@ gateway:
             weight: 2
 ```
 
-#### `Parameter` route predicate
+#### 3.`Parameter` route predicate
+
+> e.g: If I want make request parameter `nickName=Lewis` and `age=22` proxy to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -72,9 +78,14 @@ gateway:
           args:
             parameters:
               nickName: Lewis
+              age: 20
 ```
 
-#### `ClientIp` route predicate
+**Notes**: The value support regex expression.
+
+#### 4.`ClientIp` route predicate
+
+> e.g: If I want make request client ip is `192.168.200.111` and `192.168.200.112` proxy to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -87,7 +98,9 @@ gateway:
             clientIps: 192.168.200.111, 192.168.200.112
 ```
 
-#### `Cookie` route predicate
+#### 5.`Cookie` route predicate
+
+> e.g: If I want make request cookie is `deviceId=123456` and `age=22` proxy to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -99,9 +112,14 @@ gateway:
           args:
             cookies:
               deviceId: 123456
+              age: 22
 ```
 
-#### `Header` route predicate
+**Notes**: The value support regex expression.
+
+#### 6.`Header` route predicate
+
+> e.g: If I want make request cookie is `X-B3-TraceId=123456` and `X-B3-SpanId=123456` proxy to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -113,9 +131,14 @@ gateway:
           args:
             headers:
               X-B3-TraceId: 123456
+              X-B3-SpanId: 123456
 ```
 
-#### `Method` route predicate
+**Notes**: The value support regex expression.
+
+#### 7.`Method` route predicate
+
+> e.g: If I want make request method is `PUT` and `PATCH` proxy to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -128,7 +151,9 @@ gateway:
             methods: PUT, PATCH
 ```
 
-#### `After` route predicate
+#### 8.`After` route predicate
+
+> e.g: If I want make request time is after `2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]` proxy to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -141,7 +166,17 @@ gateway:
             time: 2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
 ```
 
-#### `Before` route predicate
+**Notes**: The value type is `ZonedDateTime`.
+
+You can easy to get the format value:
+
+```java
+ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
+```
+
+#### 9.`Before` route predicate
+
+> e.g: If I want make request time is before `2015-06-30T01:29:48.0875598+08:00[Asia/Shanghai]` proxy to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -154,7 +189,17 @@ gateway:
             time: 2015-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
 ```
 
-#### `Between` route predicate
+**Notes**: The value type is `ZonedDateTime`.
+
+You can easy to get the format value:
+
+```java
+ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
+```
+
+#### 10.`Between` route predicate
+
+> e.g: If you want make the request time is `(2018-06-30T01:29:48.0875598+08:00[Asia/Shanghai], 2018-06-30T01:29:48.0875598+08:00[Asia/Shanghai])` and `(2020-10-01T01:29:48.0875598+08:00[Asia/Shanghai], 2030-10-01T01:29:48.0875598+08:00[Asia/Shanghai])` proxy to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -171,7 +216,19 @@ gateway:
                 end: 2030-10-01T01:29:48.0875598+08:00[Asia/Shanghai]
 ```
 
-### Custom predicate relation
+**Notes**: 
+
+1. Support many time pair.
+
+2. The end value type is `ZonedDateTime`.
+
+   You can easy to get the format value:
+
+   ```java
+   ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
+   ```
+
+### Custom route predicate relation
 
 > You can custom define the relation for the route predicates, whether **match all**(AND) or **match anyone**(OR).
 
@@ -306,9 +363,11 @@ gateway:
 
 ## Route filter
 
-### Internal route filter
+### Exist route filter
 
-#### `AddRequestHeader` route filter
+#### 1.`AddRequestHeader` route filter
+
+> e.g: If you want add request headers.
 
 ```yaml
 gateway:
@@ -323,7 +382,9 @@ gateway:
               age: 123
 ```
 
-#### `AddRequestParameter` route filter
+#### 2.`AddRequestParameter` route filter
+
+> e.g: If you want add request parameters.
 
 ```yaml
 gateway:
@@ -337,7 +398,9 @@ gateway:
               userId: 123
 ```
 
-#### `AddResponseHeader` route filter
+#### 3.`AddResponseHeader` route filter
+
+> e.g: If you want add response headers.
 
 ```yaml
 gateway:
@@ -352,7 +415,9 @@ gateway:
               age: 20
 ```
 
-#### `RemoveRequestHeader` route filter
+#### 4.`RemoveRequestHeader` route filter
+
+> e.g: If you want remove request headers.
 
 ```yaml
 gateway:
@@ -367,7 +432,11 @@ gateway:
               X-B3-SpanId: 456
 ```
 
-#### `RemoveRequestParameter` route filter
+**Notes**: the value support regex expression.
+
+#### 5.`RemoveRequestParameter` route filter
+
+> e.g: If you want remove request parameters.
 
 ```yaml
 gateway:
@@ -382,7 +451,11 @@ gateway:
               spanId: 456
 ```
 
-#### `RemoveResponseHeader` route filter
+**Notes**: the value support regex expression.
+
+#### 6.`RemoveResponseHeader` route filter
+
+> e.g: If you want remove response headers.
 
 ```yaml
 gateway:
@@ -397,7 +470,11 @@ gateway:
               city: Guangzhou
 ```
 
-#### `RateLimiter` route filter
+**Notes**: the value support regex expression.
+
+#### 7.`RateLimiter` route filter
+
+> e.g: If you want limit the current of the request.
 
 ```yaml
 gateway:
