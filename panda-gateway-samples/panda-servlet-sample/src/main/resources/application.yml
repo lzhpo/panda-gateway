@@ -17,7 +17,7 @@ gateway:
       order: 1
       metadata:
         # choose one: ["or", "and"], default is "and"
-        predicate.relation: or
+        predicate.relation: and
       predicates:
         - name: Path
           args:
@@ -108,6 +108,9 @@ gateway:
         # choose one: ["or", "and"], default is "and"
         predicate.relation: or
       predicates:
+        - name: Path
+          args:
+            paths: /api/service-sample/**, /api/sample/**
         - name: Weight
           args:
             group: service-sample
@@ -121,7 +124,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
+        include: health, gateway
