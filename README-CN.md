@@ -6,9 +6,9 @@
 
 ### 前言
 
-- 本项目旨在手写SpringCloud Gateway。
-- 参考SpringCloud Gateway的核心思想，我基本上都是自己实现了它的所有功能。
-- 可以使用它更快的了解SpringCloud Gateway的内部工作原理和二次开发。
+- 本项目旨在手写 SpringCloud Gateway。
+- 参考 SpringCloud Gateway 的核心思想，基本上实现了它的所有功能。
+- 可以使用它更快的了解 SpringCloud Gateway 的内部工作原理和二次开发。
 
 ### 特点
 
@@ -26,9 +26,9 @@
 
 ### 已存在的谓词
 
-#### 1.`Path` route predicate
+#### 1.`Path` 路由谓词
 
-> e.g: If I want make request path `/api/service-sample/**` and `/api/sample/**` proxy to `lb://panda-service-sample`.
+> 例如：如果我想将请求路径`/api/service-sample/**`和`/api/sample/**`转发到`lb://panda-service-sample`。
 
 ```yaml
 gateway:
@@ -41,9 +41,9 @@ gateway:
             paths: /api/service-sample/**, /api/sample/**
 ```
 
-#### 2.`Weight` route predicate
+#### 2.`Weight` 路由谓词
 
-> e.g: If I want to assign weight for route.
+> 例如：我想给路由分配权重。
 
 ```yaml
 gateway:
@@ -66,9 +66,9 @@ gateway:
             weight: 2
 ```
 
-#### 3.`Parameter` route predicate
+#### 3.`Parameter` 路由谓词
 
-> e.g: If I want make request parameter `nickName=Lewis` and `age=22` proxy to `lb://panda-service-sample`.
+> 例如：如果我想将请求参数含有`nickName=Lewis`或`age=22`转发到`lb://panda-service-sample`。
 
 ```yaml
 gateway:
@@ -83,11 +83,11 @@ gateway:
               age: 20
 ```
 
-**Notes**: The value support regex expression.
+**注意**: 值支持正则表达式。
 
-#### 4.`ClientIp` route predicate
+#### 4.`ClientIp` 路由谓词
 
-> e.g: If I want make request client ip is `192.168.200.111` and `192.168.200.112` proxy to `lb://panda-service-sample`.
+> 例如：如果我想请求客户端IP为`192.168.200.111`或`192.168.200.112`转发到`lb://panda-service-sample`。
 
 ```yaml
 gateway:
@@ -100,9 +100,9 @@ gateway:
             clientIps: 192.168.200.111, 192.168.200.112
 ```
 
-#### 5.`Cookie` route predicate
+#### 5.`Cookie` 路由谓词
 
-> e.g: If I want make request cookie is `deviceId=123456` and `age=22` proxy to `lb://panda-service-sample`.
+> 例如：如果我想让请求cookie含有`deviceId=123456`或`age=22`转发到`lb://panda-service-sample`。
 
 ```yaml
 gateway:
@@ -117,11 +117,11 @@ gateway:
               age: 22
 ```
 
-**Notes**: The value support regex expression.
+**注意**: 值支持正则表达式。
 
-#### 6.`Header` route predicate
+#### 6.`Header` 路由谓词
 
-> e.g: If I want make request cookie is `X-B3-TraceId=123456` and `X-B3-SpanId=123456` proxy to `lb://panda-service-sample`.
+> 例如：如果我想让请求cookie含有`X-B3-TraceId=123456`或`X-B3-SpanId=123456`转发到`lb://panda-service-sample`。
 
 ```yaml
 gateway:
@@ -136,11 +136,11 @@ gateway:
               X-B3-SpanId: 123456
 ```
 
-**Notes**: The value support regex expression.
+**注意**: 值支持正则表达式。
 
-#### 7.`Method` route predicate
+#### 7.`Method` 路由谓词
 
-> e.g: If I want make request method is `PUT` and `PATCH` proxy to `lb://panda-service-sample`.
+> 例如：如果我想让请求方法是`PUT`或`PATCH`转发到`lb://panda-service-sample`。
 
 ```yaml
 gateway:
@@ -153,9 +153,9 @@ gateway:
             methods: PUT, PATCH
 ```
 
-#### 8.`After` route predicate
+#### 8.`After` 路由谓词
 
-> e.g: If I want make request time is after `2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]` proxy to `lb://panda-service-sample`.
+> 例如：如果我让请求时间是在`2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]`之后的转发到`lb://panda-service-sample`。
 
 ```yaml
 gateway:
@@ -168,17 +168,17 @@ gateway:
             time: 2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
 ```
 
-**Notes**: The value type is `ZonedDateTime`.
+**注意**: 值的类型是 `ZonedDateTime`.
 
-You can easy to get the format value:
+你可以很轻松的获取值的格式：
 
 ```java
 ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
 ```
 
-#### 9.`Before` route predicate
+#### 9.`Before` 路由谓词
 
-> e.g: If I want make request time is before `2015-06-30T01:29:48.0875598+08:00[Asia/Shanghai]` proxy to `lb://panda-service-sample`.
+> 例如：如果我想让请求时间在`2015-06-30T01:29:48.0875598+08:00[Asia/Shanghai]`之前的转发到`lb://panda-service-sample`。
 
 ```yaml
 gateway:
@@ -191,17 +191,31 @@ gateway:
             time: 2015-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
 ```
 
-**Notes**: The value type is `ZonedDateTime`.
+**注意**: 值的类型是 `ZonedDateTime`.
 
-You can easy to get the format value:
+你可以很轻松的获取值的格式：
 
 ```java
 ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
 ```
 
-#### 10.`Between` route predicate
+#### 10.`Between` 路由谓词
 
-> e.g: If you want make the request time is `(2018-06-30T01:29:48.0875598+08:00[Asia/Shanghai], 2018-06-30T01:29:48.0875598+08:00[Asia/Shanghai])` and `(2020-10-01T01:29:48.0875598+08:00[Asia/Shanghai], 2030-10-01T01:29:48.0875598+08:00[Asia/Shanghai])` proxy to `lb://panda-service-sample`.
+> 例如：我想让请求时间在
+>
+> ```java
+> start time: 2012-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
+> end time: 2018-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
+> ```
+>
+> 或者
+>
+> ```java
+> start time: 2020-10-01T01:29:48.0875598+08:00[Asia/Shanghai]
+> end time: 2030-10-01T01:29:48.0875598+08:00[Asia/Shanghai]
+> ```
+>
+> 转发到 `lb://panda-service-sample`。
 
 ```yaml
 gateway:
@@ -218,13 +232,13 @@ gateway:
                 end: 2030-10-01T01:29:48.0875598+08:00[Asia/Shanghai]
 ```
 
-**Notes**:
+**注意**:
 
-1. Support many time pair.
+1. 支持多个时间对。
 
-2. The end value type is `ZonedDateTime`.
+2. 值的类型是`ZonedDateTime`.
 
-   You can easy to get the format value:
+   你可以很轻松的获取值的格式：
 
    ```java
    ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
@@ -232,13 +246,11 @@ gateway:
 
 ### 自定义路由谓词关系
 
-> You can custom define the relation for the route predicates, whether **match all**(AND) or **match anyone**(OR).
+> 您可以自定义定义路由谓词的关系，通过设置`gateway.routes[x].metadata.predicate.relation`，可以设置为`AND`（匹配所有谓词）或 `OR`（匹配任意一个谓词），不区分大小写，默认是`AND`（匹配所有谓词）。
 
 #### `AND`
 
-> This route is used when the X-B3-TraceId in the request header is equal to 123456 and the nickName in the request parameter is equal to Lewis.
-
-You can set `gateway.routes[x].metadata.predicate.relation=and`, and the default value also is `and`.
+> 当请求头中的 X-B3-TraceId为123456，**并且**请求参数中的nickName为Lewis时使用此路由。
 
 ```yaml
 gateway:
@@ -261,9 +273,7 @@ gateway:
 
 #### `OR`
 
-> This route is used when the `X-B3-TraceId` in the request header is equal to 123456, or the `nickName` in the request parameter is equal to Lewis.
-
-You can set`gateway.routes[x].metadata.predicate.relation=or`
+> 当请求头中的 X-B3-TraceId为123456，**或者**请求参数中的nickName为Lewis时使用此路由。
 
 ```yaml
 gateway:
@@ -286,9 +296,9 @@ gateway:
 
 ### 如何实现一个路由谓词？
 
-> Format: `[PredicateName]`RoutePredicateFactory
+> 格式：`[PredicateName]`RoutePredicateFactory
 
-I will use `After` route predicate as example to tell you how to implement it.
+我将以`After`路由谓词为例来告诉你如何实现它。
 
 #### Servlet环境
 
@@ -367,9 +377,9 @@ gateway:
 
 ### 已存在的路由过滤器
 
-#### 1.`AddRequestHeader` route filter
+#### 1.`AddRequestHeader` 路由过滤器
 
-> e.g: If you want add request headers.
+> 例如：如果您想添加请求标头。
 
 ```yaml
 gateway:
@@ -384,9 +394,9 @@ gateway:
               age: 123
 ```
 
-#### 2.`AddRequestParameter` route filter
+#### 2.`AddRequestParameter` 路由过滤器
 
-> e.g: If you want add request parameters.
+> eg：如果你想添加请求参数。
 
 ```yaml
 gateway:
@@ -400,9 +410,9 @@ gateway:
               userId: 123
 ```
 
-#### 3.`AddResponseHeader` route filter
+#### 3.`AddResponseHeader` 路由过滤器
 
-> e.g: If you want add response headers.
+> 例如：如果你想添加响应头。
 
 ```yaml
 gateway:
@@ -417,9 +427,9 @@ gateway:
               age: 20
 ```
 
-#### 4.`RemoveRequestHeader` route filter
+#### 4.`RemoveRequestHeader` 路由过滤器
 
-> e.g: If you want remove request headers.
+> 例如：如果您想删除请求标头。
 
 ```yaml
 gateway:
@@ -436,9 +446,9 @@ gateway:
 
 **Notes**: the value support regex expression.
 
-#### 5.`RemoveRequestParameter` route filter
+#### 5.`RemoveRequestParameter` 路由过滤器
 
-> e.g: If you want remove request parameters.
+> eg：如果你想删除请求参数。
 
 ```yaml
 gateway:
@@ -455,9 +465,9 @@ gateway:
 
 **Notes**: the value support regex expression.
 
-#### 6.`RemoveResponseHeader` route filter
+#### 6.`RemoveResponseHeader` 路由过滤器
 
-> e.g: If you want remove response headers.
+> 例如：如果你想删除响应头。
 
 ```yaml
 gateway:
@@ -474,9 +484,9 @@ gateway:
 
 **Notes**: the value support regex expression.
 
-#### 7.`RateLimiter` route filter
+#### 7.`RateLimiter` 路由过滤器
 
-> e.g: If you want limit the current of the request.
+> eg：如果你想限制请求的速率。
 
 ```yaml
 gateway:
@@ -498,9 +508,9 @@ gateway:
 
 ### 如何实现一个路由过滤器？
 
-> Format: `[FilterName]`RouteFilterFactory
+> 格式：`[FilterName]`RouteFilterFactory
 
-I will use `AddResponseHeader` route filter to tell you how to implement it.
+我将使用`AddResponseHeader`路由过滤器来告诉你如何实现它。
 
 #### Servlet环境
 
@@ -593,7 +603,7 @@ gateway:
 
 ## 全局过滤器
 
-> The global filter will apply all routes, and the global filter not have anything name constraint.
+> 全局过滤器将应用所有路由，并且全局过滤器没有任何名称约束。
 
 ### 如何实现一个全局过滤器？
 
@@ -630,7 +640,7 @@ public class ResponseGlobalFilter implements GlobalFilter {
 }
 ```
 
-## Actuator api
+## Actuator端点API
 
 ```java
 // TODO

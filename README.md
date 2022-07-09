@@ -28,7 +28,7 @@ English | [中文](README-CN.md)
 
 #### 1.`Path` route predicate
 
-> e.g: If I want make request path `/api/service-sample/**` and `/api/sample/**` proxy to `lb://panda-service-sample`.
+> e.g: If I want make request path `/api/service-sample/**` and `/api/sample/**` forward to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -68,7 +68,7 @@ gateway:
 
 #### 3.`Parameter` route predicate
 
-> e.g: If I want make request parameter `nickName=Lewis` and `age=22` proxy to `lb://panda-service-sample`.
+> e.g: If I want make request parameter have `nickName=Lewis` or `age=22` forward to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -87,7 +87,7 @@ gateway:
 
 #### 4.`ClientIp` route predicate
 
-> e.g: If I want make request client ip is `192.168.200.111` and `192.168.200.112` proxy to `lb://panda-service-sample`.
+> e.g: If I want make request client ip is `192.168.200.111` or `192.168.200.112` forward to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -102,7 +102,7 @@ gateway:
 
 #### 5.`Cookie` route predicate
 
-> e.g: If I want make request cookie is `deviceId=123456` and `age=22` proxy to `lb://panda-service-sample`.
+> e.g: If I want make request cookie is `deviceId=123456` or `age=22` forward to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -121,7 +121,7 @@ gateway:
 
 #### 6.`Header` route predicate
 
-> e.g: If I want make request cookie is `X-B3-TraceId=123456` and `X-B3-SpanId=123456` proxy to `lb://panda-service-sample`.
+> e.g: If I want make request cookie is `X-B3-TraceId=123456` or `X-B3-SpanId=123456` forward to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -140,7 +140,7 @@ gateway:
 
 #### 7.`Method` route predicate
 
-> e.g: If I want make request method is `PUT` and `PATCH` proxy to `lb://panda-service-sample`.
+> e.g: If I want make request method is `PUT` or `PATCH` forward to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -155,7 +155,7 @@ gateway:
 
 #### 8.`After` route predicate
 
-> e.g: If I want make request time is after `2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]` proxy to `lb://panda-service-sample`.
+> e.g: If I want make request time is after `2030-06-30T01:29:48.0875598+08:00[Asia/Shanghai]` forward to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -178,7 +178,7 @@ ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
 
 #### 9.`Before` route predicate
 
-> e.g: If I want make request time is before `2015-06-30T01:29:48.0875598+08:00[Asia/Shanghai]` proxy to `lb://panda-service-sample`.
+> e.g: If I want make request time is before `2015-06-30T01:29:48.0875598+08:00[Asia/Shanghai]` forward to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -201,7 +201,21 @@ ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
 
 #### 10.`Between` route predicate
 
-> e.g: If you want make the request time is `(2018-06-30T01:29:48.0875598+08:00[Asia/Shanghai], 2018-06-30T01:29:48.0875598+08:00[Asia/Shanghai])` and `(2020-10-01T01:29:48.0875598+08:00[Asia/Shanghai], 2030-10-01T01:29:48.0875598+08:00[Asia/Shanghai])` proxy to `lb://panda-service-sample`.
+> e.g: If you want make the request time is 
+>
+> ```java
+> start time: 2012-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
+> end time: 2018-06-30T01:29:48.0875598+08:00[Asia/Shanghai]
+> ```
+>
+> or
+>
+> ```java
+> start time: 2020-10-01T01:29:48.0875598+08:00[Asia/Shanghai]
+> end time: 2030-10-01T01:29:48.0875598+08:00[Asia/Shanghai]
+> ```
+>
+> forward to `lb://panda-service-sample`。
 
 ```yaml
 gateway:
