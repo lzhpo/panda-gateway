@@ -28,7 +28,7 @@
 
 #### 1.`Path` 路由谓词
 
-> 例如：如果我想将请求路径`/api/service-sample/**`和`/api/sample/**`转发到`lb://panda-service-sample`。
+> 例如：如果我想将请求路径是`/api/service-sample/**`或`/api/sample/**`转发到`lb://panda-service-sample`。
 
 ```yaml
 gateway:

@@ -28,7 +28,7 @@ English | [中文](README-CN.md)
 
 #### 1.`Path` route predicate
 
-> e.g: If I want make request path `/api/service-sample/**` and `/api/sample/**` forward to `lb://panda-service-sample`.
+> e.g: If I want make request path is `/api/service-sample/**` or `/api/sample/**` forward to `lb://panda-service-sample`.
 
 ```yaml
 gateway:
@@ -246,13 +246,11 @@ gateway:
 
 ### Custom route predicate relation
 
-> You can custom define the relation for the route predicates, whether **match all**(AND) or **match anyone**(OR).
+> You can define the relation of routing predicates. By `setting gateway.routes[x].metadata.predicate.relation`, it can be set to `AND` (match all predicates) or `OR` (match any predicate), case insensitive, the default is `AND` (match all predicates).
 
 #### `AND`
 
-> This route is used when the X-B3-TraceId in the request header is equal to 123456 and the nickName in the request parameter is equal to Lewis.
-
-You can set `gateway.routes[x].metadata.predicate.relation=and`, and the default value also is `and`.
+> This route is used when the request header have `X-B3-TraceId=123456` **and** the request parameter have `nickName=Lewis`.
 
 ```yaml
 gateway:
@@ -275,9 +273,7 @@ gateway:
 
 #### `OR`
 
-> This route is used when the `X-B3-TraceId` in the request header is equal to 123456, or the `nickName` in the request parameter is equal to Lewis.
-
-You can set`gateway.routes[x].metadata.predicate.relation=or`
+> This route is used when the request header have `X-B3-TraceId=123456` **or** the request parameter have `nickName=Lewis`.
 
 ```yaml
 gateway:
@@ -644,7 +640,7 @@ public class ResponseGlobalFilter implements GlobalFilter {
 }
 ```
 
-## Actuator api
+## Actuator endpoint API
 
 ```java
 // TODO
