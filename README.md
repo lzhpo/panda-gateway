@@ -246,7 +246,7 @@ gateway:
 
 ### Custom route predicate relation
 
-> You can define the relation of routing predicates. By `setting gateway.routes[x].metadata.predicate.relation`, it can be set to `AND` (match all predicates) or `OR` (match any predicate), case insensitive, the default is `AND` (match all predicates).
+> You can define the relation of routing predicates. By setting `gateway.routes[x].metadata.predicate.relation`, it can be set to `AND` (match all predicates) or `OR` (match any predicate), case insensitive, the default is `AND` (match all predicates).
 
 #### `AND`
 
@@ -642,11 +642,63 @@ public class ResponseGlobalFilter implements GlobalFilter {
 
 ## Actuator endpoint API
 
+We need exposure `gateway` endpoint if we want to do about gateway something.
+
 ```java
-// TODO
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway
 ```
 
+### 1.Get configuration of all route
 
+```js
+GET /actuator/gateway/routes
+```
+
+### 2.Get route configuration by routeId
+
+```js
+GET /actuator/gateway/routes/${routeId}
+```
+
+### 3.Get predicate class name of all route
+
+```js
+GET /actuator/gateway/routes/predicates
+```
+
+### 4.Get predicate class name by routeId
+
+```js
+GET /actuator/gateway/routes/${routeId}/predicates
+```
+
+### 5.Get filter class name of all route
+
+```js
+GET /actuator/gateway/routes/filters
+```
+
+### 6.Get filter class name by routeId
+
+```js
+GET /actuator/gateway/routes/${routeId}/filters
+```
+
+### 7.Get global filter class name of all route
+
+```js
+GET /actuator/gateway/routes/global-filters
+```
+
+### 8.Refresh route
+
+```js
+POST /actuator/gateway/routes/refresh
+```
 
 
 

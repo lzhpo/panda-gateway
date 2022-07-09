@@ -7,7 +7,7 @@
 ### 前言
 
 - 本项目旨在手写 SpringCloud Gateway。
-- 参考 SpringCloud Gateway 的核心思想，基本上实现了它的所有功能。
+- 参考 SpringCloud Gateway 的核心思想，我基本上用自己的方式实现了它所有的功能。
 - 可以使用它更快的了解 SpringCloud Gateway 的内部工作原理和二次开发。
 
 ### 特点
@@ -642,9 +642,65 @@ public class ResponseGlobalFilter implements GlobalFilter {
 
 ## Actuator端点API
 
+如果我们想对网关做一些事情，我们需要暴露`gateway`端点。
+
 ```java
-// TODO
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway
 ```
+
+### 1.获取所有路由配置
+
+```js
+GET /actuator/gateway/routes
+```
+
+### 2.根据路由ID获取路由配置
+
+```js
+GET /actuator/gateway/routes/${routeId}
+```
+
+### 3.获取所有路由谓词类名
+
+```js
+GET /actuator/gateway/routes/predicates
+```
+
+### 4.根据路由ID获取路由谓词类名
+
+```js
+GET /actuator/gateway/routes/${routeId}/predicates
+```
+
+### 5.获取所有路由过滤器类名
+
+```js
+GET /actuator/gateway/routes/filters
+```
+
+### 6.根据路由ID获取路由过滤器类名
+
+```js
+GET /actuator/gateway/routes/${routeId}/filters
+```
+
+### 7.获取所有全局过滤器类名
+
+```js
+GET /actuator/gateway/routes/global-filters
+```
+
+### 8.刷新路由
+
+```js
+POST /actuator/gateway/routes/refresh
+```
+
+
 
 
 

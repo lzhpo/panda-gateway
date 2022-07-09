@@ -4,6 +4,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.lzhpo.panda.gateway.core.route.ComponentDefinition;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.core.route.RouteRefreshEvent;
+import com.lzhpo.panda.gateway.filter.GlobalFilter;
 import com.lzhpo.panda.gateway.filter.factory.RouteFilterFactory;
 import com.lzhpo.panda.gateway.predicate.factory.RoutePredicateFactory;
 import com.lzhpo.panda.gateway.route.RouteComponentExtractor;
@@ -90,6 +91,18 @@ public class GatewayControllerEndpoint {
                     .getClass()
                     .getName());
     return Mono.just(ResponseEntity.ok(filterNames));
+  }
+
+  @GetMapping("/routes/global-filters")
+  public Mono<ResponseEntity<List<String>>> globalFilters() {
+    String[] filterNames = SpringUtil.getBeanNamesForType(GlobalFilter.class);
+    return Mono.just(
+        ResponseEntity.ok(
+            Arrays.stream(filterNames)
+                .map(filterName -> SpringUtil.getBean(filterName, GlobalFilter.class))
+                .map(GlobalFilter::getClass)
+                .map(Class::toString)
+                .collect(Collectors.toList())));
   }
 
   @PostMapping("/routes/refresh")
