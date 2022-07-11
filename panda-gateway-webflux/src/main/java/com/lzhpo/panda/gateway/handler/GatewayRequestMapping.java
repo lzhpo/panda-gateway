@@ -42,7 +42,7 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
     // ResourceHandlerRegistry default order is Ordered.LOWEST_PRECEDENCE - 1
     setOrder(1);
     // Cors configurations
-    setCorsConfigurations(gatewayProperties.getCrossConfigurations());
+    // setCorsConfigurations(gatewayProperties.getCrossConfigurations());
   }
 
   @Nonnull

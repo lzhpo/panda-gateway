@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+  <title>Hello</title>
+</head>
+<body>
+<div id="show"></div>
+<input type="button" onclick="btnClick()" value="get_button">
+<script>
+  function btnClick() {
+    $.get('http://localhost:9001/api/webflux-sample/hello', function (msg) {
+      $("#show").html(msg);
+    });
+  }
+</script>
+</body>
+</html>

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -65,6 +66,13 @@ public class GatewayAutoConfiguration {
   public GatewayRequestMapping servletWebFilter(
       RouteLocator routeLocator, RestTemplate restTemplate) {
     return new GatewayRequestMapping(routeLocator, restTemplate, gatewayProperties);
+  }
+
+  @Bean
+  @ConditionalOnExpression(
+      "!T(org.springframework.util.ObjectUtils).isEmpty('${gateway.cross-configurations}')")
+  public CrossBeanPostProcessor crossBeanPostProcessor() {
+    return new CrossBeanPostProcessor(gatewayProperties);
   }
 
   @Bean

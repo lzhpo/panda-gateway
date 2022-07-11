@@ -83,4 +83,9 @@ public class GatewayAutoConfiguration {
       GatewayProperties gatewayProperties, GatewayRequestHandler requestHandler) {
     return new GatewayRequestMapping(routeLocator, gatewayProperties, requestHandler);
   }
+
+  @Bean
+  public CrossBeanPostProcessor crossBeanPostProcessor(GatewayProperties gatewayProperties) {
+    return new CrossBeanPostProcessor(gatewayProperties);
+  }
 }
