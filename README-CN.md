@@ -644,6 +644,8 @@ public class ResponseGlobalFilter implements GlobalFilter {
 
 ### Servlet环境
 
+#### 方法1-继承`DefaultErrorAttributes`
+
 ```java
 import java.util.HashMap;
 import java.util.Map;
@@ -658,10 +660,10 @@ import org.springframework.web.context.request.WebRequest;
 /**
  * Customize error response data.
  *
+ * @see ErrorMvcAutoConfiguration#errorAttributes()
  * @author lzhpo
  */
 @Primary
-@Order(-2)
 @Component
 public class GatewayErrorAttributes extends DefaultErrorAttributes {
 
@@ -703,7 +705,156 @@ public class GatewayErrorAttributes extends DefaultErrorAttributes {
 
 ### Webflux环境
 
+#### 方法1-继承`DefaultErrorWebExceptionHandler`
 
+```java
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.boot.autoconfigure.web.ErrorProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties.Resources;
+import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
+import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
+import org.springframework.boot.web.reactive.error.ErrorAttributes;
+import org.springframework.context.ApplicationContext;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+
+/**
+ * Customize error response.
+ *
+ * @see DefaultErrorAttributes
+ * @see ErrorWebFluxAutoConfiguration#errorWebExceptionHandler
+ * @author lzhpo
+ */
+@Order(-2)
+@Component
+public class GatewayErrorWebExceptionHandler extends DefaultErrorWebExceptionHandler {
+
+  public GatewayErrorWebExceptionHandler(
+      ErrorAttributes errorAttributes,
+      Resources resources,
+      ErrorProperties errorProperties,
+      ApplicationContext applicationContext) {
+    super(errorAttributes, resources, errorProperties, applicationContext);
+  }
+
+  @Override
+  public Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
+    Map<String, Object> errors =
+        getErrorAttributes(request, getErrorAttributeOptions(request, MediaType.ALL));
+    int status = (int) errors.getOrDefault("status", 500);
+
+    Map<String, Object> errorAttributes = new HashMap<>(4);
+    errorAttributes.put("success", false);
+    errorAttributes.put("code", status);
+    errorAttributes.put("message", getErrorMessage(errors));
+    errorAttributes.put("data", null);
+
+    return ServerResponse.status(status)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(BodyInserters.fromValue(errorAttributes));
+  }
+
+  /**
+   * Get an error message.
+   *
+   * @param errors error attributes
+   * @return error message
+   */
+  private Object getErrorMessage(Map<String, Object> errors) {
+    return Optional.ofNullable(errors.get("message"))
+        .orElseGet(() -> errors.getOrDefault("error", "Internal Server Error"));
+  }
+}
+```
+
+#### 方法2-继承`DefaultErrorAttributes`
+
+使用此方法，webflux环境中自己重写返回的`errorAttributes`需要有`status`，否则报空指针异常，servlet环境中没有这种情况发生。
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
+import org.springframework.web.reactive.function.server.ServerRequest;
+
+/**
+ * Customize error response data.
+ *
+ * @author lzhpo
+ */
+@Primary
+@Component
+public class GatewayErrorAttributes extends DefaultErrorAttributes {
+
+  /**
+   * Notes: errorAttributes must containsKey "status", otherwise, will throw NullPointerException
+   *
+   * <pre>{@code
+   * 	protected Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
+   * 		Map<String, Object> error = getErrorAttributes(request, getErrorAttributeOptions(request, MediaType.ALL));
+   * 		return ServerResponse.status(getHttpStatus(error)).contentType(MediaType.APPLICATION_JSON)
+   * 				.body(BodyInserters.fromValue(error));
+   *  }
+   *
+   * 	protected int getHttpStatus(Map<String, Object> errorAttributes) {
+   * 		return (int) errorAttributes.get("status");
+   *  }
+   * }</pre>
+   *
+   * @see DefaultErrorWebExceptionHandler#renderErrorResponse
+   * @see DefaultErrorWebExceptionHandler#getHttpStatus
+   * @param request the source request
+   * @param options options for error attribute contents
+   * @return error attributes
+   */
+  @Override
+  public Map<String, Object> getErrorAttributes(
+      ServerRequest request, ErrorAttributeOptions options) {
+    Map<String, Object> errors = super.getErrorAttributes(request, options);
+    Map<String, Object> errorAttributes = new HashMap<>(4);
+    errorAttributes.put("success", false);
+    errorAttributes.put("status", errors.getOrDefault("status", 500));
+    errorAttributes.put("message", getErrorMessage(errors));
+    errorAttributes.put("data", null);
+    return errorAttributes;
+  }
+
+  /**
+   * Get an error message.
+   *
+   * @param errors error attributes
+   * @return error message
+   */
+  private Object getErrorMessage(Map<String, Object> errors) {
+    return Optional.ofNullable(errors.get("message"))
+        .orElseGet(() -> errors.getOrDefault("error", "Internal Server Error"));
+  }
+}
+```
+
+详情可见：
+
+```java
+// org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler#renderErrorResponse
+protected Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
+    Map<String, Object> error = getErrorAttributes(request, getErrorAttributeOptions(request, MediaType.ALL));
+    return ServerResponse.status(getHttpStatus(error)).contentType(MediaType.APPLICATION_JSON)
+        .body(BodyInserters.fromValue(error));
+}
+
+// org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler#getHttpStatus
+protected int getHttpStatus(Map<String, Object> errorAttributes) {
+    return (int) errorAttributes.get("status");
+}
+```
 
 ## Actuator端点API
 

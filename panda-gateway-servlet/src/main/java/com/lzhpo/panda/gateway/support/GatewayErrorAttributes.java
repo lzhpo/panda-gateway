@@ -3,6 +3,7 @@ package com.lzhpo.panda.gateway.support;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.web.context.request.WebRequest;
@@ -10,6 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 /**
  * Customize error response data.
  *
+ * @see ErrorMvcAutoConfiguration#errorAttributes()
  * @author lzhpo
  */
 public class GatewayErrorAttributes extends DefaultErrorAttributes {

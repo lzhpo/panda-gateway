@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -34,6 +35,7 @@ public class GatewayAutoConfiguration {
 
   private final RouteDefinitionLocator routeDefinitionLocator;
 
+  /** Reference: {@link ErrorMvcAutoConfiguration#errorAttributes()} */
   @Bean
   @Primary
   public GatewayErrorAttributes gatewayErrorAttributes() {

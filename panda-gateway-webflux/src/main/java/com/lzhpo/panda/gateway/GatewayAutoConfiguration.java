@@ -8,6 +8,7 @@ import com.lzhpo.panda.gateway.route.DefaultRouteInitializer;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.route.RouteLocator;
 import com.lzhpo.panda.gateway.support.ClientIpResolver;
+import com.lzhpo.panda.gateway.support.GatewayErrorAttributes;
 import com.lzhpo.panda.gateway.support.GatewayErrorWebExceptionHandler;
 import com.lzhpo.panda.gateway.support.KeyResolver;
 import com.lzhpo.panda.gateway.support.RedisRateLimiter;
@@ -29,6 +30,7 @@ import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
@@ -48,6 +50,12 @@ public class GatewayAutoConfiguration {
 
   private final RouteLocator routeLocator;
   private final RouteDefinitionLocator routeDefinitionLocator;
+
+  @Bean
+  @Primary
+  public GatewayErrorAttributes gatewayErrorAttributes() {
+    return new GatewayErrorAttributes();
+  }
 
   /** Reference: {@link ErrorWebFluxAutoConfiguration#errorWebExceptionHandler} */
   @Bean

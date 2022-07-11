@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties.Resources;
 import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
+import org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
@@ -18,8 +19,8 @@ import reactor.core.publisher.Mono;
 /**
  * Customize error response.
  *
- * <p>Also can see: {@link DefaultErrorAttributes}
- *
+ * @see DefaultErrorAttributes
+ * @see ErrorWebFluxAutoConfiguration#errorWebExceptionHandler
  * @author lzhpo
  */
 public class GatewayErrorWebExceptionHandler extends DefaultErrorWebExceptionHandler {
