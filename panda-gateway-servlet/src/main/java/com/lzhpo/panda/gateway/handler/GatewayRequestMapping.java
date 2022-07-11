@@ -1,5 +1,6 @@
 package com.lzhpo.panda.gateway.handler;
 
+import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.route.GatewayConst;
 import com.lzhpo.panda.gateway.core.route.RelationType;
 import com.lzhpo.panda.gateway.core.route.RouteMetadataConst;
@@ -37,6 +38,7 @@ public class GatewayRequestMapping extends OncePerRequestFilter implements Order
 
   private final RouteLocator routeLocator;
   private final RestTemplate restTemplate;
+  private final GatewayProperties gatewayProperties;
 
   @Override
   public int getOrder() {
@@ -58,7 +60,7 @@ public class GatewayRequestMapping extends OncePerRequestFilter implements Order
       Route route = routeOptional.get();
       List<RouteFilter> routeFilters = route.getFilters();
       filters.addAll(routeFilters);
-      filters.add(new ForwardRouteFilter(route, restTemplate));
+      filters.add(new ForwardRouteFilter(route, restTemplate, gatewayProperties));
     }
 
     AnnotationAwareOrderComparator.sort(filters);

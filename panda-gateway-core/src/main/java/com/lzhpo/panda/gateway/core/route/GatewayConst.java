@@ -33,8 +33,8 @@ public final class GatewayConst {
   public static final String REQUESTED_TOKENS_HEADER = "X-RateLimit-Requested-Tokens";
 
   /** Http client connect timeout. Unit: milliseconds */
-  public static final long DEFAULT_CONNECT_TIMEOUT = 30 * 1000L;
+  public static final long DEFAULT_CONNECT_TIMEOUT = 60 * 1000L;
 
   /** Http client response timeout. Unit: milliseconds */
-  public static final long DEFAULT_RESPONSE_TIMEOUT = 30 * 1000L;
+  public static final long DEFAULT_RESPONSE_TIMEOUT = 60 * 1000L;
 }

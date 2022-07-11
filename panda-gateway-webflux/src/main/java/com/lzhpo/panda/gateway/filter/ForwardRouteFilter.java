@@ -42,6 +42,11 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
   private final WebClient.Builder webClientBuilder;
 
   @Override
+  public int getOrder() {
+    return Ordered.LOWEST_PRECEDENCE;
+  }
+
+  @Override
   public Mono<Void> filter(ServerWebExchange exchange, DefaultRouteFilterChain filterChain) {
     ServerHttpRequest request = exchange.getRequest();
     ServerHttpResponse response = exchange.getResponse();
@@ -80,6 +85,12 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
         });
   }
 
+  /**
+   * Setup about some timeout.
+   *
+   * @param exchange {@link ServerWebExchange}
+   * @return {@link HttpClient}
+   */
   private HttpClient getHttpClientWithTimeout(ServerWebExchange exchange) {
     Duration connectTimeout =
         exchange.getAttributeOrDefault(
@@ -96,12 +107,19 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
         .doOnConnected(
             conn ->
                 conn.addHandlerLast(
-                        new ReadTimeoutHandler(connectTimeout.toMillis(), TimeUnit.MILLISECONDS))
+                        new ReadTimeoutHandler(responseTimeout.toMillis(), TimeUnit.MILLISECONDS))
                     .addHandlerLast(
                         new WriteTimeoutHandler(
                             responseTimeout.toMillis(), TimeUnit.MILLISECONDS)));
   }
 
+  /**
+   * Append request params to request path.
+   *
+   * @param request {@link ServerHttpRequest}
+   * @param fullPath full-request path
+   * @return request path after appended request params
+   */
   private String buildPathWithParams(ServerHttpRequest request, String fullPath) {
     Map<String, String> queryParams = request.getQueryParams().toSingleValueMap();
     if (!ObjectUtils.isEmpty(queryParams)) {
@@ -109,10 +127,5 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
       fullPath += "?" + queryParamsInPath;
     }
     return fullPath;
-  }
-
-  @Override
-  public int getOrder() {
-    return Ordered.LOWEST_PRECEDENCE;
   }
 }

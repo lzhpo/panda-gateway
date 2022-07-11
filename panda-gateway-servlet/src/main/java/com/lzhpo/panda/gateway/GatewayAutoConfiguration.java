@@ -2,6 +2,7 @@ package com.lzhpo.panda.gateway;
 
 import cn.hutool.extra.servlet.ServletUtil;
 import com.lzhpo.panda.gateway.actuator.GatewayControllerEndpoint;
+import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.handler.GatewayRequestMapping;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import com.lzhpo.panda.gateway.route.RouteLocator;
@@ -57,7 +58,7 @@ public class GatewayAutoConfiguration {
 
   @Bean
   public GatewayRequestMapping servletWebFilter(
-      RouteLocator routeLocator, RestTemplate restTemplate) {
-    return new GatewayRequestMapping(routeLocator, restTemplate);
+      RouteLocator routeLocator, RestTemplate restTemplate, GatewayProperties gatewayProperties) {
+    return new GatewayRequestMapping(routeLocator, restTemplate, gatewayProperties);
   }
 }
