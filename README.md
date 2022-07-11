@@ -246,7 +246,7 @@ gateway:
 
 ### Custom route predicate relation
 
-> You can define the relation of routing predicates. By setting `gateway.routes[x].metadata.predicate.relation`, it can be set to `AND` (match all predicates) or `OR` (match any predicate), case insensitive, the default is `AND` (match all predicates).
+> You can define the relation of routing predicates. By setting `gateway.routes[x].metadata.predicate-relation`, it can be set to `AND` (match all predicates) or `OR` (match any predicate), case insensitive, the default is `AND` (match all predicates).
 
 #### `AND`
 
@@ -259,7 +259,7 @@ gateway:
       uri: lb://panda-service-sample
       order: 1
       metadata:
-        predicate.relation: and
+        predicate-relation: and
       predicates:
         - name: Header
           args:
@@ -282,7 +282,7 @@ gateway:
       uri: lb://panda-service-sample
       order: 1
       metadata:
-        predicate.relation: or
+        predicate-relation: or
       predicates:
         - name: Header
           args:

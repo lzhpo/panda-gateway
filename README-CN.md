@@ -246,7 +246,7 @@ gateway:
 
 ### 自定义路由谓词关系
 
-> 您可以自定义定义路由谓词的关系，通过设置`gateway.routes[x].metadata.predicate.relation`，可以设置为`AND`（匹配所有谓词）或 `OR`（匹配任意一个谓词），不区分大小写，默认是`AND`（匹配所有谓词）。
+> 您可以自定义定义路由谓词的关系，通过设置`gateway.routes[x].metadata.predicate-relation`，可以设置为`AND`（匹配所有谓词）或 `OR`（匹配任意一个谓词），不区分大小写，默认是`AND`（匹配所有谓词）。
 
 #### `AND`
 
@@ -259,7 +259,7 @@ gateway:
       uri: lb://panda-service-sample
       order: 1
       metadata:
-        predicate.relation: and
+        predicate-relation: and
       predicates:
         - name: Header
           args:
@@ -282,7 +282,7 @@ gateway:
       uri: lb://panda-service-sample
       order: 1
       metadata:
-        predicate.relation: or
+        predicate-relation: or
       predicates:
         - name: Header
           args:

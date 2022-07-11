@@ -3,6 +3,7 @@ package com.lzhpo.panda.gateway.core;
 import cn.hutool.extra.spring.SpringUtil;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.core.route.RouteInitializer;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
@@ -21,6 +22,9 @@ public class GatewayProperties implements InitializingBean {
   /** Whether to enable service discovery mode, otherwise, use http or https. */
   private boolean discovery = true;
 
+  /** About http client configurations. */
+  private HttpClientConfig httpClient;
+
   /** About redis configurations. */
   private RedisConfig redis;
 
@@ -28,8 +32,19 @@ public class GatewayProperties implements InitializingBean {
   private List<RouteDefinition> routes = new ArrayList<>();
 
   @Data
+  public static class HttpClientConfig {
+
+    /** Http client connect timeout */
+    private Duration connectTimeout;
+
+    /** Http client response timeout */
+    private Duration responseTimeout;
+  }
+
+  @Data
   public static class RedisConfig {
 
+    /** Whether enable redis */
     private boolean enabled = false;
 
     /** Use redis to save routes */

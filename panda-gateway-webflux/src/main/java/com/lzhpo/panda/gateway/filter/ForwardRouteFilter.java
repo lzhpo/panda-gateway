@@ -1,14 +1,22 @@
 package com.lzhpo.panda.gateway.filter;
 
+import com.lzhpo.panda.gateway.core.route.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.RouteMetadataConst;
 import com.lzhpo.panda.gateway.core.utils.ExtractUtil;
 import com.lzhpo.panda.gateway.route.Route;
+import io.netty.channel.ChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
+import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.Assert;
@@ -21,6 +29,7 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
 
 /**
  * @author lzhpo
@@ -44,8 +53,12 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
     requestPath = buildPathWithParams(request, requestPath);
     HttpHeaders headers = request.getHeaders();
 
+    HttpClient httpClient = getHttpClientWithTimeout(exchange);
+    ReactorClientHttpConnector clientHttpConnector = new ReactorClientHttpConnector(httpClient);
+
     RequestBodySpec bodySpec =
         webClientBuilder
+            .clientConnector(clientHttpConnector)
             .build()
             .method(httpMethod)
             .uri(route.getUri() + requestPath)
@@ -65,6 +78,28 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
               clientResponse.body(BodyExtractors.toDataBuffers());
           return response.writeWith(clientResDataBuffers);
         });
+  }
+
+  private HttpClient getHttpClientWithTimeout(ServerWebExchange exchange) {
+    Duration connectTimeout =
+        exchange.getAttributeOrDefault(
+            RouteMetadataConst.CONNECT_TIMEOUT,
+            Duration.ofMillis(GatewayConst.DEFAULT_CONNECT_TIMEOUT));
+    Duration responseTimeout =
+        exchange.getAttributeOrDefault(
+            RouteMetadataConst.RESPONSE_TIMEOUT,
+            Duration.ofMillis(GatewayConst.DEFAULT_RESPONSE_TIMEOUT));
+
+    return HttpClient.create()
+        .responseTimeout(responseTimeout)
+        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeout.toMillisPart())
+        .doOnConnected(
+            conn ->
+                conn.addHandlerLast(
+                        new ReadTimeoutHandler(connectTimeout.toMillis(), TimeUnit.MILLISECONDS))
+                    .addHandlerLast(
+                        new WriteTimeoutHandler(
+                            responseTimeout.toMillis(), TimeUnit.MILLISECONDS)));
   }
 
   private String buildPathWithParams(ServerHttpRequest request, String fullPath) {

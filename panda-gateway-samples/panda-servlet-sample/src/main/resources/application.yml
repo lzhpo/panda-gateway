@@ -17,7 +17,7 @@ gateway:
       order: 1
       metadata:
         # choose one: ["or", "and"], default is "and"
-        predicate.relation: and
+        predicate-relation: and
       predicates:
         - name: Path
           args:
@@ -106,7 +106,7 @@ gateway:
       order: 2
       metadata:
         # choose one: ["or", "and"], default is "and"
-        predicate.relation: or
+        predicate-relation: or
       predicates:
         - name: Path
           args:

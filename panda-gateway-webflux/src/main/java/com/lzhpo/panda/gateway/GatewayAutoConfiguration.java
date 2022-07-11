@@ -1,6 +1,7 @@
 package com.lzhpo.panda.gateway;
 
 import com.lzhpo.panda.gateway.actuator.GatewayControllerEndpoint;
+import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.handler.GatewayRequestHandler;
 import com.lzhpo.panda.gateway.handler.GatewayRequestMapping;
 import com.lzhpo.panda.gateway.route.DefaultRouteInitializer;
@@ -78,7 +79,8 @@ public class GatewayAutoConfiguration {
   }
 
   @Bean
-  public GatewayRequestMapping gatewayRequestMapping(GatewayRequestHandler requestHandler) {
-    return new GatewayRequestMapping(routeLocator, requestHandler);
+  public GatewayRequestMapping gatewayRequestMapping(
+      GatewayProperties gatewayProperties, GatewayRequestHandler requestHandler) {
+    return new GatewayRequestMapping(routeLocator, gatewayProperties, requestHandler);
   }
 }
