@@ -640,6 +640,258 @@ public class ResponseGlobalFilter implements GlobalFilter {
 }
 ```
 
+## Unified custom exception response format
+
+### Servlet environment
+
+#### method1 - extends `DefaultErrorAttributes`
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.WebRequest;
+
+/**
+ * Customize error response data.
+ *
+ * @see ErrorMvcAutoConfiguration#errorAttributes()
+ * @author lzhpo
+ */
+@Component
+public class GatewayErrorAttributes extends DefaultErrorAttributes {
+
+  @Override
+  public Map<String, Object> getErrorAttributes(
+      WebRequest webRequest, ErrorAttributeOptions options) {
+    Map<String, Object> errors = super.getErrorAttributes(webRequest, options);
+    Map<String, Object> errorAttributes = new HashMap<>(4);
+    errorAttributes.put("success", false);
+    errorAttributes.put("code", errors.getOrDefault("status", 500));
+    errorAttributes.put("message", getErrorMessage(errors));
+    errorAttributes.put("data", null);
+    return errorAttributes;
+  }
+
+  /**
+   * Get an error message.
+   *
+   * @param errors error attributes
+   * @return error message
+   */
+  private Object getErrorMessage(Map<String, Object> errors) {
+    return Optional.ofNullable(errors.get("message"))
+        .orElseGet(() -> errors.getOrDefault("error", "Internal Server Error"));
+  }
+}
+```
+
+return format (example): 
+
+```json
+{
+    "code": 504,
+    "message": "Gateway Timeout",
+    "data": null,
+    "success": false
+}
+```
+
+### Webflux environment
+
+#### method1 - extends `DefaultErrorWebExceptionHandler`
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
+import org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration;
+import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
+import org.springframework.boot.web.reactive.error.ErrorAttributes;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerCodecConfigurer;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.reactive.result.view.ViewResolver;
+import reactor.core.publisher.Mono;
+
+/**
+ * Customize error response.
+ *
+ * @see DefaultErrorAttributes
+ * @see ErrorWebFluxAutoConfiguration#errorWebExceptionHandler
+ * @author lzhpo
+ */
+@Order(-2)
+@Component
+public class GatewayErrorWebExceptionHandler extends DefaultErrorWebExceptionHandler {
+
+  public GatewayErrorWebExceptionHandler(
+      WebProperties webProperties,
+      ErrorAttributes errorAttributes,
+      ServerProperties serverProperties,
+      ApplicationContext applicationContext,
+      ObjectProvider<ViewResolver> viewResolvers,
+      ServerCodecConfigurer serverCodecConfigurer) {
+    super(
+        errorAttributes,
+        webProperties.getResources(),
+        serverProperties.getError(),
+        applicationContext);
+    setViewResolvers(viewResolvers.orderedStream().collect(Collectors.toList()));
+    setMessageWriters(serverCodecConfigurer.getWriters());
+    setMessageReaders(serverCodecConfigurer.getReaders());
+  }
+
+  @Override
+  public Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
+    Map<String, Object> errors =
+        getErrorAttributes(request, getErrorAttributeOptions(request, MediaType.ALL));
+    int status = (int) errors.getOrDefault("status", 500);
+
+    Map<String, Object> errorAttributes = new HashMap<>(4);
+    errorAttributes.put("success", false);
+    errorAttributes.put("code", status);
+    errorAttributes.put("message", getErrorMessage(errors));
+    errorAttributes.put("data", null);
+
+    return ServerResponse.status(status)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(BodyInserters.fromValue(errorAttributes));
+  }
+
+  /**
+   * Get an error message.
+   *
+   * @param errors error attributes
+   * @return error message
+   */
+  private Object getErrorMessage(Map<String, Object> errors) {
+    return Optional.ofNullable(errors.get("message"))
+        .orElseGet(() -> errors.getOrDefault("error", "Internal Server Error"));
+  }
+}
+```
+
+return format (example): 
+
+```json
+{
+    "code": 504,
+    "message": "Gateway Timeout",
+    "data": null,
+    "success": false
+}
+```
+
+#### method2 - extends `DefaultErrorAttributes`
+
+Using this method, the `errorAttributes` returned by rewriting in the webflux environment needs to have `status`, otherwise, will throw NullPointerException, which does not happen in the servlet environment.
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.server.ServerRequest;
+
+/**
+ * Customize error response data.
+ *
+ * @author lzhpo
+ */
+@Component
+public class GatewayErrorAttributes extends DefaultErrorAttributes {
+
+  /**
+   * Notes: errorAttributes must containsKey "status", otherwise, will throw NullPointerException
+   *
+   * <pre>{@code
+   * 	protected Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
+   * 		Map<String, Object> error = getErrorAttributes(request, getErrorAttributeOptions(request, MediaType.ALL));
+   * 		return ServerResponse.status(getHttpStatus(error)).contentType(MediaType.APPLICATION_JSON)
+   * 				.body(BodyInserters.fromValue(error));
+   *  }
+   *
+   * 	protected int getHttpStatus(Map<String, Object> errorAttributes) {
+   * 		return (int) errorAttributes.get("status");
+   *  }
+   * }</pre>
+   *
+   * @see DefaultErrorWebExceptionHandler#renderErrorResponse
+   * @see DefaultErrorWebExceptionHandler#getHttpStatus
+   * @param request the source request
+   * @param options options for error attribute contents
+   * @return error attributes
+   */
+  @Override
+  public Map<String, Object> getErrorAttributes(
+      ServerRequest request, ErrorAttributeOptions options) {
+    Map<String, Object> errors = super.getErrorAttributes(request, options);
+    Map<String, Object> errorAttributes = new HashMap<>(4);
+    errorAttributes.put("success", false);
+    errorAttributes.put("status", errors.getOrDefault("status", 500));
+    errorAttributes.put("message", getErrorMessage(errors));
+    errorAttributes.put("data", null);
+    return errorAttributes;
+  }
+
+  /**
+   * Get an error message.
+   *
+   * @param errors error attributes
+   * @return error message
+   */
+  private Object getErrorMessage(Map<String, Object> errors) {
+    return Optional.ofNullable(errors.get("message"))
+        .orElseGet(() -> errors.getOrDefault("error", "Internal Server Error"));
+  }
+}
+```
+
+Details can be seen: 
+
+```java
+// org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler#renderErrorResponse
+protected Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
+    Map<String, Object> error = getErrorAttributes(request, getErrorAttributeOptions(request, MediaType.ALL));
+    return ServerResponse.status(getHttpStatus(error)).contentType(MediaType.APPLICATION_JSON)
+        .body(BodyInserters.fromValue(error));
+}
+
+// org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler#getHttpStatus
+protected int getHttpStatus(Map<String, Object> errorAttributes) {
+    return (int) errorAttributes.get("status");
+}
+```
+
+return format (example): 
+
+```json
+{
+    "status": 504,
+    "message": "Gateway Timeout",
+    "data": null,
+    "success": false
+}
+```
+
 ## Actuator endpoint API
 
 We need exposure `gateway` endpoint if we want to do about gateway something.

@@ -786,6 +786,17 @@ public class GatewayErrorWebExceptionHandler extends DefaultErrorWebExceptionHan
 }
 ```
 
+返回格式（例子）：
+
+```json
+{
+    "code": 504,
+    "message": "Gateway Timeout",
+    "data": null,
+    "success": false
+}
+```
+
 #### 方法2-继承`DefaultErrorAttributes`
 
 使用此方法，webflux环境中自己重写返回的`errorAttributes`需要有`status`，否则报空指针异常，servlet环境中没有这种情况发生。
@@ -867,6 +878,17 @@ protected Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
 // org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler#getHttpStatus
 protected int getHttpStatus(Map<String, Object> errorAttributes) {
     return (int) errorAttributes.get("status");
+}
+```
+
+返回格式（例子）：
+
+```json
+{
+    "status": 504,
+    "message": "Gateway Timeout",
+    "data": null,
+    "success": false
 }
 ```
 
