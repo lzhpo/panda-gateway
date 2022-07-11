@@ -15,6 +15,12 @@ gateway:
     connect-timeout: 60s
     # http client response timeout, default 60s
     response-timeout: 60s
+  cross-configurations:
+    '[/**]':
+      maxAge: 10
+      allowedOrigins: "*"
+      allowedMethods:
+        - GET
   routes:
     - id: panda-service-sample-01
       # uri: http://localhost:9000

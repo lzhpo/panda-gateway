@@ -5,11 +5,14 @@ import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.core.route.RouteInitializer;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.Data;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.web.cors.CorsConfiguration;
 
 /**
  * @author lzhpo
@@ -30,6 +33,9 @@ public class GatewayProperties implements InitializingBean {
 
   /** Gateway service routes */
   private List<RouteDefinition> routes = new ArrayList<>();
+
+  /** Cross-domain configurations */
+  private Map<String, CorsConfiguration> crossConfigurations = new HashMap<>();
 
   @Data
   public static class HttpClientConfig {

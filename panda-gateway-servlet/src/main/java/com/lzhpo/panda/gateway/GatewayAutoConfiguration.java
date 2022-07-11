@@ -10,6 +10,8 @@ import com.lzhpo.panda.gateway.support.ClientIpResolver;
 import com.lzhpo.panda.gateway.support.KeyResolver;
 import com.lzhpo.panda.gateway.support.RedisRateLimiter;
 import java.util.List;
+import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,14 +21,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 /**
  * @author lzhpo
  */
 @Configuration
+@RequiredArgsConstructor
 @ConditionalOnWebApplication(type = Type.SERVLET)
 public class GatewayAutoConfiguration {
+
+  private final GatewayProperties gatewayProperties;
 
   @Bean
   public GatewayControllerEndpoint gatewayControllerEndpoint(
@@ -55,7 +63,25 @@ public class GatewayAutoConfiguration {
 
   @Bean
   public GatewayRequestMapping servletWebFilter(
-      RouteLocator routeLocator, RestTemplate restTemplate, GatewayProperties gatewayProperties) {
+      RouteLocator routeLocator, RestTemplate restTemplate) {
     return new GatewayRequestMapping(routeLocator, restTemplate, gatewayProperties);
+  }
+
+  @Bean
+  public CrossWebMvcConfiguration crossWebMvcConfiguration() {
+    return new CrossWebMvcConfiguration(gatewayProperties);
+  }
+
+  /** Cross-domain configuration */
+  public static class CrossWebMvcConfiguration extends WebMvcConfigurationSupport {
+
+    public CrossWebMvcConfiguration(GatewayProperties gatewayProperties) {
+      Map<String, CorsConfiguration> corsConfigurations =
+          gatewayProperties.getCrossConfigurations();
+      if (!ObjectUtils.isEmpty(corsConfigurations)) {
+        Map<String, CorsConfiguration> finalCorsConfigurations = getCorsConfigurations();
+        finalCorsConfigurations.putAll(corsConfigurations);
+      }
+    }
   }
 }
