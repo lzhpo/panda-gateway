@@ -640,7 +640,7 @@ public class ResponseGlobalFilter implements GlobalFilter {
 }
 ```
 
-## 自定义异常响应格式
+## 统一自定义异常响应格式
 
 ### Servlet环境
 
@@ -650,10 +650,9 @@ public class ResponseGlobalFilter implements GlobalFilter {
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
-import org.springframework.context.annotation.Primary;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
@@ -663,7 +662,6 @@ import org.springframework.web.context.request.WebRequest;
  * @see ErrorMvcAutoConfiguration#errorAttributes()
  * @author lzhpo
  */
-@Primary
 @Component
 public class GatewayErrorAttributes extends DefaultErrorAttributes {
 
@@ -711,16 +709,23 @@ public class GatewayErrorAttributes extends DefaultErrorAttributes {
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.springframework.boot.autoconfigure.web.ErrorProperties;
-import org.springframework.boot.autoconfigure.web.WebProperties.Resources;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
+import org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerCodecConfigurer;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.reactive.result.view.ViewResolver;
 import reactor.core.publisher.Mono;
 
 /**
@@ -735,11 +740,20 @@ import reactor.core.publisher.Mono;
 public class GatewayErrorWebExceptionHandler extends DefaultErrorWebExceptionHandler {
 
   public GatewayErrorWebExceptionHandler(
+      WebProperties webProperties,
       ErrorAttributes errorAttributes,
-      Resources resources,
-      ErrorProperties errorProperties,
-      ApplicationContext applicationContext) {
-    super(errorAttributes, resources, errorProperties, applicationContext);
+      ServerProperties serverProperties,
+      ApplicationContext applicationContext,
+      ObjectProvider<ViewResolver> viewResolvers,
+      ServerCodecConfigurer serverCodecConfigurer) {
+    super(
+        errorAttributes,
+        webProperties.getResources(),
+        serverProperties.getError(),
+        applicationContext);
+    setViewResolvers(viewResolvers.orderedStream().collect(Collectors.toList()));
+    setMessageWriters(serverCodecConfigurer.getWriters());
+    setMessageReaders(serverCodecConfigurer.getReaders());
   }
 
   @Override
@@ -783,6 +797,7 @@ import java.util.Optional;
 import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 
 /**
@@ -790,7 +805,6 @@ import org.springframework.web.reactive.function.server.ServerRequest;
  *
  * @author lzhpo
  */
-@Primary
 @Component
 public class GatewayErrorAttributes extends DefaultErrorAttributes {
 

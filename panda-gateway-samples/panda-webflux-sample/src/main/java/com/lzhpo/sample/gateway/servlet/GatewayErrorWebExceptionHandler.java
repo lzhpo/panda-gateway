@@ -1,19 +1,25 @@
-package com.lzhpo.panda.gateway.support;
+package com.lzhpo.sample.gateway.servlet;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.springframework.boot.autoconfigure.web.ErrorProperties;
-import org.springframework.boot.autoconfigure.web.WebProperties.Resources;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
 import org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerCodecConfigurer;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.reactive.result.view.ViewResolver;
 import reactor.core.publisher.Mono;
 
 /**
@@ -23,14 +29,25 @@ import reactor.core.publisher.Mono;
  * @see ErrorWebFluxAutoConfiguration#errorWebExceptionHandler
  * @author lzhpo
  */
+@Order(-2)
+@Component
 public class GatewayErrorWebExceptionHandler extends DefaultErrorWebExceptionHandler {
 
   public GatewayErrorWebExceptionHandler(
+      WebProperties webProperties,
       ErrorAttributes errorAttributes,
-      Resources resources,
-      ErrorProperties errorProperties,
-      ApplicationContext applicationContext) {
-    super(errorAttributes, resources, errorProperties, applicationContext);
+      ServerProperties serverProperties,
+      ApplicationContext applicationContext,
+      ObjectProvider<ViewResolver> viewResolvers,
+      ServerCodecConfigurer serverCodecConfigurer) {
+    super(
+        errorAttributes,
+        webProperties.getResources(),
+        serverProperties.getError(),
+        applicationContext);
+    setViewResolvers(viewResolvers.orderedStream().collect(Collectors.toList()));
+    setMessageWriters(serverCodecConfigurer.getWriters());
+    setMessageReaders(serverCodecConfigurer.getReaders());
   }
 
   @Override
