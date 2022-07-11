@@ -21,10 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.Assert;
@@ -32,6 +34,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -40,6 +43,7 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 /**
  * @author lzhpo
  */
+@Slf4j
 @RequiredArgsConstructor
 public class ForwardRouteFilter implements RouteFilter, Ordered {
 
@@ -75,14 +79,25 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
     String finallyRequestPath = request.getRequestURI();
     finallyRequestPath = buildPathWithParams(request, finallyRequestPath);
     HttpEntity<?> httpEntity = buildHttpEntity(request, httpMethod, headers);
-    ResponseEntity<byte[]> responseEntity =
-        restTemplate.exchange(
-            route.getUri() + finallyRequestPath, httpMethod, httpEntity, byte[].class);
+    ResponseEntity<byte[]> responseEntity;
+
+    try {
+      responseEntity =
+          restTemplate.exchange(
+              route.getUri() + finallyRequestPath, httpMethod, httpEntity, byte[].class);
+    } catch (ResourceAccessException e) {
+      response.sendError(HttpStatus.GATEWAY_TIMEOUT.value());
+      log.error(
+          "Request timeout, connectTimeout: {} ms, responseTimeout: {} ms",
+          connectTimeout.toMillis(),
+          responseTimeout.toMillis(),
+          e);
+      return;
+    }
 
     byte[] responseBody = responseEntity.getBody();
     if (Objects.nonNull(responseBody)) {
       response.setStatus(responseEntity.getStatusCodeValue());
-
       ServletOutputStream outputStream = response.getOutputStream();
       outputStream.write(responseBody);
       // In order to make response.isCommitted() is true
@@ -98,7 +113,6 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
    * @param httpMethod {@link HttpMethod}
    * @param headers request headers
    * @return http entity
-   * @throws IOException if operate inputStream throw exception
    */
   private HttpEntity<?> buildHttpEntity(
       HttpServletRequest request, HttpMethod httpMethod, MultiValueMap<String, String> headers)
