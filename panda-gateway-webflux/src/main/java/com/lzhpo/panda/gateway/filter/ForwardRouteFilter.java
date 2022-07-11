@@ -5,7 +5,9 @@ import com.lzhpo.panda.gateway.core.route.RouteMetadataConst;
 import com.lzhpo.panda.gateway.core.utils.ExtractUtil;
 import com.lzhpo.panda.gateway.route.Route;
 import io.netty.channel.ChannelOption;
+import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import java.time.Duration;
 import java.util.Map;
@@ -16,6 +18,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -26,6 +29,8 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodySpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -76,13 +81,27 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
       headersSpec = bodySpec;
     }
 
-    return headersSpec.exchangeToMono(
-        clientResponse -> {
-          response.setStatusCode(clientResponse.statusCode());
-          Flux<DataBuffer> clientResDataBuffers =
-              clientResponse.body(BodyExtractors.toDataBuffers());
-          return response.writeWith(clientResDataBuffers);
-        });
+    return headersSpec
+        .exchangeToMono(
+            clientResponse -> {
+              response.setStatusCode(clientResponse.statusCode());
+              Flux<DataBuffer> clientResDataBuffers =
+                  clientResponse.body(BodyExtractors.toDataBuffers());
+              return response.writeWith(clientResDataBuffers);
+            })
+        .onErrorMap(
+            WebClientRequestException.class,
+            e -> {
+              String message = e.getMessage();
+              Throwable rootCause = e.getRootCause();
+              HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+              if (rootCause instanceof ReadTimeoutException
+                  || rootCause instanceof WriteTimeoutException) {
+                httpStatus = HttpStatus.GATEWAY_TIMEOUT;
+              }
+              log.error("Http request error: {}", message, e);
+              throw new ResponseStatusException(httpStatus, message, e);
+            });
   }
 
   /**
