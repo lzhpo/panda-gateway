@@ -11,6 +11,7 @@ import com.lzhpo.panda.gateway.support.KeyResolver;
 import com.lzhpo.panda.gateway.support.RedisRateLimiter;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.ServletContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -38,6 +39,12 @@ public class GatewayAutoConfiguration {
   private final GatewayProperties gatewayProperties;
 
   @Bean
+  public GatewayRequestMapping gatewayRequestMapping(
+      ServletContext servletContext, RouteLocator routeLocator, RestTemplate restTemplate) {
+    return new GatewayRequestMapping(servletContext, routeLocator, restTemplate, gatewayProperties);
+  }
+
+  @Bean
   public GatewayControllerEndpoint gatewayControllerEndpoint(
       RouteDefinitionLocator routeDefinitionLocator) {
     return new GatewayControllerEndpoint(routeDefinitionLocator);
@@ -60,12 +67,6 @@ public class GatewayAutoConfiguration {
   @ConditionalOnMissingBean
   public ClientIpResolver clientIpResolver() {
     return ServletUtil::getClientIP;
-  }
-
-  @Bean
-  public GatewayRequestMapping servletWebFilter(
-      RouteLocator routeLocator, RestTemplate restTemplate) {
-    return new GatewayRequestMapping(routeLocator, restTemplate, gatewayProperties);
   }
 
   @Bean

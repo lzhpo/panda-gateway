@@ -5,70 +5,77 @@ import com.lzhpo.panda.gateway.core.route.GatewayConst;
 import com.lzhpo.panda.gateway.core.route.RelationType;
 import com.lzhpo.panda.gateway.core.route.RouteMetadataConst;
 import com.lzhpo.panda.gateway.filter.DefaultRouteFilterChain;
-import com.lzhpo.panda.gateway.filter.ForwardRouteFilter;
-import com.lzhpo.panda.gateway.filter.GlobalFilterAdapter;
 import com.lzhpo.panda.gateway.filter.RouteFilter;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import com.lzhpo.panda.gateway.route.Route;
 import com.lzhpo.panda.gateway.route.RouteComponentExtractor;
 import com.lzhpo.panda.gateway.route.RouteLocator;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
 /**
  * @author lzhpo
  */
 @Slf4j
-@RequiredArgsConstructor
-public class GatewayRequestMapping extends OncePerRequestFilter implements Ordered {
+public class GatewayRequestMapping extends AbstractHandlerMapping {
 
   private final RouteLocator routeLocator;
   private final RestTemplate restTemplate;
+  private final ServletContext servletContext;
   private final GatewayProperties gatewayProperties;
 
-  @Override
-  public int getOrder() {
-    return Ordered.LOWEST_PRECEDENCE;
+  /**
+   * {@link org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping} <br>
+   * {@link org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry#order} <br>
+   * {@link org.springframework.web.servlet.DispatcherServlet#getHandler} <br>
+   * {@link org.springframework.web.servlet.handler.SimpleUrlHandlerMapping}
+   */
+  public GatewayRequestMapping(
+      ServletContext servletContext,
+      RouteLocator routeLocator,
+      RestTemplate restTemplate,
+      GatewayProperties gatewayProperties) {
+    this.servletContext = servletContext;
+    this.routeLocator = routeLocator;
+    this.restTemplate = restTemplate;
+    this.gatewayProperties = gatewayProperties;
+    setOrder(Ordered.LOWEST_PRECEDENCE - 2);
   }
 
   @Override
-  protected void doFilterInternal(
-      @Nonnull HttpServletRequest request,
-      @Nonnull HttpServletResponse response,
-      @Nonnull FilterChain filterChain)
-      throws ServletException, IOException {
-
-    List<GlobalFilterAdapter> globalFilters = RouteComponentExtractor.getGlobalFilterAdapters();
-    List<RouteFilter> filters = new ArrayList<>(globalFilters);
-    Optional<Route> routeOptional = lookupRoute(request);
-
-    if (routeOptional.isPresent()) {
-      Route route = routeOptional.get();
-      List<RouteFilter> routeFilters = route.getFilters();
-      filters.addAll(routeFilters);
-      filters.add(new ForwardRouteFilter(route, restTemplate, gatewayProperties));
-    }
-
-    AnnotationAwareOrderComparator.sort(filters);
-    DefaultRouteFilterChain.create(filters).doFilter(request, response);
-
-    if (!response.isCommitted()) {
-      filterChain.doFilter(request, response);
-    }
+  protected Object getHandlerInternal(@NonNull HttpServletRequest request) {
+    return lookupRoute(request)
+        .map(
+            route ->
+                new GatewayRequestHandler(servletContext, route, restTemplate, gatewayProperties))
+        .orElseGet(
+            () -> {
+              ServletRequestAttributes requestAttributes =
+                  (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+              if (!ObjectUtils.isEmpty(requestAttributes)) {
+                HttpServletResponse response = requestAttributes.getResponse();
+                // Also need to execute global filters
+                List<RouteFilter> globalFilters =
+                    new ArrayList<>(RouteComponentExtractor.getGlobalFilterAdapters());
+                AnnotationAwareOrderComparator.sort(globalFilters);
+                DefaultRouteFilterChain.create(globalFilters).doFilter(request, response);
+              }
+              return null;
+            });
   }
 
   /**

@@ -15,8 +15,7 @@ public class CrossBeanPostProcessor implements BeanPostProcessor {
   private final GatewayProperties gatewayProperties;
 
   @Override
-  public Object postProcessBeforeInitialization(Object bean, String beanName)
-      throws BeansException {
+  public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
     if (AbstractHandlerMapping.class.isAssignableFrom(bean.getClass())) {
       AbstractHandlerMapping handlerMapping = (AbstractHandlerMapping) bean;
       handlerMapping.setCorsConfigurations(gatewayProperties.getCrossConfigurations());

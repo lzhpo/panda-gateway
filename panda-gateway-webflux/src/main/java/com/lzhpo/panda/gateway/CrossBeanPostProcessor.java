@@ -1,6 +1,7 @@
 package com.lzhpo.panda.gateway;
 
 import com.lzhpo.panda.gateway.core.GatewayProperties;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -15,7 +16,7 @@ public class CrossBeanPostProcessor implements BeanPostProcessor {
   private final GatewayProperties gatewayProperties;
 
   @Override
-  public Object postProcessBeforeInitialization(Object bean, String beanName)
+  public Object postProcessAfterInitialization(Object bean, @NonNull String beanName)
       throws BeansException {
     if (AbstractHandlerMapping.class.isAssignableFrom(bean.getClass())) {
       AbstractHandlerMapping handlerMapping = (AbstractHandlerMapping) bean;
