@@ -27,14 +27,15 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
 
   @Override
   public RouteDefinition getRoute(String routeId) {
-    return Optional.ofNullable(redisTemplate.opsForHash().get(GatewayConst.ROUTE_ID, routeId))
+    return Optional.ofNullable(
+            redisTemplate.opsForHash().get(GatewayConst.ROUTE_DEFINITION_CACHE_KEY, routeId))
         .map(RouteDefinition.class::cast)
         .orElse(null);
   }
 
   @Override
   public List<RouteDefinition> getRoutes() {
-    return Optional.of(redisTemplate.opsForHash().values(GatewayConst.ROUTE_ID))
+    return Optional.of(redisTemplate.opsForHash().values(GatewayConst.ROUTE_DEFINITION_CACHE_KEY))
         .filter(x -> !CollectionUtils.isEmpty(x))
         .orElse(Lists.newArrayList())
         .stream()
@@ -50,7 +51,7 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
       routeDefinitionMap.put(routeDefinition.getId(), routeDefinition);
     }
 
-    redisTemplate.opsForHash().putAll(GatewayConst.ROUTE_ID, routeDefinitionMap);
+    redisTemplate.opsForHash().putAll(GatewayConst.ROUTE_DEFINITION_CACHE_KEY, routeDefinitionMap);
     publishRefreshEvent(new RouteRefreshEvent(this));
   }
 
@@ -60,7 +61,7 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
         redisTemplate
             .opsForHash()
             .delete(
-                GatewayConst.ROUTE_ID,
+                GatewayConst.ROUTE_DEFINITION_CACHE_KEY,
                 Arrays.stream(routeIds).map(Object.class::cast).collect(Collectors.toList()));
 
     if (deletedNum > 0) {
