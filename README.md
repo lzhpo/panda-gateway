@@ -24,6 +24,10 @@ English | [中文](README-CN.md)
 
 ## Route predicate
 
+> Route predicates are used to evaluate whether the current request matches a certain route.
+>
+> The name format: `[PredicateName]`RoutePredicateFactory
+
 ### Exist route predicate
 
 #### 1.`Path` route predicate
@@ -296,8 +300,6 @@ gateway:
 
 ### How to implement route predicate?
 
-> Format: `[PredicateName]`RoutePredicateFactory
-
 I will use `After` route predicate as example to tell you how to implement it.
 
 #### Servlet environment
@@ -374,6 +376,10 @@ gateway:
 ```
 
 ## Route filter
+
+> The name format: `[FilterName]`RouteFilterFactory
+>
+> Route filter just apply current route.
 
 ### Exist route filter
 
@@ -507,8 +513,6 @@ gateway:
 ```
 
 ### How to implement route filter?
-
-> Format: `[FilterName]`RouteFilterFactory
 
 I will use `AddResponseHeader` route filter to tell you how to implement it.
 

@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Global filter.
+ * Global filter will apply to all routes.
  *
  * @author lzhpo
  */

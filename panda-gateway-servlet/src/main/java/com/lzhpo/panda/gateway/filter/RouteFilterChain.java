@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 public interface RouteFilterChain {
 
   /**
-   * Execute next filter of this filter chain.
+   * Execute the next filter of this filter chain.
    *
    * @param request {@link HttpServletRequest}
    * @param response {@link HttpServletResponse}

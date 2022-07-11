@@ -4,27 +4,18 @@ import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.route.GatewayConst;
 import com.lzhpo.panda.gateway.core.route.RelationType;
 import com.lzhpo.panda.gateway.core.route.RouteMetadataConst;
-import com.lzhpo.panda.gateway.filter.DefaultRouteFilterChain;
-import com.lzhpo.panda.gateway.filter.RouteFilter;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import com.lzhpo.panda.gateway.route.Route;
-import com.lzhpo.panda.gateway.route.RouteComponentExtractor;
 import com.lzhpo.panda.gateway.route.RouteLocator;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
 /**
@@ -62,20 +53,7 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
         .map(
             route ->
                 new GatewayRequestHandler(servletContext, route, restTemplate, gatewayProperties))
-        .orElseGet(
-            () -> {
-              ServletRequestAttributes requestAttributes =
-                  (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-              if (!ObjectUtils.isEmpty(requestAttributes)) {
-                HttpServletResponse response = requestAttributes.getResponse();
-                // Also need to execute global filters
-                List<RouteFilter> globalFilters =
-                    new ArrayList<>(RouteComponentExtractor.getGlobalFilterAdapters());
-                AnnotationAwareOrderComparator.sort(globalFilters);
-                DefaultRouteFilterChain.create(globalFilters).doFilter(request, response);
-              }
-              return null;
-            });
+        .orElse(null);
   }
 
   /**

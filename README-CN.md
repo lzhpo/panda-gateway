@@ -24,6 +24,10 @@
 
 ## 路由谓词
 
+> 谓词用来评估当前请求是否符合某个的路由。
+>
+> 名称格式：`[PredicateName]`RoutePredicateFactory
+
 ### 已存在的谓词
 
 #### 1.`Path` 路由谓词
@@ -296,8 +300,6 @@ gateway:
 
 ### 如何实现一个路由谓词？
 
-> 格式：`[PredicateName]`RoutePredicateFactory
-
 我将以`After`路由谓词为例来告诉你如何实现它。
 
 #### Servlet环境
@@ -374,6 +376,10 @@ gateway:
 ```
 
 ## 路由过滤器
+
+> 名称格式：`[FilterName]`RouteFilterFactory
+>
+> 路由过滤器只应用当前路由。
 
 ### 已存在的路由过滤器
 
@@ -507,8 +513,6 @@ gateway:
 ```
 
 ### 如何实现一个路由过滤器？
-
-> 格式：`[FilterName]`RouteFilterFactory
 
 我将使用`AddResponseHeader`路由过滤器来告诉你如何实现它。
 

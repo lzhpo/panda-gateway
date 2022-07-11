@@ -4,14 +4,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Just for route filter.
+ * Route filter just apply current route.
  *
  * @author lzhpo
  */
 public interface RouteFilter {
 
   /**
-   * Execute route filter chain.
+   * Execute route filter.
    *
    * @param request {@link HttpServletRequest}
    * @param response {@link HttpServletResponse}
