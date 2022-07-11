@@ -24,9 +24,9 @@ gateway:
         # choose one: ["or", "and"], default is "and"
         predicate-relation: and
         # http client connect timeout, unit: millisecond
-        connect-timeout: 60000
+        connect-timeout: 10000
         # http client response timeout, unit: millisecond
-        response-timeout: 60000
+        response-timeout: 10000
       predicates:
         - name: Path
           args:
@@ -115,7 +115,11 @@ gateway:
       order: 2
       metadata:
         # choose one: ["or", "and"], default is "and"
-        predicate-relation: or
+        predicate-relation: and
+        # http client connect timeout, unit: millisecond
+        connect-timeout: 10000
+        # http client response timeout, unit: millisecond
+        response-timeout: 10000
       predicates:
         - name: Path
           args:

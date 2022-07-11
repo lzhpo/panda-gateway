@@ -28,6 +28,13 @@ public class SampleApiController {
     return "Hello";
   }
 
+  @GetMapping("/timeout")
+  public String timeout(HttpServletRequest request) throws InterruptedException {
+    log.info("[IP: {}] timeout...", request.getRemoteAddr());
+    Thread.sleep(60 * 1000L);
+    return "timeout";
+  }
+
   @GetMapping("/noReturn")
   public void noReturn(HttpServletRequest request) {
     log.info("[IP: {}] noReturn...", request.getRemoteAddr());

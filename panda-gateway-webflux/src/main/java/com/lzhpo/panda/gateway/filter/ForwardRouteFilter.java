@@ -103,7 +103,7 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
 
     return HttpClient.create()
         .responseTimeout(responseTimeout)
-        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeout.toMillisPart())
+        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, Math.toIntExact(connectTimeout.toMillis()))
         .doOnConnected(
             conn ->
                 conn.addHandlerLast(

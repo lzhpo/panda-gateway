@@ -68,8 +68,8 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
     Duration responseTimeout = getResponseTimeout(metadata, httpClient);
 
     SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-    requestFactory.setConnectTimeout(connectTimeout.toMillisPart());
-    requestFactory.setReadTimeout(responseTimeout.toMillisPart());
+    requestFactory.setConnectTimeout(Math.toIntExact(connectTimeout.toMillis()));
+    requestFactory.setReadTimeout(Math.toIntExact(responseTimeout.toMillis()));
     restTemplate.setRequestFactory(requestFactory);
 
     String finallyRequestPath = request.getRequestURI();
