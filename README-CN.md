@@ -640,6 +640,19 @@ public class ResponseGlobalFilter implements GlobalFilter {
 }
 ```
 
+## 跨域配置
+
+> 例如：如果我想允许所有跨域。
+
+```yaml
+gateway:
+  cross-configurations:
+    '[/**]':
+      allowed-headers: "*"
+      allowed-methods: "*"
+      allowed-origins: "*"
+```
+
 ## 统一自定义异常响应格式
 
 ### Servlet环境

@@ -640,6 +640,19 @@ public class ResponseGlobalFilter implements GlobalFilter {
 }
 ```
 
+## Cross-domain configuration
+
+>  e.g: If I want allow any cross-domain.
+
+```yaml
+gateway:
+  cross-configurations:
+    '[/**]':
+      allowed-headers: "*"
+      allowed-methods: "*"
+      allowed-origins: "*"
+```
+
 ## Unified custom exception response format
 
 ### Servlet environment

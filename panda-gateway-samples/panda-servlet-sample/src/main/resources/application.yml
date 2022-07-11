@@ -17,9 +17,9 @@ gateway:
     response-timeout: 60s
   cross-configurations:
     '[/**]':
-      allowedOrigins: "*"
-      allowedHeaders: "*"
-      allowedMethods: "*"
+      allowed-headers: "*"
+      allowed-methods: "*"
+      allowed-origins: "*"
   routes:
     - id: panda-service-sample-01
       # uri: http://localhost:9000
