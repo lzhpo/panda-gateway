@@ -18,8 +18,44 @@
 
 ## 它是如何工作的？
 
-```java
-// TODO
+![](docs/images/panda-gateway-logic.png)
+
+## 引入依赖
+
+### Servlet环境
+
+#### Maven
+
+```xml
+<dependency>
+  <groupId>com.lzhpo</groupId>
+  <artifactId>panda-gateway-servlet</artifactId>
+  <version>${latest-version}</version>
+</dependency>
+```
+
+#### Gradle
+
+```groovy
+implementation 'com.lzhpo:panda-gateway-servlet:${latest-version}'
+```
+
+### Webflux环境
+
+#### Maven
+
+```xml
+<dependency>
+  <groupId>com.lzhpo</groupId>
+  <artifactId>panda-gateway-webflux</artifactId>
+  <version>${latest-version}</version>
+</dependency>
+```
+
+#### Gradle
+
+```groovy
+implementation 'com.lzhpo:panda-gateway-webflux:${latest-version}'
 ```
 
 ## 路由谓词

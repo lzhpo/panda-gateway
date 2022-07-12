@@ -18,8 +18,44 @@ English | [中文](README-CN.md)
 
 ## How it works?
 
-```java
-// TODO
+![](docs/images/panda-gateway-logic.png)
+
+## Import dependencies
+
+### Servlet environment
+
+#### Maven
+
+```xml
+<dependency>
+  <groupId>com.lzhpo</groupId>
+  <artifactId>panda-gateway-servlet</artifactId>
+  <version>${latest-version}</version>
+</dependency>
+```
+
+#### Gradle
+
+```groovy
+implementation 'com.lzhpo:panda-gateway-servlet:${latest-version}'
+```
+
+### Webflux environment
+
+#### Maven
+
+```xml
+<dependency>
+  <groupId>com.lzhpo</groupId>
+  <artifactId>panda-gateway-webflux</artifactId>
+  <version>${latest-version}</version>
+</dependency>
+```
+
+#### Gradle
+
+```groovy
+implementation 'com.lzhpo:panda-gateway-webflux:${latest-version}'
 ```
 
 ## Route predicate
