@@ -1,9 +1,6 @@
-![style check](https://github.com/lzhpo/panda-gateway/actions/workflows/style-check.yml/badge.svg)
-![](https://img.shields.io/badge/JDK-1.8+-brightgreen.svg)
+![](./docs/images/logo.png)
 
 English | [中文](README-CN.md)
-
-![](./docs/images/logo.png)
 
 ## What's it?
 
