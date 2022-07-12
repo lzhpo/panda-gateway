@@ -9,12 +9,15 @@
 - 本项目旨在手写 SpringCloud Gateway。
 - 参考 SpringCloud Gateway 的核心思想，我基本上用自己的方式实现了它所有的功能。
 - 可以使用它更快的了解 SpringCloud Gateway 的内部工作原理和二次开发。
+- 等等...
 
 ### 特点
 
 1. 强大的谓词和过滤器，更容易理解和扩展。
 2. 路由信息存储可以动态切换到内存或者redis。
 3. 支持servlet和webflux环境，以及微服务模式和http/https模式。
+3. 支持自定义配置跨域。
+3. 等等...
 
 ## 它是如何工作的？
 
