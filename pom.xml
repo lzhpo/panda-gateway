@@ -24,15 +24,33 @@
   <artifactId>panda-gateway</artifactId>
   <version>${revision}</version>
   <name>${project.groupId} ::: ${project.artifactId}</name>
+  <url>https://github.com/lzhpo/panda-gateway</url>
+  <description>panda gateway</description>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>1.8</java.version>
     <hutool.version>5.8.4</hutool.version>
     <guava.version>31.1-jre</guava.version>
     <commons-io.version>2.11.0</commons-io.version>
     <spring-cloud.version>2021.0.1</spring-cloud.version>
     <fmt-maven-plugin.version>2.19</fmt-maven-plugin.version>
   </properties>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>lzhpo</id>
+      <name>lzhpo</name>
+      <email>lzhpo1024@gmail.com</email>
+      <organizationUrl>http://www.lzhpo.com</organizationUrl>
+    </developer>
+  </developers>
 
   <dependencies>
     <dependency>
