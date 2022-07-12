@@ -1,16 +1,13 @@
-name: Release version
+name: Release ossrh
 
 on:
   release:
     types: [released]
-  # TODO：test
-  push:
-    branches: [ master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Release version jobs
+    name: Release ossrh jobs
 
     steps:
       - uses: actions/checkout@v3
@@ -20,6 +17,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+          # It needs to be the same as the id corresponding to the snapshot Repository in pom.xml
           server-id: ossrh
           # env variable for username in deploy
           server-username: MAVEN_USERNAME
