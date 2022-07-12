@@ -2,6 +2,8 @@
 
 中文 | [English](README.md)
 
+![](./docs/images/logo.png)
+
 ## 它是什么？
 
 ### 前言

@@ -2,6 +2,8 @@
 
 English | [中文](README-CN.md)
 
+![](./docs/images/logo.png)
+
 ## What's it?
 
 ### Foreword
