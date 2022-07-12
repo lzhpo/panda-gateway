@@ -3,6 +3,9 @@ name: Release version
 on:
   release:
     types: [released]
+  # TODO：test
+  push:
+    branches: [ master ]
 
 jobs:
   build:
