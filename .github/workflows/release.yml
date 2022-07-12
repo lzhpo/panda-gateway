@@ -13,7 +13,7 @@ jobs:
       - name: Set up Apache Maven Central
         uses: joschi/setup-jdk@v2
         with:
-          java-version: '11'
+          java-version: '8'
           server-id: ossrh
           server-username: ${{ secrets.OSSRH_USERNAME }}
           server-password: ${{ secrets.OSSRH_PASSWORD }}
