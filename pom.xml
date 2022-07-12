@@ -33,7 +33,6 @@
     <hutool.version>5.8.4</hutool.version>
     <guava.version>31.1-jre</guava.version>
     <maven.gpg.version>1.6</maven.gpg.version>
-    <maven.deploy.skip>true</maven.deploy.skip>
     <commons-io.version>2.11.0</commons-io.version>
     <maven.source.version>3.0.1</maven.source.version>
     <maven.javadoc.version>3.0.1</maven.javadoc.version>
