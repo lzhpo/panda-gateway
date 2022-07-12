@@ -192,20 +192,13 @@
             <version>${maven.gpg.version}</version>
             <executions>
               <execution>
-                <id>gpg.passphrase</id>
+                <id>gpg.passphrases</id>
                 <phase>verify</phase>
                 <goals>
                   <goal>sign</goal>
                 </goals>
               </execution>
             </executions>
-            <configuration>
-              <!-- Prevent gpg from using pinentry programs -->
-              <gpgArguments>
-                <arg>--pinentry-mode</arg>
-                <arg>loopback</arg>
-              </gpgArguments>
-            </configuration>
           </plugin>
         </plugins>
       </build>
