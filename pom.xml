@@ -39,6 +39,8 @@
     <maven.javadoc.version>3.0.1</maven.javadoc.version>
     <spring-cloud.version>2021.0.1</spring-cloud.version>
     <fmt-maven-plugin.version>2.19</fmt-maven-plugin.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <scm>
