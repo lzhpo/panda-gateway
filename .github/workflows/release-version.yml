@@ -18,10 +18,14 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           server-id: ossrh
-          server-username: ${{ secrets.OSSRH_USERNAME }}
-          server-password: ${{ secrets.OSSRH_PASSWORD }}
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          # env variable for username in deploy
+          server-username: MAVEN_USERNAME
+          # env variable for token in deploy
+          server-password: MAVEN_CENTRAL_TOKEN
+          # Value of the GPG private key to import
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          # env variable for GPG private key passphrase
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Release to Apache Maven Central
         run: mvn deploy -Prelease
