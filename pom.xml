@@ -192,7 +192,7 @@
             <version>${maven.gpg.version}</version>
             <executions>
               <execution>
-                <id>gpg.passphrases</id>
+                <id>sign-artifacts</id>
                 <phase>verify</phase>
                 <goals>
                   <goal>sign</goal>
