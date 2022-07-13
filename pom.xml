@@ -132,6 +132,9 @@
         <groupId>com.spotify.fmt</groupId>
         <artifactId>fmt-maven-plugin</artifactId>
         <version>${fmt-maven-plugin.version}</version>
+        <configuration>
+          <skipSortingImports>false</skipSortingImports>
+        </configuration>
         <executions>
           <execution>
             <goals>
