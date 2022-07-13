@@ -1,7 +1,7 @@
 spring:
   servlet:
     multipart:
-      # 单个文件大小最大限制
+      # Maximum single file size limit
       max-file-size: 50MB
-      # 单次请求总文件大小最大限制
+      # The maximum limit of the total file size of a single request
       max-request-size: 50MB
