@@ -22,7 +22,7 @@ import com.lzhpo.panda.gateway.filter.ForwardRouteFilter;
 import com.lzhpo.panda.gateway.filter.GlobalFilterAdapter;
 import com.lzhpo.panda.gateway.filter.RouteFilter;
 import com.lzhpo.panda.gateway.route.Route;
-import com.lzhpo.panda.gateway.route.RouteComponentExtractor;
+import com.lzhpo.panda.gateway.route.RouteComponentUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +65,7 @@ public class GatewayRequestHandler extends DefaultServletHttpRequestHandler {
       @NonNull HttpServletRequest request, @NonNull HttpServletResponse response)
       throws ServletException, IOException {
 
-    List<GlobalFilterAdapter> globalFilters = RouteComponentExtractor.getGlobalFilterAdapters();
+    List<GlobalFilterAdapter> globalFilters = RouteComponentUtil.getGlobalFilterAdapters();
     List<RouteFilter> filters = new ArrayList<>(globalFilters);
 
     List<RouteFilter> routeFilters = route.getFilters();

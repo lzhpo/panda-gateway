@@ -19,7 +19,7 @@ package com.lzhpo.panda.gateway.predicate.factory;
 import cn.hutool.core.lang.WeightRandom;
 import cn.hutool.core.lang.WeightRandom.WeightObj;
 import com.lzhpo.panda.gateway.core.route.ComponentDefinition;
-import com.lzhpo.panda.gateway.core.route.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.GatewayConstants;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
@@ -49,7 +49,7 @@ public class WeightRoutePredicateFactory
   @Override
   public RoutePredicate create(Config config) {
     return request -> {
-      String currentRouteId = (String) request.getAttribute(GatewayConst.ROUTE_ID);
+      String currentRouteId = (String) request.getAttribute(GatewayConstants.ROUTE_ID);
       if (!StringUtils.hasText(currentRouteId)) {
         return false;
       }

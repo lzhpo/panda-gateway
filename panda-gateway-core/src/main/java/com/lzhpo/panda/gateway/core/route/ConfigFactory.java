@@ -112,8 +112,8 @@ public interface ConfigFactory<T> {
     // Whether is spring el expression for the value
     if (Objects.nonNull(value) && value instanceof String) {
       String expressionString = (String) value;
-      if (expressionString.startsWith(GatewayConst.EXPRESSION_PREFIX)
-          && expressionString.endsWith(GatewayConst.EXPRESSION_SUFFIX)) {
+      if (expressionString.startsWith(GatewayConstants.EXPRESSION_PREFIX)
+          && expressionString.endsWith(GatewayConstants.EXPRESSION_SUFFIX)) {
         SpelExpressionParser parser = new SpelExpressionParser();
         StandardEvaluationContext context = new StandardEvaluationContext();
         context.setBeanResolver(new BeanFactoryResolver(SpringUtil.getBeanFactory()));

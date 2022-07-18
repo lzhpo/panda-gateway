@@ -23,7 +23,7 @@ import com.lzhpo.panda.gateway.core.route.RouteRefreshEvent;
 import com.lzhpo.panda.gateway.filter.GlobalFilter;
 import com.lzhpo.panda.gateway.filter.factory.RouteFilterFactory;
 import com.lzhpo.panda.gateway.predicate.factory.RoutePredicateFactory;
-import com.lzhpo.panda.gateway.route.RouteComponentExtractor;
+import com.lzhpo.panda.gateway.route.RouteComponentUtil;
 import com.lzhpo.panda.gateway.route.RouteDefinitionLocator;
 import java.util.Arrays;
 import java.util.Collections;
@@ -74,7 +74,7 @@ public class GatewayControllerEndpoint {
             routeId,
             RouteDefinition::getPredicates,
             componentDefinition ->
-                RouteComponentExtractor.getPredicateFactory(componentDefinition.getName())
+                RouteComponentUtil.getPredicateFactory(componentDefinition.getName())
                     .getClass()
                     .getName());
     return ResponseEntity.ok(predicateNames);
@@ -98,7 +98,7 @@ public class GatewayControllerEndpoint {
             routeId,
             RouteDefinition::getFilters,
             componentDefinition ->
-                RouteComponentExtractor.getFilterFactory(componentDefinition.getName())
+                RouteComponentUtil.getFilterFactory(componentDefinition.getName())
                     .getClass()
                     .getName());
     return ResponseEntity.ok(filterNames);

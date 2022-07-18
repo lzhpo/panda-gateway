@@ -16,13 +16,13 @@
 
 package com.lzhpo.panda.gateway.handler;
 
-import com.lzhpo.panda.gateway.core.route.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.GatewayConstants;
 import com.lzhpo.panda.gateway.filter.DefaultRouteFilterChain;
 import com.lzhpo.panda.gateway.filter.ForwardRouteFilter;
 import com.lzhpo.panda.gateway.filter.GlobalFilterAdapter;
 import com.lzhpo.panda.gateway.filter.RouteFilter;
 import com.lzhpo.panda.gateway.route.Route;
-import com.lzhpo.panda.gateway.route.RouteComponentExtractor;
+import com.lzhpo.panda.gateway.route.RouteComponentUtil;
 import com.lzhpo.panda.gateway.route.RouteLocator;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,8 +48,8 @@ public class GatewayRequestHandler implements WebHandler {
 
   @Override
   public Mono<Void> handle(ServerWebExchange exchange) {
-    String routeId = exchange.getAttribute(GatewayConst.ROUTE_ID);
-    List<GlobalFilterAdapter> globalFilters = RouteComponentExtractor.getGlobalFilterAdapters();
+    String routeId = exchange.getAttribute(GatewayConstants.ROUTE_ID);
+    List<GlobalFilterAdapter> globalFilters = RouteComponentUtil.getGlobalFilterAdapters();
     List<RouteFilter> filters = new ArrayList<>(globalFilters);
 
     if (StringUtils.hasText(routeId)) {

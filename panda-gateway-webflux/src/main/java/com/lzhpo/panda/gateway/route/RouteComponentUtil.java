@@ -33,7 +33,7 @@ import org.springframework.util.ObjectUtils;
  * @author lzhpo
  */
 @UtilityClass
-public class RouteComponentExtractor {
+public class RouteComponentUtil {
 
   /**
    * Use {@code name} to get route predicate factory.

@@ -16,8 +16,8 @@
 
 package com.lzhpo.panda.gateway.filter;
 
-import com.lzhpo.panda.gateway.core.route.GatewayConst;
-import com.lzhpo.panda.gateway.core.route.RouteMetadataConst;
+import com.lzhpo.panda.gateway.core.route.GatewayConstants;
+import com.lzhpo.panda.gateway.core.route.RouteMetadataConstants;
 import com.lzhpo.panda.gateway.core.utils.ExtractUtil;
 import com.lzhpo.panda.gateway.route.Route;
 import io.netty.channel.ChannelOption;
@@ -129,12 +129,12 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
   private HttpClient getHttpClientWithTimeout(ServerWebExchange exchange) {
     Duration connectTimeout =
         exchange.getAttributeOrDefault(
-            RouteMetadataConst.CONNECT_TIMEOUT,
-            Duration.ofMillis(GatewayConst.DEFAULT_CONNECT_TIMEOUT));
+            RouteMetadataConstants.CONNECT_TIMEOUT,
+            Duration.ofMillis(GatewayConstants.DEFAULT_CONNECT_TIMEOUT));
     Duration responseTimeout =
         exchange.getAttributeOrDefault(
-            RouteMetadataConst.RESPONSE_TIMEOUT,
-            Duration.ofMillis(GatewayConst.DEFAULT_RESPONSE_TIMEOUT));
+            RouteMetadataConstants.RESPONSE_TIMEOUT,
+            Duration.ofMillis(GatewayConstants.DEFAULT_RESPONSE_TIMEOUT));
 
     return HttpClient.create()
         .responseTimeout(responseTimeout)

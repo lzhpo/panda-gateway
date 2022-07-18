@@ -16,7 +16,7 @@
 
 package com.lzhpo.panda.gateway.route;
 
-import com.lzhpo.panda.gateway.core.route.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.GatewayConstants;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.core.route.RouteRefreshEvent;
 import java.util.Arrays;
@@ -41,7 +41,7 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
   public Mono<RouteDefinition> getRoute(String routeId) {
     return redisTemplate
         .opsForHash()
-        .get(GatewayConst.ROUTE_DEFINITION_CACHE_KEY, routeId)
+        .get(GatewayConstants.ROUTE_DEFINITION_CACHE_KEY, routeId)
         .cast(RouteDefinition.class);
   }
 
@@ -49,7 +49,7 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
   public Flux<RouteDefinition> getRoutes() {
     return redisTemplate
         .opsForHash()
-        .values(GatewayConst.ROUTE_DEFINITION_CACHE_KEY)
+        .values(GatewayConstants.ROUTE_DEFINITION_CACHE_KEY)
         .cast(RouteDefinition.class);
   }
 
@@ -65,7 +65,7 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
               }
               return redisTemplate
                   .opsForHash()
-                  .putAll(GatewayConst.ROUTE_DEFINITION_CACHE_KEY, routeDefinitionMap)
+                  .putAll(GatewayConstants.ROUTE_DEFINITION_CACHE_KEY, routeDefinitionMap)
                   .doOnNext(b -> publishRefreshEvent(new RouteRefreshEvent(this)));
             });
   }
@@ -74,7 +74,7 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
   public Mono<Long> deleteRoutes(String... routeIds) {
     return redisTemplate
         .opsForHash()
-        .remove(GatewayConst.ROUTE_DEFINITION_CACHE_KEY, Arrays.stream(routeIds).toArray())
+        .remove(GatewayConstants.ROUTE_DEFINITION_CACHE_KEY, Arrays.stream(routeIds).toArray())
         .doOnNext(
             deletedNum -> {
               if (deletedNum > 0) {

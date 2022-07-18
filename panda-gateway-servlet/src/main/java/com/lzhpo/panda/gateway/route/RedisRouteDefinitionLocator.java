@@ -17,7 +17,7 @@
 package com.lzhpo.panda.gateway.route;
 
 import com.google.common.collect.Lists;
-import com.lzhpo.panda.gateway.core.route.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.GatewayConstants;
 import com.lzhpo.panda.gateway.core.route.RouteDefinition;
 import com.lzhpo.panda.gateway.core.route.RouteRefreshEvent;
 import java.util.Arrays;
@@ -44,14 +44,15 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
   @Override
   public RouteDefinition getRoute(String routeId) {
     return Optional.ofNullable(
-            redisTemplate.opsForHash().get(GatewayConst.ROUTE_DEFINITION_CACHE_KEY, routeId))
+            redisTemplate.opsForHash().get(GatewayConstants.ROUTE_DEFINITION_CACHE_KEY, routeId))
         .map(RouteDefinition.class::cast)
         .orElse(null);
   }
 
   @Override
   public List<RouteDefinition> getRoutes() {
-    return Optional.of(redisTemplate.opsForHash().values(GatewayConst.ROUTE_DEFINITION_CACHE_KEY))
+    return Optional.of(
+            redisTemplate.opsForHash().values(GatewayConstants.ROUTE_DEFINITION_CACHE_KEY))
         .filter(x -> !CollectionUtils.isEmpty(x))
         .orElse(Lists.newArrayList())
         .stream()
@@ -67,7 +68,9 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
       routeDefinitionMap.put(routeDefinition.getId(), routeDefinition);
     }
 
-    redisTemplate.opsForHash().putAll(GatewayConst.ROUTE_DEFINITION_CACHE_KEY, routeDefinitionMap);
+    redisTemplate
+        .opsForHash()
+        .putAll(GatewayConstants.ROUTE_DEFINITION_CACHE_KEY, routeDefinitionMap);
     publishRefreshEvent(new RouteRefreshEvent(this));
   }
 
@@ -77,7 +80,7 @@ public class RedisRouteDefinitionLocator implements RouteDefinitionLocator {
         redisTemplate
             .opsForHash()
             .delete(
-                GatewayConst.ROUTE_DEFINITION_CACHE_KEY,
+                GatewayConstants.ROUTE_DEFINITION_CACHE_KEY,
                 Arrays.stream(routeIds).map(Object.class::cast).collect(Collectors.toList()));
 
     if (deletedNum > 0) {

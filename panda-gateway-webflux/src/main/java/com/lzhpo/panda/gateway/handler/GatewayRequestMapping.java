@@ -18,9 +18,9 @@ package com.lzhpo.panda.gateway.handler;
 
 import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.GatewayProperties.HttpClientConfig;
-import com.lzhpo.panda.gateway.core.route.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.GatewayConstants;
 import com.lzhpo.panda.gateway.core.route.RelationType;
-import com.lzhpo.panda.gateway.core.route.RouteMetadataConst;
+import com.lzhpo.panda.gateway.core.route.RouteMetadataConstants;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import com.lzhpo.panda.gateway.route.Route;
 import com.lzhpo.panda.gateway.route.RouteLocator;
@@ -71,8 +71,10 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
               Duration connectTimeout = getConnectTimeout(metadata, httpClient);
               Duration responseTimeout = getResponseTimeout(metadata, httpClient);
 
-              exchange.getAttributes().put(RouteMetadataConst.CONNECT_TIMEOUT, connectTimeout);
-              exchange.getAttributes().put(RouteMetadataConst.RESPONSE_TIMEOUT, responseTimeout);
+              exchange.getAttributes().put(RouteMetadataConstants.CONNECT_TIMEOUT, connectTimeout);
+              exchange
+                  .getAttributes()
+                  .put(RouteMetadataConstants.RESPONSE_TIMEOUT, responseTimeout);
               return route;
             })
         .map(route -> Mono.just(requestHandler))
@@ -82,9 +84,13 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
                     .then(
                         Mono.fromRunnable(
                             () -> {
-                              exchange.getAttributes().remove(GatewayConst.ROUTE_ID);
-                              exchange.getAttributes().remove(RouteMetadataConst.CONNECT_TIMEOUT);
-                              exchange.getAttributes().remove(RouteMetadataConst.RESPONSE_TIMEOUT);
+                              exchange.getAttributes().remove(GatewayConstants.ROUTE_ID);
+                              exchange
+                                  .getAttributes()
+                                  .remove(RouteMetadataConstants.CONNECT_TIMEOUT);
+                              exchange
+                                  .getAttributes()
+                                  .remove(RouteMetadataConstants.RESPONSE_TIMEOUT);
                               if (log.isDebugEnabled()) {
                                 log.warn("No route found.");
                               }
@@ -101,7 +107,7 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
    * @return connect timeout
    */
   private Duration getConnectTimeout(Map<String, String> metadata, HttpClientConfig httpClient) {
-    return Optional.ofNullable(metadata.get(RouteMetadataConst.CONNECT_TIMEOUT))
+    return Optional.ofNullable(metadata.get(RouteMetadataConstants.CONNECT_TIMEOUT))
         .filter(StringUtils::hasText)
         .map(connectTimeoutMillis -> Duration.ofMillis(Long.parseLong(connectTimeoutMillis)))
         .orElseGet(httpClient::getConnectTimeout);
@@ -117,7 +123,7 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
    * @return response timeout
    */
   private Duration getResponseTimeout(Map<String, String> metadata, HttpClientConfig httpClient) {
-    return Optional.ofNullable(metadata.get(RouteMetadataConst.RESPONSE_TIMEOUT))
+    return Optional.ofNullable(metadata.get(RouteMetadataConstants.RESPONSE_TIMEOUT))
         .filter(StringUtils::hasText)
         .map(responseTimeoutMillis -> Duration.ofMillis(Long.parseLong(responseTimeoutMillis)))
         .orElseGet(httpClient::getResponseTimeout);
@@ -134,10 +140,10 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
     return routes.stream()
         .filter(
             route -> {
-              exchange.getAttributes().put(GatewayConst.ROUTE_ID, route.getId());
+              exchange.getAttributes().put(GatewayConstants.ROUTE_ID, route.getId());
               List<RoutePredicate> predicates = route.getPredicates();
               Map<String, String> metadata = route.getMetadata();
-              String relation = metadata.get(RouteMetadataConst.PREDICATE_RELATION);
+              String relation = metadata.get(RouteMetadataConstants.PREDICATE_RELATION);
               if (RelationType.OR.name().equalsIgnoreCase(relation)) {
                 return predicates.stream().anyMatch(predicate -> predicate.test(exchange));
               }

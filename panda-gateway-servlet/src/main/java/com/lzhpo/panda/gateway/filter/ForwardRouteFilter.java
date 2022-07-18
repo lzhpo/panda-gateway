@@ -19,7 +19,7 @@ package com.lzhpo.panda.gateway.filter;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.lzhpo.panda.gateway.core.GatewayProperties;
 import com.lzhpo.panda.gateway.core.GatewayProperties.HttpClientConfig;
-import com.lzhpo.panda.gateway.core.route.RouteMetadataConst;
+import com.lzhpo.panda.gateway.core.route.RouteMetadataConstants;
 import com.lzhpo.panda.gateway.core.utils.ExtractUtil;
 import com.lzhpo.panda.gateway.route.Route;
 import com.lzhpo.panda.gateway.support.CacheRequestWrapper;
@@ -203,7 +203,7 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
    * @return connect timeout
    */
   private Duration getConnectTimeout(Map<String, String> metadata, HttpClientConfig httpClient) {
-    return Optional.ofNullable(metadata.get(RouteMetadataConst.CONNECT_TIMEOUT))
+    return Optional.ofNullable(metadata.get(RouteMetadataConstants.CONNECT_TIMEOUT))
         .filter(StringUtils::hasText)
         .map(connectTimeoutMillis -> Duration.ofMillis(Long.parseLong(connectTimeoutMillis)))
         .orElseGet(httpClient::getConnectTimeout);
@@ -219,7 +219,7 @@ public class ForwardRouteFilter implements RouteFilter, Ordered {
    * @return response timeout
    */
   private Duration getResponseTimeout(Map<String, String> metadata, HttpClientConfig httpClient) {
-    return Optional.ofNullable(metadata.get(RouteMetadataConst.RESPONSE_TIMEOUT))
+    return Optional.ofNullable(metadata.get(RouteMetadataConstants.RESPONSE_TIMEOUT))
         .filter(StringUtils::hasText)
         .map(responseTimeoutMillis -> Duration.ofMillis(Long.parseLong(responseTimeoutMillis)))
         .orElseGet(httpClient::getResponseTimeout);

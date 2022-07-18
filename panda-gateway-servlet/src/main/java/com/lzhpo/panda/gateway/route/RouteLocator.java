@@ -66,7 +66,7 @@ public interface RouteLocator extends ApplicationListener<RouteRefreshEvent> {
                 predicateDefinition -> {
                   String name = predicateDefinition.getName();
                   RoutePredicateFactory<Object> factory =
-                      RouteComponentExtractor.getPredicateFactory(name);
+                      RouteComponentUtil.getPredicateFactory(name);
                   return factory.create(predicateDefinition);
                 })
             .collect(Collectors.toList());
@@ -79,8 +79,7 @@ public interface RouteLocator extends ApplicationListener<RouteRefreshEvent> {
             .map(
                 filterDefinition -> {
                   String name = filterDefinition.getName();
-                  RouteFilterFactory<Object> factory =
-                      RouteComponentExtractor.getFilterFactory(name);
+                  RouteFilterFactory<Object> factory = RouteComponentUtil.getFilterFactory(name);
                   return factory.create(filterDefinition);
                 })
             .collect(Collectors.toList());

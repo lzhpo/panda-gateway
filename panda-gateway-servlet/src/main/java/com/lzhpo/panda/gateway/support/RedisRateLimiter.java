@@ -17,7 +17,7 @@
 package com.lzhpo.panda.gateway.support;
 
 import com.google.common.collect.Lists;
-import com.lzhpo.panda.gateway.core.route.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.GatewayConstants;
 import com.lzhpo.panda.gateway.filter.factory.RateLimiterRouteFilterFactory.Config;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,10 +63,10 @@ public class RedisRateLimiter implements RateLimiter {
 
     Map<String, String> headers = new HashMap<>(4);
     if (config.isIncludeHeaders()) {
-      headers.put(GatewayConst.REMAINING_HEADER, tokensLeft.toString());
-      headers.put(GatewayConst.REPLENISH_RATE_HEADER, replenishRate);
-      headers.put(GatewayConst.BURST_CAPACITY_HEADER, burstCapacity);
-      headers.put(GatewayConst.REQUESTED_TOKENS_HEADER, requestedTokens);
+      headers.put(GatewayConstants.REMAINING_HEADER, tokensLeft.toString());
+      headers.put(GatewayConstants.REPLENISH_RATE_HEADER, replenishRate);
+      headers.put(GatewayConstants.BURST_CAPACITY_HEADER, burstCapacity);
+      headers.put(GatewayConstants.REQUESTED_TOKENS_HEADER, requestedTokens);
     }
 
     return RateLimiterResponse.builder()

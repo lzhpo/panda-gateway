@@ -17,9 +17,9 @@
 package com.lzhpo.panda.gateway.handler;
 
 import com.lzhpo.panda.gateway.core.GatewayProperties;
-import com.lzhpo.panda.gateway.core.route.GatewayConst;
+import com.lzhpo.panda.gateway.core.route.GatewayConstants;
 import com.lzhpo.panda.gateway.core.route.RelationType;
-import com.lzhpo.panda.gateway.core.route.RouteMetadataConst;
+import com.lzhpo.panda.gateway.core.route.RouteMetadataConstants;
 import com.lzhpo.panda.gateway.predicate.RoutePredicate;
 import com.lzhpo.panda.gateway.route.Route;
 import com.lzhpo.panda.gateway.route.RouteLocator;
@@ -83,10 +83,10 @@ public class GatewayRequestMapping extends AbstractHandlerMapping {
     return routes.stream()
         .filter(
             route -> {
-              request.setAttribute(GatewayConst.ROUTE_ID, route.getId());
+              request.setAttribute(GatewayConstants.ROUTE_ID, route.getId());
               List<RoutePredicate> predicates = route.getPredicates();
               Map<String, String> metadata = route.getMetadata();
-              String relation = metadata.get(RouteMetadataConst.PREDICATE_RELATION);
+              String relation = metadata.get(RouteMetadataConstants.PREDICATE_RELATION);
               if (RelationType.OR.name().equalsIgnoreCase(relation)) {
                 return predicates.stream().anyMatch(predicate -> predicate.test(request));
               }

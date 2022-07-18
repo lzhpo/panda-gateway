@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
  * @author lzhpo
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class GatewayConst {
+public final class GatewayConstants {
 
   public static final String ROUTE_ID = "ROUTE-ID";
 
