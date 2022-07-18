@@ -17,6 +17,7 @@
     <dependency>
       <groupId>com.lzhpo</groupId>
       <artifactId>panda-gateway-servlet</artifactId>
+      <version>${revision}</version>
     </dependency>
 
     <dependency>

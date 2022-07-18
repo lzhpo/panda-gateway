@@ -10,7 +10,6 @@
     <module>panda-gateway-servlet</module>
     <module>panda-gateway-webflux</module>
     <module>panda-gateway-samples</module>
-    <module>panda-gateway-bom</module>
   </modules>
 
   <parent>
