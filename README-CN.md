@@ -1,3 +1,9 @@
+![](https://img.shields.io/badge/JDK-1.8+-success.svg)
+![](https://maven-badges.herokuapp.com/maven-central/com.lzhpo/panda-gateway/badge.svg?color=blueviolet)
+![](https://img.shields.io/:license-Apache2-orange.svg)
+[![Style check](https://github.com/lzhpo/panda-gateway/actions/workflows/style-check.yml/badge.svg)](https://github.com/lzhpo/panda-gateway/actions/workflows/style-check.yml)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/357eee58bffa4663b84a040b60b92f46)](https://www.codacy.com/gh/lzhpo/panda-gateway/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lzhpo/panda-gateway&amp;utm_campaign=Badge_Grade)
+
 ![](./docs/images/logo.png)
 
 中文 | [English](README.md)
