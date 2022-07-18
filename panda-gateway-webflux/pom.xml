@@ -17,6 +17,7 @@
     <dependency>
       <groupId>com.lzhpo</groupId>
       <artifactId>panda-gateway-core</artifactId>
+      <version>${revision}</version>
       <exclusions>
         <exclusion>
           <groupId>org.springframework.boot</groupId>
